@@ -6841,6 +6841,606 @@
         "A"
       ],
       "explanation": "Quando uma expressão CASE tem ramos com tipos de dados aparentemente diferentes (uma string 'High' e um número 0), o Oracle usa o tipo de dado do PRIMEIRO resultado encontrado como tipo 'âncora' para toda a expressão, e tenta converter implicitamente os demais resultados para esse tipo — como 'High' (VARCHAR2) é o primeiro, o Oracle tenta converter 0 para a string '0', e como essa conversão numérica-para-string é sempre possível, a expressão executa com sucesso (A correto). B está errada porque essa conversão implícita específica (número para string) é sempre bem-sucedida, não gera erro de tipos inconsistentes nesse sentido. C está errada porque a expressão retorna o valor apropriado ('High' ou '0'), não NULL. D está errada porque a conversão ocorre na direção oposta: o número é convertido para corresponder ao tipo string do primeiro resultado, não o inverso."
+    },
+    {
+      "id": 219,
+      "topic": "functions",
+      "context": "Evaluate:\n\nSELECT TO_CHAR(DATE '2024-12-25', 'DAY') FROM dual;\n\n(Assume default NLS_DATE_LANGUAGE is AMERICAN.)",
+      "text": "What kind of value is returned?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The full day name (e.g., 'WEDNESDAY'), padded with trailing spaces to a fixed width."
+        },
+        {
+          "key": "B",
+          "text": "A 3-letter abbreviation (e.g., 'WED')."
+        },
+        {
+          "key": "C",
+          "text": "The numeric day of week (1-7)."
+        },
+        {
+          "key": "D",
+          "text": "An error, since DAY is not a valid format element."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "\"DAY\" retorna o nome completo do dia da semana em maiúsculas, preenchido com espaços à direita até completar o tamanho do maior nome de dia (ex: 'WEDNESDAY '). Para abreviação de 3 letras se usa 'DY'. Para o número do dia da semana (1-7) se usa 'D'. Não há erro: DAY é um elemento de formato válido para datas."
+    },
+    {
+      "id": 220,
+      "topic": "functions",
+      "context": "Evaluate:\n\nSELECT ADD_MONTHS(DATE '2024-01-31', 1) FROM dual;",
+      "text": "What is returned?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "28-FEB-2024"
+        },
+        {
+          "key": "B",
+          "text": "29-FEB-2024"
+        },
+        {
+          "key": "C",
+          "text": "02-MAR-2024"
+        },
+        {
+          "key": "D",
+          "text": "an error, since February doesn't have 31 days"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "ADD_MONTHS soma meses de calendário e, quando o dia original não existe no mês de destino, ajusta automaticamente para o último dia válido desse mês — não gera erro nem 'rola' para o mês seguinte. Como 2024 é ano bissexto, fevereiro tem 29 dias, então 31-JAN-2024 + 1 mês vira 29-FEB-2024."
+    },
+    {
+      "id": 221,
+      "topic": "functions",
+      "context": "Evaluate:\n\nSELECT TRUNC(157.89) FROM dual;",
+      "text": "What is returned?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "157"
+        },
+        {
+          "key": "B",
+          "text": "158"
+        },
+        {
+          "key": "C",
+          "text": "157.89"
+        },
+        {
+          "key": "D",
+          "text": "160"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Quando TRUNC é usado com apenas um argumento numérico, o segundo argumento (casas decimais) assume o valor padrão 0, truncando toda a parte decimal sem arredondar. Por isso 157.89 vira 157, diferente de ROUND que arredondaria para 158."
+    },
+    {
+      "id": 222,
+      "topic": "functions",
+      "context": "Evaluate:\n\nSELECT NVL2(NULL, 'A', 'B') FROM dual;",
+      "text": "What is returned?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "'A'"
+        },
+        {
+          "key": "B",
+          "text": "'B'"
+        },
+        {
+          "key": "C",
+          "text": "NULL"
+        },
+        {
+          "key": "D",
+          "text": "an error"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "NVL2(expr1, expr2, expr3) retorna expr2 quando expr1 NÃO é nulo, e expr3 quando expr1 É nulo. Como o primeiro argumento é literalmente NULL, a função retorna expr3 ('B'), não expr2."
+    },
+    {
+      "id": 223,
+      "topic": "joins",
+      "context": "EMPLOYEES(employee_id, department_id, job_id), DEPARTMENTS(department_id, location_id), JOB_HISTORY(employee_id, department_id).\n\nExamine this ANSI join:\n\nSELECT e.last_name, d.department_name\n  FROM employees e\n  JOIN departments d ON e.department_id = d.department_id\n  JOIN job_history j ON j.employee_id = e.employee_id;",
+      "text": "What is true about the third table, JOB_HISTORY, in this query?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It can only ever be joined to the immediately preceding table in the FROM clause (DEPARTMENTS)."
+        },
+        {
+          "key": "B",
+          "text": "It can be joined to ANY table already introduced earlier in the FROM clause (here, EMPLOYEES), not only the one immediately before it."
+        },
+        {
+          "key": "C",
+          "text": "This query is invalid syntax, because JOB_HISTORY must join to DEPARTMENTS."
+        },
+        {
+          "key": "D",
+          "text": "ANSI JOIN only supports joining exactly two tables total."
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Em ANSI JOIN, cada cláusula ON pode referenciar qualquer tabela já introduzida anteriormente na cláusula FROM, não apenas a tabela imediatamente anterior. Por isso JOB_HISTORY pode se juntar a EMPLOYEES (que apareceu primeiro), mesmo com DEPARTMENTS no meio. Não há limite de duas tabelas por JOIN ANSI — é possível encadear quantas forem necessárias."
+    },
+    {
+      "id": 224,
+      "topic": "joins",
+      "context": "Examine this join condition:\n\n... JOIN departments d ON e.department_id = d.department_id OR e.department_id IS NULL",
+      "text": "What is true about using OR inside an ON clause like this?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It is invalid syntax; ON clauses can only use AND."
+        },
+        {
+          "key": "B",
+          "text": "It is valid syntax, but can produce a Cartesian-like explosion of matches if e.department_id IS NULL, since that condition would then match EVERY row of DEPARTMENTS for those rows."
+        },
+        {
+          "key": "C",
+          "text": "It behaves identically to using AND instead of OR."
+        },
+        {
+          "key": "D",
+          "text": "Oracle automatically converts the OR to AND."
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "ON aceita operadores lógicos como OR normalmente (não é restrito a AND). O problema dessa condição específica é lógico, não sintático: quando e.department_id é NULL, a condição 'e.department_id IS NULL' é verdadeira para TODA linha de DEPARTMENTS, criando um produto cartesiano disfarçado para essas linhas — multiplicando o resultado de forma indesejada."
+    },
+    {
+      "id": 225,
+      "topic": "joins",
+      "context": "Examine this query:\n\nSELECT *\n  FROM a\n  LEFT JOIN b ON a.id = b.a_id\n  JOIN c ON b.id = c.b_id;",
+      "text": "Since the second JOIN (to C) is an INNER JOIN referencing columns from B (which may be NULL due to the LEFT JOIN), what is the overall effect?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Rows from A with no matching B row are still preserved, because LEFT JOIN always takes priority."
+        },
+        {
+          "key": "B",
+          "text": "Rows from A with no matching B row get filtered out, because b.id is NULL for them and the INNER JOIN to C requires a non-NULL match — effectively cancelling the LEFT JOIN's effect."
+        },
+        {
+          "key": "C",
+          "text": "This raises a syntax error, since you cannot mix LEFT JOIN and JOIN in the same query."
+        },
+        {
+          "key": "D",
+          "text": "C is also outer-joined automatically to compensate."
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Mesmo que o LEFT JOIN entre A e B preserve as linhas de A sem correspondência em B (com b.id como NULL), o INNER JOIN seguinte para C exige b.id = c.b_id, e NULL nunca satisfaz uma igualdade — então essas linhas acabam sendo eliminadas de qualquer forma. Isso anula, na prática, o efeito do LEFT JOIN anterior. É um erro comum de quem encadeia joins sem pensar na ordem de avaliação."
+    },
+    {
+      "id": 226,
+      "topic": "ddl",
+      "context": "",
+      "text": "Which statement correctly adds two new columns, EMAIL and PHONE, to the EMPLOYEES table in a single ALTER TABLE statement?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "ALTER TABLE employees ADD (email VARCHAR2(50), phone VARCHAR2(20));"
+        },
+        {
+          "key": "B",
+          "text": "ALTER TABLE employees ADD COLUMN email VARCHAR2(50), phone VARCHAR2(20);"
+        },
+        {
+          "key": "C",
+          "text": "ALTER TABLE employees ADD email VARCHAR2(50) AND phone VARCHAR2(20);"
+        },
+        {
+          "key": "D",
+          "text": "ALTER TABLE employees ADD COLUMNS (email VARCHAR2(50), phone VARCHAR2(20));"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Para adicionar múltiplas colunas em um único ALTER TABLE, a sintaxe Oracle exige parênteses envolvendo a lista de definições de coluna: ADD (coluna1 tipo, coluna2 tipo). A palavra-chave COLUMN/COLUMNS não é usada no Oracle (diferente de outros bancos), e AND não é um separador válido entre definições de coluna."
+    },
+    {
+      "id": 227,
+      "topic": "ddl",
+      "context": "",
+      "text": "Which statement creates a UNIQUE constraint on the combination of FIRST_NAME and LAST_NAME together (allowing the same first name or last name individually to repeat, just not both together)?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "CREATE TABLE people (first_name VARCHAR2(20) UNIQUE, last_name VARCHAR2(20) UNIQUE);"
+        },
+        {
+          "key": "B",
+          "text": "CREATE TABLE people (first_name VARCHAR2(20), last_name VARCHAR2(20), CONSTRAINT uq_name UNIQUE (first_name, last_name));"
+        },
+        {
+          "key": "C",
+          "text": "CREATE TABLE people (first_name VARCHAR2(20), last_name VARCHAR2(20), UNIQUE (first_name) (last_name));"
+        },
+        {
+          "key": "D",
+          "text": "CREATE TABLE people (first_name VARCHAR2(20), last_name VARCHAR2(20)) UNIQUE COMBINED;"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Para tornar a COMBINAÇÃO de duas colunas única (não cada uma isoladamente), a constraint UNIQUE precisa ser definida no nível da tabela, listando as duas colunas juntas entre parênteses. A opção A criaria duas constraints UNIQUE separadas, uma em cada coluna individualmente — uma regra bem mais restritiva e diferente do que foi pedido."
+    },
+    {
+      "id": 228,
+      "topic": "ddl",
+      "context": "",
+      "text": "Which clause, used when granting a SYSTEM privilege (not an object privilege) to a user, allows that user to also grant the same privilege to others?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "WITH GRANT OPTION"
+        },
+        {
+          "key": "B",
+          "text": "WITH ADMIN OPTION"
+        },
+        {
+          "key": "C",
+          "text": "WITH CASCADE OPTION"
+        },
+        {
+          "key": "D",
+          "text": "WITH HIERARCHY OPTION"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Para privilégios de SISTEMA (como CREATE TABLE), a cláusula que permite repassar o privilégio para outros usuários é WITH ADMIN OPTION. WITH GRANT OPTION é o equivalente, mas usado especificamente para privilégios de OBJETO (como SELECT em uma tabela) — são cláusulas distintas para dois tipos diferentes de privilégio, uma pegadinha clássica do exame."
+    },
+    {
+      "id": 229,
+      "topic": "ddl",
+      "context": "",
+      "text": "Which operation can cause a row's ROWID to change, even though its primary key and data remain the same?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "A simple UPDATE that changes a non-key column."
+        },
+        {
+          "key": "B",
+          "text": "ALTER TABLE ... MOVE (e.g., moving the table to a different tablespace)."
+        },
+        {
+          "key": "C",
+          "text": "A SELECT statement."
+        },
+        {
+          "key": "D",
+          "text": "Adding an index to the table."
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "ALTER TABLE ... MOVE realoca fisicamente as linhas da tabela (por exemplo, para outro tablespace), o que muda o ROWID de cada linha, já que o ROWID reflete a localização física do dado. Um UPDATE comum em coluna não-chave não move a linha fisicamente, então não altera o ROWID. Por isso, após um MOVE, é recomendado reconstruir os índices, que ainda apontam para os ROWIDs antigos."
+    },
+    {
+      "id": 230,
+      "topic": "select",
+      "context": "Examine:\n\nSELECT * FROM employees ORDER BY commission_pct DESC NULLS FIRST;",
+      "text": "What does NULLS FIRST do here, given that DESC normally already places NULLs first by default?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It has no effect at all, since it just restates the default behavior for DESC."
+        },
+        {
+          "key": "B",
+          "text": "It forces an error, since NULLS FIRST cannot be combined with DESC."
+        },
+        {
+          "key": "C",
+          "text": "It reverses the default to put NULLs last instead."
+        },
+        {
+          "key": "D",
+          "text": "It overrides the data ordering entirely, ignoring commission_pct values for non-null rows."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Por padrão, em ordenação DESCENDENTE, os valores NULL já aparecem primeiro (são tratados como 'maiores' que qualquer valor). Por isso, NULLS FIRST combinado com DESC é redundante — apenas reafirma o comportamento padrão, sem mudar nada. Já em ordenação ASC, o padrão seria NULLS LAST, e aí sim adicionar NULLS FIRST mudaria o comportamento."
+    },
+    {
+      "id": 231,
+      "topic": "select",
+      "context": "A column contains values like '50%_OFF'.",
+      "text": "Which WHERE clause correctly matches rows where the value literally contains the percent sign (treating % as a literal character, not a wildcard)?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "WHERE col LIKE '%/%%' ESCAPE '/'"
+        },
+        {
+          "key": "B",
+          "text": "WHERE col LIKE '%\\%%'"
+        },
+        {
+          "key": "C",
+          "text": "WHERE col = '%'"
+        },
+        {
+          "key": "D",
+          "text": "WHERE col LIKE '%%%'"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Para tratar % ou _ como caractere literal dentro de um LIKE, é preciso definir um caractere de escape com a cláusula ESCAPE e colocá-lo imediatamente antes do caractere especial no padrão. Em '%/%%' ESCAPE '/', o '/' antes do primeiro '%' marca esse '%' como literal, enquanto os outros símbolos '%' continuam funcionando como curinga normalmente."
+    },
+    {
+      "id": 232,
+      "topic": "select",
+      "context": "",
+      "text": "Is it valid to nest one CASE expression inside the THEN or ELSE branch of another CASE expression?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "No, CASE expressions cannot be nested under any circumstances."
+        },
+        {
+          "key": "B",
+          "text": "Yes, CASE expressions can be nested inside THEN, ELSE, or even WHEN branches of another CASE."
+        },
+        {
+          "key": "C",
+          "text": "Only DECODE supports nesting, not CASE."
+        },
+        {
+          "key": "D",
+          "text": "Nesting is allowed only up to one level of GROUP BY."
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "CASE expressions podem ser livremente aninhadas dentro de qualquer ramo (WHEN, THEN ou ELSE) de outra expressão CASE, permitindo lógica condicional bem mais sofisticada do que DECODE consegue oferecer. Não existe limite formal de profundidade de aninhamento imposto pela linguagem (embora exagerar prejudique a legibilidade)."
+    },
+    {
+      "id": 233,
+      "topic": "dml",
+      "context": "Você está dentro de uma transação. Executa:\n\nINSERT INTO logs VALUES (1,'a');\nSAVEPOINT sp1;\nTRUNCATE TABLE logs;",
+      "text": "Você consegue dar ROLLBACK TO sp1 depois e recuperar a linha inserida?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Sim, ROLLBACK TO sp1 vai restaurar a linha, já que o SAVEPOINT foi definido antes do TRUNCATE."
+        },
+        {
+          "key": "B",
+          "text": "Não — TRUNCATE TABLE é DDL e dispara um COMMIT implícito, que encerra a transação corrente (incluindo o SAVEPOINT) antes mesmo do TRUNCATE ser executado."
+        },
+        {
+          "key": "C",
+          "text": "Sim, mas apenas se FLASHBACK TABLE também for usado."
+        },
+        {
+          "key": "D",
+          "text": "Não, porque SAVEPOINT não pode ser combinado com INSERT."
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "TRUNCATE TABLE é um comando DDL, e toda instrução DDL dispara um COMMIT implícito ANTES de ser executada. Esse commit implícito efetiva a transação corrente (incluindo o INSERT) e descarta qualquer SAVEPOINT pendente — então não existe mais transação à qual dar ROLLBACK depois do TRUNCATE. A linha inserida já estava 'selada' pelo commit implícito antes mesmo dos dados serem apagados."
+    },
+    {
+      "id": 234,
+      "topic": "dml",
+      "context": "",
+      "text": "Within a MERGE statement's WHEN MATCHED THEN UPDATE clause, which additional clause can be used to delete rows that, after being updated, satisfy a certain condition?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "DELETE WHERE"
+        },
+        {
+          "key": "B",
+          "text": "ALSO DELETE"
+        },
+        {
+          "key": "C",
+          "text": "A standalone DELETE clause can follow the UPDATE SET, restricted to rows affected by the UPDATE"
+        },
+        {
+          "key": "D",
+          "text": "REMOVE IF"
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "O MERGE permite um DELETE opcional dentro da cláusula WHEN MATCHED THEN UPDATE, mas esse DELETE só afeta as linhas que JÁ foram atualizadas pelo próprio UPDATE e que, depois da atualização, satisfazem a condição do DELETE — não é um DELETE independente sobre toda a tabela de destino. É um recurso pouco usado, mas cobrado em exame por causa dessa restrição de escopo."
+    },
+    {
+      "id": 235,
+      "topic": "set",
+      "context": "Examine this query:\n\nSELECT product_id, list_price FROM products\nUNION\nSELECT product_id, unit_cost AS price FROM product_costs\nORDER BY 2;",
+      "text": "Is ORDER BY 2 valid here, and what does it sort by?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Invalid, because the second query's alias 'price' conflicts with the first query's lack of alias."
+        },
+        {
+          "key": "B",
+          "text": "Valid — ORDER BY 2 refers to the second column position, which works regardless of whether (or how) it was aliased in either query."
+        },
+        {
+          "key": "C",
+          "text": "Invalid, because UNION does not support ORDER BY at all."
+        },
+        {
+          "key": "D",
+          "text": "Valid, but it sorts by the alias from the SECOND query specifically, ignoring the first."
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "ORDER BY por posição numérica (ORDER BY 2) sempre se refere à posição da coluna na lista de SELECT, funcionando independentemente de haver ou não um alias definido em qualquer uma das consultas combinadas. É a forma mais segura de ordenar resultados de UNION quando os nomes/aliases das colunas diferem entre as consultas, evitando ambiguidade."
+    },
+    {
+      "id": 236,
+      "topic": "advanced",
+      "context": "Evaluate:\n\nSELECT employee_id, salary, LAG(salary) OVER (ORDER BY employee_id) AS prev_salary\n  FROM employees;",
+      "text": "What offset does LAG use by default when none is specified?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "0 (the current row)"
+        },
+        {
+          "key": "B",
+          "text": "1 (the immediately preceding row)"
+        },
+        {
+          "key": "C",
+          "text": "-1 (the next row)"
+        },
+        {
+          "key": "D",
+          "text": "It requires an explicit offset; this query would raise an error."
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Quando nenhum argumento de deslocamento (offset) é informado, LAG assume o valor padrão 1, retornando o valor da coluna na linha IMEDIATAMENTE ANTERIOR de acordo com o ORDER BY da janela. Para 'olhar' mais linhas para trás, seria preciso informar explicitamente esse segundo argumento, como LAG(salary, 2)."
+    },
+    {
+      "id": 237,
+      "topic": "fundamentals",
+      "context": "",
+      "text": "In the context of normalization, what does it mean to say that column B is \"functionally dependent\" on column A?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "For each value of B, there are multiple possible values of A."
+        },
+        {
+          "key": "B",
+          "text": "For each value of A, there is exactly one corresponding value of B."
+        },
+        {
+          "key": "C",
+          "text": "A and B must always have the same data type."
+        },
+        {
+          "key": "D",
+          "text": "A and B must be in different tables."
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Dependência funcional (A determina B, ou A → B) significa que, para cada valor único de A, existe exatamente um valor correspondente de B — conhecendo A, você sempre sabe qual é o B associado, sem ambiguidade. É o conceito central por trás das formas normais (especialmente 2NF e 3NF), que buscam eliminar dependências indesejadas ou parciais."
+    },
+    {
+      "id": 238,
+      "topic": "functions",
+      "context": "Evaluate:\n\nSELECT REGEXP_COUNT('banana', 'an') FROM dual;",
+      "text": "What is returned?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "1"
+        },
+        {
+          "key": "B",
+          "text": "2"
+        },
+        {
+          "key": "C",
+          "text": "3"
+        },
+        {
+          "key": "D",
+          "text": "6"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "REGEXP_COUNT conta quantas vezes o padrão ocorre na string, sem sobreposição. Em 'banana', o padrão 'an' aparece em 'b-AN-ana' (posições 2-3) e depois em 'ban-AN-a' (posições 4-5) — duas ocorrências não sobrepostas, resultando em 2."
     }
   ]
 }
