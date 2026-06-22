@@ -7441,6 +7441,607 @@
         "B"
       ],
       "explanation": "REGEXP_COUNT conta quantas vezes o padrão ocorre na string, sem sobreposição. Em 'banana', o padrão 'an' aparece em 'b-AN-ana' (posições 2-3) e depois em 'ban-AN-a' (posições 4-5) — duas ocorrências não sobrepostas, resultando em 2."
+    },
+    {
+      "topic": "fundamentals",
+      "context": "",
+      "text": "A column is defined as NUMBER(5,2). Which of the following values raises ORA-01438 (value larger than specified precision allowed for this column) when inserted?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "123.45"
+        },
+        {
+          "key": "B",
+          "text": "999.99"
+        },
+        {
+          "key": "C",
+          "text": "1234.5"
+        },
+        {
+          "key": "D",
+          "text": "12.345"
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "NUMBER(5,2) permite no máximo 5 dígitos significativos, sendo 2 deles reservados para a parte decimal — ou seja, a parte inteira pode ter no máximo 3 dígitos (até 999). O valor 1234.5 tem 4 dígitos na parte inteira, excedendo o limite de 3 dígitos permitidos antes do ponto decimal, o que gera ORA-01438 (C correto). 123.45 e 999.99 cabem exatamente no formato (3 dígitos inteiros + 2 decimais). 12.345 seria arredondado para 12.35 ao ser armazenado, já que o Oracle arredonda casas decimais excedentes quando a precisão total permite, não gerando erro.",
+      "id": 239
+    },
+    {
+      "topic": "fundamentals",
+      "context": "",
+      "text": "Which two statements are true regarding composite primary keys in a relational table design? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A composite primary key consists of two or more columns whose combination must be unique across rows."
+        },
+        {
+          "key": "B",
+          "text": "Each individual column within a composite primary key must independently contain unique values."
+        },
+        {
+          "key": "C",
+          "text": "None of the columns participating in a composite primary key may contain NULL values."
+        },
+        {
+          "key": "D",
+          "text": "A table can have multiple composite primary keys defined simultaneously."
+        }
+      ],
+      "correct": [
+        "A",
+        "C"
+      ],
+      "explanation": "Uma chave primária composta é formada por duas ou mais colunas cuja COMBINAÇÃO de valores deve ser única entre as linhas da tabela — colunas individuais podem se repetir, desde que a combinação seja única (A correto). Por exigência da própria definição de chave primária (UNIQUE + NOT NULL), nenhuma das colunas participantes pode conter NULL, mesmo sendo parte de uma chave composta (C correto). B está errada porque o requisito de unicidade se aplica à combinação das colunas, não a cada coluna isoladamente. D está errada porque uma tabela relacional só pode ter UMA chave primária (simples ou composta) por definição.",
+      "id": 240
+    },
+    {
+      "topic": "select",
+      "context": "Table EMPLOYEES(employee_id, last_name, salary).",
+      "text": "Which query correctly returns the 3rd to 5th highest-paid employees (ranked by salary descending)?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "SELECT * FROM employees WHERE ROWNUM BETWEEN 3 AND 5 ORDER BY salary DESC;"
+        },
+        {
+          "key": "B",
+          "text": "SELECT * FROM (SELECT e.*, ROWNUM rn FROM (SELECT * FROM employees ORDER BY salary DESC) e) WHERE rn BETWEEN 3 AND 5;"
+        },
+        {
+          "key": "C",
+          "text": "SELECT * FROM employees ORDER BY salary DESC WHERE ROWNUM BETWEEN 3 AND 5;"
+        },
+        {
+          "key": "D",
+          "text": "SELECT * FROM employees WHERE salary BETWEEN 3 AND 5 ORDER BY salary DESC;"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Para obter um intervalo de linhas baseado em uma ordenação (ex: 3ª à 5ª posição), é necessário primeiro ordenar os dados em uma subconsulta e SOMENTE DEPOIS atribuir o ROWNUM em uma consulta externa, filtrando esse valor em uma terceira camada — esse é o padrão de \"view aninhada\" usado em B. A está errada porque ROWNUM é atribuído sequencialmente às linhas à medida que são retornadas pelo WHERE, começando em 1; uma condição como \"ROWNUM BETWEEN 3 AND 5\" nunca é satisfeita, pois antes de uma linha receber ROWNUM=3 ela precisaria passar pela condição com ROWNUM=1 e ROWNUM=2, que já falham o filtro — resultando em zero linhas. C está errada porque a cláusula WHERE não pode aparecer depois de ORDER BY (ordem de cláusulas inválida). D está errada porque filtra pela coluna SALARY estar entre 3 e 5, o que não tem relação com a posição no ranking.",
+      "id": 241
+    },
+    {
+      "topic": "select",
+      "context": "Table SALES(region, amount). Some rows have region = NULL.",
+      "text": "Examine this query:\nSELECT region, SUM(amount) FROM sales GROUP BY region;\nHow are rows where region IS NULL treated?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "They are excluded from the result, since GROUP BY ignores NULL values."
+        },
+        {
+          "key": "B",
+          "text": "They are grouped together into a single group with region displayed as NULL, and their amounts are summed in that group."
+        },
+        {
+          "key": "C",
+          "text": "They cause the query to raise an error, since GROUP BY cannot operate on NULL-valued columns."
+        },
+        {
+          "key": "D",
+          "text": "Each NULL-region row forms its own separate group."
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "O GROUP BY trata todos os valores NULL de uma coluna de agrupamento como pertencentes a um único grupo — diferente de uma comparação de igualdade comum, onde NULL nunca é igual a NULL, o GROUP BY agrupa todas as linhas com region NULL juntas, somando seus valores de amount nessa linha de resultado (B correto). A está errada porque o GROUP BY não exclui linhas com NULL, apenas as agrupa especialmente. C está errada porque não há erro algum nesse cenário, é um comportamento padrão e documentado. D está errada porque todas as linhas NULL formam UM único grupo, não grupos individuais.",
+      "id": 242
+    },
+    {
+      "topic": "select",
+      "context": "Examine this query:\nSELECT department_id, AVG(salary)\n  FROM employees\n WHERE salary > 3000\n GROUP BY department_id\nHAVING AVG(salary) > 5000\n ORDER BY department_id;",
+      "text": "What is the correct logical order in which Oracle evaluates the clauses of this statement?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "SELECT, FROM, WHERE, GROUP BY, HAVING, ORDER BY"
+        },
+        {
+          "key": "B",
+          "text": "FROM, WHERE, GROUP BY, HAVING, SELECT, ORDER BY"
+        },
+        {
+          "key": "C",
+          "text": "FROM, GROUP BY, WHERE, HAVING, SELECT, ORDER BY"
+        },
+        {
+          "key": "D",
+          "text": "FROM, WHERE, SELECT, GROUP BY, HAVING, ORDER BY"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "A ordem lógica de avaliação do Oracle é: primeiro FROM (identifica as tabelas), depois WHERE (filtra linhas individuais antes de agrupar, por isso salary > 3000 é aplicado aos funcionários individualmente), em seguida GROUP BY (agrupa as linhas restantes por department_id), depois HAVING (filtra os grupos já formados, por isso pode usar AVG(salary) > 5000), só então SELECT (projeta as colunas/expressões finais) e por último ORDER BY (ordena o resultado final) — essa é a ordem representada em B. As demais alternativas invertem essa sequência lógica, o que explica, por exemplo, por que HAVING pode referenciar funções de agregação enquanto WHERE não pode: WHERE é avaliado antes de qualquer agregação existir.",
+      "id": 243
+    },
+    {
+      "topic": "functions",
+      "context": "Table EMPLOYEES(department_id, last_name).",
+      "text": "Examine this query:\nSELECT department_id, LISTAGG(last_name, ', ') WITHIN GROUP (ORDER BY last_name) AS names\n  FROM employees\n GROUP BY department_id;\nWhat does this query do?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "For each department, concatenates the last names of its employees into a single comma-separated string, sorted alphabetically."
+        },
+        {
+          "key": "B",
+          "text": "Returns one row per employee with a running concatenation of names seen so far."
+        },
+        {
+          "key": "C",
+          "text": "Raises an error because LISTAGG cannot be combined with GROUP BY."
+        },
+        {
+          "key": "D",
+          "text": "Concatenates all last names in the entire table into one string, ignoring department_id."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "LISTAGG é uma função de agregação que concatena os valores de uma coluna de todas as linhas de um grupo em uma única string, usando o separador informado (', ' neste caso), e a cláusula WITHIN GROUP (ORDER BY last_name) define a ordem em que os valores são concatenados dentro de cada grupo — como há GROUP BY department_id, o resultado é uma linha por departamento com os nomes concatenados em ordem alfabética (A correto). B descreve uma função analítica de janela (como uma versão \"running\" com OVER), não o comportamento de agregação de LISTAGG com GROUP BY. C está errada pois LISTAGG é justamente projetada para uso com GROUP BY, sendo uma função de agregação. D está errada porque o GROUP BY department_id garante que a concatenação respeite os grupos por departamento, não a tabela inteira.",
+      "id": 244
+    },
+    {
+      "topic": "functions",
+      "context": "Column BONUS in table EMPLOYEES allows NULL. Consider:\nSELECT NVL2(bonus, salary + bonus, salary) AS total_comp FROM employees;",
+      "text": "What does NVL2 return for an employee whose BONUS is NULL?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "NULL"
+        },
+        {
+          "key": "B",
+          "text": "salary + bonus (treating bonus as 0)"
+        },
+        {
+          "key": "C",
+          "text": "salary"
+        },
+        {
+          "key": "D",
+          "text": "An error, since NVL2 requires all three arguments to have the same data type"
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "NVL2(expr1, expr2, expr3) avalia expr1: se expr1 NÃO for NULL, retorna expr2; se expr1 FOR NULL, retorna expr3. Como bonus é NULL para esse funcionário, a função retorna o terceiro argumento, que é simplesmente salary (C correto). A está errada porque NVL2 nunca retorna NULL apenas por seu primeiro argumento ser NULL — ela retorna explicitamente expr3 nesse caso. B descreve o comportamento de NVL(bonus,0) somado a salary, não o de NVL2 com essa estrutura. D está errada porque NVL2 não exige que expr2 e expr3 tenham o mesmo tipo de dado exato, apenas tipos implicitamente conversíveis/compatíveis.",
+      "id": 245
+    },
+    {
+      "topic": "functions",
+      "context": "Table PRODUCTS(product_code). Examine:\nSELECT product_code FROM products\n WHERE REGEXP_LIKE(product_code, '^[A-Z]{2}-[0-9]{3}$');",
+      "text": "Which product_code value matches this condition?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "AB-123"
+        },
+        {
+          "key": "B",
+          "text": "ab-123"
+        },
+        {
+          "key": "C",
+          "text": "ABC-123"
+        },
+        {
+          "key": "D",
+          "text": "AB-12"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "A expressão regular '^[A-Z]{2}-[0-9]{3}$' exige exatamente duas letras maiúsculas no início (^[A-Z]{2}), seguidas de um hífen literal, seguidas de exatamente três dígitos até o fim da string ($) — o valor 'AB-123' atende exatamente a esse padrão (A correto). 'ab-123' usa letras minúsculas, que não correspondem à classe [A-Z], já que REGEXP_LIKE é sensível a maiúsculas/minúsculas por padrão, sem o parâmetro de match 'i'. 'ABC-123' tem três letras antes do hífen, excedendo o {2} exigido. 'AB-12' tem apenas dois dígitos, não os três exigidos por {3}.",
+      "id": 246
+    },
+    {
+      "topic": "joins",
+      "context": "Tables EMPLOYEES(employee_id, department_id) and DEPARTMENTS(department_id, department_name). Some employees have department_id = NULL.",
+      "text": "Which traditional Oracle join syntax is equivalent to:\nSELECT e.last_name, d.department_name\n  FROM employees e LEFT OUTER JOIN departments d\n    ON e.department_id = d.department_id;",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "SELECT e.last_name, d.department_name FROM employees e, departments d WHERE e.department_id = d.department_id(+);"
+        },
+        {
+          "key": "B",
+          "text": "SELECT e.last_name, d.department_name FROM employees e, departments d WHERE e.department_id(+) = d.department_id;"
+        },
+        {
+          "key": "C",
+          "text": "SELECT e.last_name, d.department_name FROM employees e, departments d WHERE e.department_id = d.department_id;"
+        },
+        {
+          "key": "D",
+          "text": "SELECT e.last_name, d.department_name FROM employees e, departments d WHERE e.department_id(+) = d.department_id(+);"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Na sintaxe tradicional do Oracle, o operador (+) é posicionado do lado da coluna que pertence à tabela \"opcional\" — ou seja, a tabela cujas linhas sem correspondência devem ser preenchidas com NULL — enquanto a tabela sem (+) é totalmente preservada. Como o LEFT OUTER JOIN da consulta original preserva TODOS os funcionários (employees) mesmo sem departamento correspondente, o (+) deve ficar do lado de d.department_id, exatamente como em A. B está errada porque colocar o (+) em e.department_id preservaria departments por completo (equivalente a um RIGHT OUTER JOIN), não employees. C está errada porque, sem (+), a consulta é um INNER JOIN comum, que descartaria funcionários sem department_id correspondente. D está errada porque o Oracle não permite (+) nos dois lados da mesma condição de junção — isso gera o erro ORA-01468 (a predicate may reference only one outer-joined table), já que a sintaxe tradicional não suporta FULL OUTER JOIN dessa forma.",
+      "id": 247
+    },
+    {
+      "topic": "joins",
+      "context": "Tables DEPARTMENTS(department_id, department_name) and EMPLOYEES(employee_id, department_id, salary).",
+      "text": "Examine this query:\nSELECT department_name\n  FROM departments d\n WHERE EXISTS (SELECT 1 FROM employees e\n                WHERE e.department_id = d.department_id\n                  AND e.salary > 10000);\nWhat does this query return?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The names of departments that have at least one employee earning more than 10000."
+        },
+        {
+          "key": "B",
+          "text": "The names of all departments, along with a count of employees earning more than 10000."
+        },
+        {
+          "key": "C",
+          "text": "An error, because the subquery's SELECT list uses the literal 1 instead of a column name."
+        },
+        {
+          "key": "D",
+          "text": "The names of departments where every employee earns more than 10000."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "EXISTS testa apenas se a subconsulta correlacionada retorna PELO MENOS UMA linha para cada department_id da consulta externa — como a subconsulta filtra funcionários daquele departamento com salary > 10000, o EXISTS será verdadeiro para departamentos que tenham AO MENOS UM funcionário nessa condição, retornando o nome desses departamentos (A correto). B está errada porque a consulta não faz nenhuma agregação ou contagem, apenas filtra departamentos via EXISTS. C está errada porque é uma prática comum e válida usar SELECT 1 (ou SELECT *) dentro de subconsultas EXISTS, já que o valor/coluna selecionado é irrelevante — o Oracle apenas verifica a existência de linhas. D está errada porque EXISTS exige apenas UM funcionário que satisfaça a condição, não que TODOS satisfaçam.",
+      "id": 248
+    },
+    {
+      "topic": "joins",
+      "context": "Tables EMPLOYEES(employee_id, salary) and SALARY_GRADES(grade_level, low_sal, high_sal).",
+      "text": "Examine this query:\nSELECT e.employee_id, sg.grade_level\n  FROM employees e JOIN salary_grades sg\n    ON e.salary BETWEEN sg.low_sal AND sg.high_sal;\nWhat type of join is this?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "An equijoin, because it uses the JOIN keyword."
+        },
+        {
+          "key": "B",
+          "text": "A non-equijoin (range join), because the join condition compares salary against a range of values rather than testing for equality."
+        },
+        {
+          "key": "C",
+          "text": "A self-join, because both tables reference the same logical entity."
+        },
+        {
+          "key": "D",
+          "text": "A natural join, because no explicit column names are mentioned in the join condition."
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Um non-equijoin (ou range join) é caracterizado pela condição de junção usar um operador diferente de igualdade — neste caso, BETWEEN compara salary contra um intervalo definido por low_sal e high_sal, ao invés de comparar diretamente colunas iguais entre as duas tabelas (B correto). A está errada porque o uso da palavra-chave JOIN não define o tipo de junção quanto à condição usada; equijoin se refere especificamente a condições de igualdade (=). C está errada porque self-join é quando uma tabela é unida a ela mesma (com aliases diferentes), o que não é o caso aqui — employees e salary_grades são tabelas distintas. D está errada porque NATURAL JOIN exige a palavra-chave explícita NATURAL e une automaticamente por colunas de mesmo nome, o que não está ocorrendo aqui.",
+      "id": 249
+    },
+    {
+      "topic": "dml",
+      "context": "",
+      "text": "A user executes the following sequence in a single session:\nINSERT INTO employees (employee_id, last_name) VALUES (501, 'Silva');\nCREATE TABLE temp_log (msg VARCHAR2(100));\nROLLBACK;\nWhat is the state of the INSERT after this sequence?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The INSERT is rolled back, since ROLLBACK undoes all uncommitted changes in the session."
+        },
+        {
+          "key": "B",
+          "text": "The INSERT is permanently committed, because the CREATE TABLE statement performs an implicit COMMIT before executing, which already made the INSERT permanent."
+        },
+        {
+          "key": "C",
+          "text": "The INSERT raises an error, since DDL statements cannot be executed inside a transaction with pending DML."
+        },
+        {
+          "key": "D",
+          "text": "The INSERT remains uncommitted and pending until an explicit COMMIT is issued later."
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Toda instrução DDL (como CREATE TABLE) realiza um COMMIT implícito automaticamente ANTES de ser executada — isso significa que, ao executar CREATE TABLE temp_log, o Oracle primeiro efetiva (commita) a transação pendente que continha o INSERT, tornando-o permanente, e só depois cria a nova tabela (B correto). A está errada porque, no momento em que o ROLLBACK é executado, já não há mais nada pendente para desfazer relacionado ao INSERT — ele já foi commitado pelo DDL anterior. C está errada porque não há restrição que impeça executar DDL com DML pendente; o que ocorre é justamente o commit automático, sem gerar erro. D está errada pelo mesmo motivo de A: o commit implícito do DDL já efetivou o INSERT antes do ROLLBACK ser alcançado.",
+      "id": 250
+    },
+    {
+      "topic": "dml",
+      "context": "Tables EMPLOYEES_STAGE(employee_id, salary) and EMPLOYEES(employee_id, salary).",
+      "text": "Examine this statement:\nMERGE INTO employees e\nUSING employees_stage s\n   ON (e.employee_id = s.employee_id)\n WHEN MATCHED THEN\n   UPDATE SET e.salary = s.salary\n WHEN NOT MATCHED THEN\n   INSERT (employee_id, salary) VALUES (s.employee_id, s.salary);\nWhat does this statement do?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "For each row in employees_stage, updates the matching employee's salary in employees if the employee_id already exists there, or inserts a new row if it doesn't — combining update and insert logic in a single statement."
+        },
+        {
+          "key": "B",
+          "text": "Deletes all rows in employees that do not have a matching employee_id in employees_stage."
+        },
+        {
+          "key": "C",
+          "text": "Always inserts every row from employees_stage into employees, ignoring the ON condition."
+        },
+        {
+          "key": "D",
+          "text": "Raises an error, because MERGE cannot combine both UPDATE and INSERT actions in the same statement."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "MERGE é uma instrução DML que combina lógica condicional de UPDATE e INSERT em uma única operação (\"upsert\"): para cada linha da tabela de origem (employees_stage), se a condição ON encontrar uma linha correspondente na tabela de destino (employees), a cláusula WHEN MATCHED executa o UPDATE; caso não encontre correspondência, a cláusula WHEN NOT MATCHED executa o INSERT (A correto). B está errada porque MERGE, por padrão, não exclui linhas — seria necessária uma cláusula DELETE adicional dentro do WHEN MATCHED para isso, que não está presente aqui. C está errada porque o MERGE respeita rigorosamente a condição ON para decidir entre UPDATE e INSERT, não inserindo cegamente todas as linhas. D está errada porque combinar WHEN MATCHED (UPDATE) e WHEN NOT MATCHED (INSERT) na mesma instrução é exatamente o propósito e a sintaxe válida do MERGE.",
+      "id": 251
+    },
+    {
+      "topic": "ddl",
+      "context": "",
+      "text": "Which of the following CHECK constraint definitions is INVALID and will be rejected by Oracle at creation time?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "CONSTRAINT chk_salary CHECK (salary > 0)"
+        },
+        {
+          "key": "B",
+          "text": "CONSTRAINT chk_dates CHECK (ship_date >= order_date)"
+        },
+        {
+          "key": "C",
+          "text": "CONSTRAINT chk_dept CHECK (department_id IN (SELECT department_id FROM departments))"
+        },
+        {
+          "key": "D",
+          "text": "CONSTRAINT chk_status CHECK (status IN ('PENDING', 'SHIPPED', 'CANCELLED'))"
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "Uma restrição CHECK no Oracle só pode referenciar colunas da PRÓPRIA linha sendo inserida/atualizada, usando expressões, operadores e funções determinísticas — ela NÃO pode conter subqueries (consultas a outras tabelas), pois isso exigiria verificar dados fora da linha atual, o que não é permitido em uma cláusula CHECK (C é inválida e é rejeitada na criação). A, B e D são válidas porque comparam colunas da própria linha contra valores literais ou outras colunas da mesma linha, sem necessidade de consultar outra tabela.",
+      "id": 252
+    },
+    {
+      "topic": "ddl",
+      "context": "Examine this view definition:\nCREATE VIEW high_earners AS\nSELECT employee_id, last_name, salary\n  FROM employees\n WHERE salary > 10000\nWITH CHECK OPTION;",
+      "text": "What does the WITH CHECK OPTION clause enforce?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It prevents any INSERT or UPDATE performed through this view from creating a row that would not satisfy the view's WHERE condition (i.e., salary > 10000)."
+        },
+        {
+          "key": "B",
+          "text": "It prevents the view from ever being dropped."
+        },
+        {
+          "key": "C",
+          "text": "It makes the view read-only, blocking all INSERT, UPDATE, and DELETE operations."
+        },
+        {
+          "key": "D",
+          "text": "It automatically refreshes the view's data whenever the underlying table changes."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "WITH CHECK OPTION garante que qualquer INSERT ou UPDATE realizado através da view só seja aceito se a linha resultante ainda satisfizer a condição WHERE definida na view — neste caso, impede que se insira ou atualize uma linha através de high_earners com salary <= 10000, já que isso tornaria a linha \"invisível\" pela própria view (A correto). B está errada porque essa cláusula nada tem a ver com proteção contra DROP. C está errada porque WITH CHECK OPTION não torna a view somente leitura — ela continua permitindo INSERT/UPDATE/DELETE, apenas valida que o resultado respeite a condição WHERE. D está errada porque views (não materializadas) sempre refletem os dados atuais da tabela base em tempo de consulta — isso não tem relação com WITH CHECK OPTION, que é sobre validação de escrita.",
+      "id": 253
+    },
+    {
+      "topic": "ddl",
+      "context": "Examine this sequence definition:\nCREATE SEQUENCE order_seq\n  START WITH 1\n  INCREMENT BY 1\n  MAXVALUE 5\n  NOCYCLE;",
+      "text": "After order_seq.NEXTVAL has been used to generate the values 1, 2, 3, 4, and 5, what happens on the next call to order_seq.NEXTVAL?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It wraps around and returns 1 again, since sequences cycle by default."
+        },
+        {
+          "key": "B",
+          "text": "It raises an error (ORA-08004), because the sequence has exceeded its MAXVALUE and NOCYCLE was specified."
+        },
+        {
+          "key": "C",
+          "text": "It returns NULL."
+        },
+        {
+          "key": "D",
+          "text": "It returns 5 again, repeating the last value indefinitely."
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "NOCYCLE (que também é o comportamento padrão se CYCLE não for especificado) faz com que a sequence pare de gerar valores ao atingir o MAXVALUE definido — qualquer chamada a NEXTVAL após esse ponto gera o erro ORA-08004 (\"sequence exceeds MAXVALUE and cannot be instantiated\"), ao invés de continuar gerando valores (B correto). A está errada porque o comportamento de \"dar a volta\" (wrap-around) só ocorre se a sequence for criada com CYCLE, não com NOCYCLE. C e D estão erradas porque não correspondem ao comportamento documentado do Oracle: a sequence simplesmente falha com erro ao invés de retornar NULL ou repetir o último valor.",
+      "id": 254
+    },
+    {
+      "topic": "set",
+      "context": "",
+      "text": "Examine this combined query:\nSELECT department_id FROM employees WHERE commission_pct IS NULL\nINTERSECT\nSELECT department_id FROM employees WHERE salary > 5000;\nWhat does this query return?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The department_id values that appear in BOTH result sets — i.e., departments having at least one employee with NULL commission_pct AND at least one employee with salary > 5000 (not necessarily the same employee)."
+        },
+        {
+          "key": "B",
+          "text": "The department_id values that appear in either result set, without duplicates."
+        },
+        {
+          "key": "C",
+          "text": "The department_id values that appear in the first result set but not in the second."
+        },
+        {
+          "key": "D",
+          "text": "An error, because INTERSECT cannot be used with a WHERE clause containing IS NULL."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "INTERSECT retorna apenas as linhas que aparecem nos resultados de AMBAS as consultas, eliminando duplicatas — como cada consulta retorna department_id de forma independente, o resultado final contém os department_id presentes nos dois conjuntos, o que corresponde a departamentos que têm pelo menos um funcionário com commission_pct NULL E pelo menos um funcionário (não necessariamente o mesmo) com salary > 5000 (A correto). B descreve o comportamento de UNION, não de INTERSECT. C descreve o comportamento de MINUS, não de INTERSECT. D está errada porque não há nenhuma restrição que impeça o uso de IS NULL dentro de uma consulta combinada com operadores de conjunto.",
+      "id": 255
+    },
+    {
+      "topic": "set",
+      "context": "",
+      "text": "Which of the following pairs of SELECT statements can be legally combined with a set operator (UNION, INTERSECT, MINUS, or UNION ALL)?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "SELECT employee_id, last_name FROM employees combined with SELECT department_id FROM departments"
+        },
+        {
+          "key": "B",
+          "text": "SELECT employee_id, salary FROM employees combined with SELECT department_id, department_name FROM departments"
+        },
+        {
+          "key": "C",
+          "text": "SELECT employee_id, last_name FROM employees combined with SELECT department_id, department_name FROM departments"
+        },
+        {
+          "key": "D",
+          "text": "SELECT employee_id FROM employees combined with SELECT department_id, department_name FROM departments"
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "Para combinar duas consultas com um operador de conjunto, ambas precisam retornar o MESMO NÚMERO de colunas e com tipos de dados compatíveis (correspondentes posicionalmente) — em C, ambas retornam exatamente 2 colunas, sendo a primeira numérica (employee_id/department_id) e a segunda textual (last_name/department_name), o que é compatível (C correto). A está errada porque a primeira consulta retorna 2 colunas e a segunda apenas 1, número diferente de colunas. B está errada porque, embora ambas tenham 2 colunas, a segunda coluna combina salary (numérico) com department_name (texto), tipos incompatíveis posicionalmente — isso geraria erro ORA-01790. D está errada pelo mesmo motivo de A: números de colunas diferentes (1 vs 2).",
+      "id": 256
+    },
+    {
+      "topic": "advanced",
+      "context": "Table EMPLOYEES(employee_id, department_id, salary). Within department 10, three employees have salary = 5000, and the next highest distinct salary is 4500.",
+      "text": "Using RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) for these employees, what rank value is assigned to the employee earning 4500?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "2"
+        },
+        {
+          "key": "B",
+          "text": "3"
+        },
+        {
+          "key": "C",
+          "text": "4"
+        },
+        {
+          "key": "D",
+          "text": "1"
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "RANK() atribui a mesma posição a valores empatados, mas PULA os números de posição subsequentes de acordo com a quantidade de linhas empatadas — como três funcionários empatam com salary 5000 e recebem rank 1, 1 e 1, o próximo valor distinto (4500) recebe rank 4 (pulando os ranks 2 e 3, que seriam \"consumidos\" pelos três empates) (C correto). Esse é exatamente o comportamento que diferencia RANK de DENSE_RANK: DENSE_RANK não pularia números e atribuiria rank 2 ao próximo valor distinto, enquanto RANK conta as linhas empatadas como ocupando posições consecutivas que são puladas.",
+      "id": 257
+    },
+    {
+      "topic": "advanced",
+      "context": "WITH dept_totals AS (\n  SELECT department_id, SUM(salary) AS total_sal\n    FROM employees\n   GROUP BY department_id\n)\nSELECT * FROM dept_totals WHERE total_sal > 50000;",
+      "text": "What is the primary purpose of the WITH clause (subquery factoring) used at the start of this statement?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It defines a named subquery (dept_totals) that can be referenced one or more times in the main query, improving readability and potentially allowing Oracle to compute it once and reuse the result."
+        },
+        {
+          "key": "B",
+          "text": "It permanently creates a new table named dept_totals in the database schema."
+        },
+        {
+          "key": "C",
+          "text": "It is required syntax for any query that uses GROUP BY."
+        },
+        {
+          "key": "D",
+          "text": "It replaces the need for a WHERE clause in the main query."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "A cláusula WITH (subquery factoring/CTE) permite nomear uma subconsulta (dept_totals) que pode ser referenciada uma ou mais vezes no restante da consulta principal, tornando o SQL mais legível e, em alguns casos, permitindo que o otimizador do Oracle calcule o resultado uma única vez e o reutilize em vez de reexecutar a subconsulta repetidamente (A correto). B está errada porque a cláusula WITH não cria nenhum objeto persistente no banco — dept_totals existe apenas durante a execução dessa consulta específica. C está errada porque GROUP BY funciona normalmente em consultas comuns, sem qualquer exigência de uso da cláusula WITH. D está errada porque o WITH não substitui o WHERE; ambos podem (e frequentemente são) usados juntos, como demonstrado no próprio exemplo.",
+      "id": 258
     }
   ]
 }
