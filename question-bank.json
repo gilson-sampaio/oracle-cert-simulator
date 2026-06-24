@@ -8643,6 +8643,606 @@
       ],
       "topic": "functions",
       "explanation": "COALESCE aceita uma lista com dois ou mais argumentos e retorna o primeiro que não for NULL, avaliando-os na ordem em que aparecem e parando assim que encontra o primeiro valor não nulo (avaliação de curto-circuito). NVL (A) aceita exatamente dois argumentos e sempre avalia ambos. NVL2 (B) aceita exatamente três argumentos, retornando um valor se a expressão original não for NULL e outro se for. NULLIF (D) compara duas expressões e retorna NULL se forem iguais, ou a primeira expressão caso contrário — um propósito completamente diferente de encontrar o primeiro valor não nulo."
+    },
+    {
+      "id": 279,
+      "topic": "fundamentals",
+      "context": "CREATE TABLE test_types (\n  col_char  CHAR(10),\n  col_var   VARCHAR2(10)\n);\nINSERT INTO test_types VALUES ('ORACLE', 'ORACLE');",
+      "text": "After the INSERT above, which statement is true about the values stored in COL_CHAR and COL_VAR?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Both store the string 'ORACLE' without any padding"
+        },
+        {
+          "key": "B",
+          "text": "COL_CHAR stores 'ORACLE    ' (padded to 10 chars with spaces); COL_VAR stores 'ORACLE' (6 chars)"
+        },
+        {
+          "key": "C",
+          "text": "COL_VAR stores 'ORACLE    ' (padded to 10 chars); COL_CHAR stores 'ORACLE' (6 chars)"
+        },
+        {
+          "key": "D",
+          "text": "Both store 'ORACLE    ' (padded to 10 chars) because Oracle pads all string types"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "O tipo CHAR(n) sempre armazena exatamente n caracteres, preenchendo com espaços à direita quando o valor inserido é menor que n. Por isso, COL_CHAR conterá 'ORACLE    ' (6 letras + 4 espaços). Já o VARCHAR2(n) armazena apenas os caracteres realmente inseridos, sem preenchimento, então COL_VAR conterá 'ORACLE' (6 caracteres). Essa diferença importa em comparações e funções: LENGTH(col_char) retorna 10, enquanto LENGTH(col_var) retorna 6. Nas comparações com literais usando CHAR, o Oracle aplica blank-padding automaticamente, mas ao comparar CHAR com VARCHAR2 o resultado pode ser inesperado."
+    },
+    {
+      "id": 280,
+      "topic": "fundamentals",
+      "context": "",
+      "text": "Which of the following events causes an IMPLICIT COMMIT of the current transaction in Oracle?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Executing a ROLLBACK TO SAVEPOINT statement"
+        },
+        {
+          "key": "B",
+          "text": "Executing a SELECT ... FOR UPDATE statement"
+        },
+        {
+          "key": "C",
+          "text": "Executing an ALTER TABLE ... ADD COLUMN statement"
+        },
+        {
+          "key": "D",
+          "text": "Executing a SAVEPOINT command"
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "Em Oracle, qualquer comando DDL (como CREATE, ALTER, DROP, TRUNCATE, RENAME) emite um COMMIT implícito antes de ser executado e outro depois de concluído com sucesso. Isso significa que alterações de DML pendentes na transação atual são confirmadas automaticamente antes do DDL ser processado. ROLLBACK TO SAVEPOINT desfaz parte da transação mas não a encerra. SELECT FOR UPDATE e SAVEPOINT fazem parte de uma transação em andamento e não a confirmam. Por isso, executar um ALTER TABLE sempre confirma qualquer INSERT, UPDATE ou DELETE pendente — comportamento que pode surpreender quem vem de outros bancos de dados."
+    },
+    {
+      "id": 281,
+      "topic": "fundamentals",
+      "context": "SELECT 100 + NULL, 'Oracle' || NULL, NULL = NULL\nFROM dual;",
+      "text": "What values does the query above return for each expression?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "100, 'Oracle', TRUE"
+        },
+        {
+          "key": "B",
+          "text": "NULL, 'OracleNULL', NULL"
+        },
+        {
+          "key": "C",
+          "text": "NULL, 'Oracle', NULL"
+        },
+        {
+          "key": "D",
+          "text": "Error — NULL cannot be used in arithmetic or comparison expressions"
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "Em Oracle, qualquer operação aritmética com NULL resulta em NULL (100 + NULL = NULL). Já a concatenação de strings com NULL ignora o NULL e retorna a string original ('Oracle' || NULL = 'Oracle'). Expressões de comparação com NULL (como NULL = NULL) não produzem TRUE nem FALSE, mas sim NULL — por isso, comparações com NULL exigem IS NULL ou IS NOT NULL, e nunca operadores de igualdade como = ou <>. A consulta é sintaticamente válida; não ocorre nenhum erro. Esse comportamento de NULL é fundamental para entender os resultados inesperados em WHERE, JOIN e agregações."
+    },
+    {
+      "id": 282,
+      "topic": "select",
+      "context": "-- Table ORDERS with 5 rows:\n-- (1, 'North'), (2, 'South'), (3, NULL), (4, 'North'), (5, NULL)",
+      "text": "How many rows does the following query return?\nSELECT DISTINCT region FROM orders;",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "5"
+        },
+        {
+          "key": "B",
+          "text": "4"
+        },
+        {
+          "key": "C",
+          "text": "3"
+        },
+        {
+          "key": "D",
+          "text": "2"
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "O DISTINCT elimina linhas duplicadas, incluindo linhas onde o valor é NULL. Nos dados fornecidos, os valores únicos de REGION são: 'North', 'South' e NULL. Embora NULL não seja igual a outro NULL em comparações comuns (NULL = NULL resulta em NULL, não TRUE), para fins do DISTINCT e operações de conjunto, o Oracle trata múltiplos NULLs como duplicatas e retorna apenas um. Portanto, a consulta retorna 3 linhas distintas: 'North', 'South' e NULL — e não 4 nem 5, porque os dois NULL e os dois 'North' são colapsados em uma linha cada."
+    },
+    {
+      "id": 283,
+      "topic": "select",
+      "context": "",
+      "text": "A query sorts employees by COMMISSION_PCT in descending order (ORDER BY commission_pct DESC). By default in Oracle, where do NULL values appear in the result set?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "At the beginning of the result set, before non-NULL values"
+        },
+        {
+          "key": "B",
+          "text": "At the end of the result set, after all non-NULL values"
+        },
+        {
+          "key": "C",
+          "text": "NULL values are automatically excluded from the result set by ORDER BY"
+        },
+        {
+          "key": "D",
+          "text": "An error is raised when ordering by a nullable column without handling NULLs explicitly"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Em Oracle, ao ordenar em ordem decrescente (DESC), os valores NULL aparecem por padrão no INÍCIO do resultado (comportamento NULLS FIRST). Ao ordenar em ordem crescente (ASC), os NULLs aparecem por padrão no FINAL (NULLS LAST). Para inverter esse comportamento padrão, use as palavras-chave explícitas NULLS FIRST ou NULLS LAST: por exemplo, ORDER BY commission_pct DESC NULLS LAST coloca os NULLs após todos os valores não-nulos mesmo em ordenação descendente. NULL não é excluído de resultados por ORDER BY — todos os registros aparecem no resultado. Esse padrão difere de outros bancos como PostgreSQL e MySQL."
+    },
+    {
+      "id": 284,
+      "topic": "functions",
+      "context": "SELECT department_id,\n       LISTAGG(last_name, ', ') WITHIN GROUP (ORDER BY last_name) AS names\nFROM employees\nGROUP BY department_id;",
+      "text": "Which statement best describes the behavior of the LISTAGG function in this query?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Returns the count of employees per department as a comma-separated number list"
+        },
+        {
+          "key": "B",
+          "text": "Concatenates all LAST_NAME values per department into a single string, in alphabetical order, separated by commas"
+        },
+        {
+          "key": "C",
+          "text": "Returns only DISTINCT last names per department, ordered alphabetically"
+        },
+        {
+          "key": "D",
+          "text": "Creates one row per employee with all department members listed in a comma-separated string"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "A função LISTAGG concatena os valores de uma coluna em uma única string dentro de cada grupo, usando o separador especificado (', ' neste caso). A cláusula WITHIN GROUP (ORDER BY last_name) define a ordem em que os nomes são concatenados — aqui, ordem alfabética. O resultado é uma linha por DEPARTMENT_ID com todos os sobrenomes concatenados. Importante: LISTAGG não elimina duplicatas automaticamente; se dois empregados tiverem o mesmo sobrenome, ambos aparecem. Caso a string resultante exceda 4000 bytes, ocorre o erro ORA-01489. A partir do Oracle 19c, é possível usar LISTAGG(...) ON OVERFLOW TRUNCATE para tratar esse caso graciosamente."
+    },
+    {
+      "id": 285,
+      "topic": "functions",
+      "context": "SELECT first_name FROM employees\nWHERE REGEXP_LIKE(first_name, '^[AEIOUaeiou]');",
+      "text": "What does this query return?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Employees whose first name contains a vowel anywhere in the string"
+        },
+        {
+          "key": "B",
+          "text": "Employees whose first name starts with a vowel (uppercase or lowercase)"
+        },
+        {
+          "key": "C",
+          "text": "Employees whose first name ends with a vowel"
+        },
+        {
+          "key": "D",
+          "text": "Employees whose first name consists entirely of vowels"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Em expressões regulares, o símbolo ^ é uma âncora que indica o INÍCIO da string. Portanto, REGEXP_LIKE(first_name, '^[AEIOUaeiou]') retorna linhas onde FIRST_NAME começa com qualquer vogal maiúscula ou minúscula. Para verificar se a string termina com uma vogal, usaria-se o símbolo $ (âncora de fim): '[AEIOUaeiou]$'. Para verificar se contém uma vogal em qualquer posição, bastaria [AEIOUaeiou] sem âncoras. A função REGEXP_LIKE é o equivalente ao LIKE mas com suporte a expressões regulares POSIX — mais poderosa porém mais verbosa. Alternativas: REGEXP_SUBSTR extrai o trecho que casa; REGEXP_REPLACE substitui padrões."
+    },
+    {
+      "id": 286,
+      "topic": "functions",
+      "context": "",
+      "text": "What are the results of the following Oracle expressions?\nROUND(175, -2)  and  TRUNC(175, -2)",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "ROUND returns 200, TRUNC returns 100"
+        },
+        {
+          "key": "B",
+          "text": "ROUND returns 100, TRUNC returns 100"
+        },
+        {
+          "key": "C",
+          "text": "ROUND returns 200, TRUNC returns 200"
+        },
+        {
+          "key": "D",
+          "text": "Both return 175 because the value has no decimal part and a negative second argument is invalid"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Com segundo argumento negativo, ROUND e TRUNC operam nos dígitos à esquerda do ponto decimal. ROUND(175, -2) arredonda ao múltiplo de 100 mais próximo: como o dígito na posição das dezenas é 7 (≥ 5), arredonda para cima, retornando 200. TRUNC(175, -2) simplesmente zera os dois últimos dígitos inteiros, retornando 100. O fato de 175 ser inteiro não impede o uso de precisão negativa. Compare: ROUND(149, -2) retorna 100 (dígito 4 < 5), enquanto ROUND(150, -2) retorna 200. Esse comportamento é frequentemente testado em provas de certificação Oracle."
+    },
+    {
+      "id": 287,
+      "topic": "joins",
+      "context": "Table EMPLOYEES: employee_id, first_name, department_id, manager_id\nTable DEPARTMENTS: department_id, department_name, manager_id, location_id",
+      "text": "Which statement is true about a NATURAL JOIN between EMPLOYEES and DEPARTMENTS, given the table structures above?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Oracle joins on ALL columns with matching names and compatible types — here, on both DEPARTMENT_ID and MANAGER_ID simultaneously"
+        },
+        {
+          "key": "B",
+          "text": "Oracle joins only on DEPARTMENT_ID because it appears first in the column order of EMPLOYEES"
+        },
+        {
+          "key": "C",
+          "text": "Oracle joins on all columns with matching names, regardless of data type compatibility"
+        },
+        {
+          "key": "D",
+          "text": "The developer must specify which columns to use; a NATURAL JOIN with multiple matching columns causes an ORA error"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "O NATURAL JOIN une automaticamente as tabelas por TODOS os pares de colunas que compartilham o mesmo nome e tipo de dado compatível. No cenário dado, tanto DEPARTMENT_ID quanto MANAGER_ID existem nas duas tabelas, portanto o JOIN é feito em ambas as colunas simultaneamente — equivalente a ON e.department_id = d.department_id AND e.manager_id = d.manager_id. Isso pode gerar resultados inesperados se as colunas comuns não representarem a mesma entidade lógica (no exemplo, MANAGER_ID da tabela EMPLOYEES é o gerente do empregado, enquanto em DEPARTMENTS é o gerente do departamento). Para maior controle, prefira JOIN ... USING (department_id) ou JOIN ... ON com condição explícita."
+    },
+    {
+      "id": 288,
+      "topic": "joins",
+      "context": "-- Query A:\nSELECT e.last_name, d.department_name\nFROM employees e LEFT JOIN departments d\n  ON e.department_id = d.department_id AND d.location_id = 1700;\n\n-- Query B:\nSELECT e.last_name, d.department_name\nFROM employees e LEFT JOIN departments d\n  ON e.department_id = d.department_id\nWHERE d.location_id = 1700;",
+      "text": "What is the key behavioral difference between Query A and Query B?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Query A returns all employees but shows department info only for those in location 1700 (others get NULL); Query B returns only employees whose department is in location 1700"
+        },
+        {
+          "key": "B",
+          "text": "Both queries return exactly the same rows"
+        },
+        {
+          "key": "C",
+          "text": "Query A returns only employees in location 1700; Query B returns all employees with NULLs for non-matching departments"
+        },
+        {
+          "key": "D",
+          "text": "Query B returns all departments in location 1700, including those with no employees"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Em um LEFT OUTER JOIN, condições adicionais na cláusula ON filtram a tabela do lado direito antes da junção, preservando todas as linhas da tabela esquerda. Na Query A, a condição d.location_id = 1700 está no ON: todos os empregados aparecem, mas DEPARTMENT_NAME será NULL para aqueles cujo departamento não fica em location 1700. Na Query B, a condição está no WHERE: após o LEFT JOIN gerar NULLs para departamentos não correspondentes, o filtro WHERE d.location_id = 1700 elimina linhas onde department_name é NULL, convertendo efetivamente o LEFT JOIN em um INNER JOIN. Essa diferença entre filtrar no ON vs no WHERE é uma das pegadinhas mais comuns em provas de certificação Oracle."
+    },
+    {
+      "id": 289,
+      "topic": "dml",
+      "context": "MERGE INTO inventory tgt\nUSING daily_sales src\nON (tgt.product_id = src.product_id)\nWHEN MATCHED THEN\n  UPDATE SET tgt.quantity = tgt.quantity - src.quantity\n  DELETE WHERE tgt.quantity <= 0\nWHEN NOT MATCHED THEN\n  INSERT (product_id, quantity) VALUES (src.product_id, src.quantity);",
+      "text": "When a product exists in both INVENTORY and DAILY_SALES, and after the UPDATE the resulting quantity becomes 0, what happens to that row in INVENTORY?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The row is updated to quantity = 0 and remains in INVENTORY"
+        },
+        {
+          "key": "B",
+          "text": "The row is first updated to quantity = 0, then immediately deleted from INVENTORY"
+        },
+        {
+          "key": "C",
+          "text": "The row is deleted from INVENTORY without the UPDATE being applied first"
+        },
+        {
+          "key": "D",
+          "text": "An error is raised because DELETE is not a valid clause inside a MERGE statement"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "O Oracle suporta a cláusula DELETE dentro do WHEN MATCHED desde o Oracle 10g. A semântica é sequencial: primeiro o UPDATE é aplicado, depois o DELETE WHERE avalia a condição sobre o valor já atualizado. Portanto, se quantity - src.quantity resultar em 0, o UPDATE é executado (definindo quantity = 0) e em seguida DELETE WHERE tgt.quantity <= 0 é avaliado como verdadeiro, removendo a linha da tabela. Esse comportamento permite limpar registros inválidos ou esgotados em uma única operação atômica, sem necessidade de um DELETE separado após o MERGE. Note que o DELETE dentro do MERGE só pode ser colocado após o UPDATE na cláusula WHEN MATCHED."
+    },
+    {
+      "id": 290,
+      "topic": "dml",
+      "context": "INSERT ALL\n  WHEN salary >= 5000 THEN INTO eligible_emp\n  WHEN salary >= 8000 THEN INTO senior_emp\nSELECT employee_id, last_name, salary\nFROM employees\nWHERE employee_id = 101;\n-- Employee 101 has salary = 9000",
+      "text": "Employee 101 has a salary of 9000. Into which table(s) will the row be inserted?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "eligible_emp only, because it is the first matching WHEN condition"
+        },
+        {
+          "key": "B",
+          "text": "senior_emp only, because it is the most specific (higher threshold) condition"
+        },
+        {
+          "key": "C",
+          "text": "Both eligible_emp and senior_emp, because INSERT ALL evaluates all WHEN conditions independently"
+        },
+        {
+          "key": "D",
+          "text": "Neither table — a salary matching both conditions causes an ORA error"
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "O INSERT ALL avalia TODAS as cláusulas WHEN de forma independente, inserindo o registro em cada tabela cujas condições sejam verdadeiras. Como 9000 >= 5000 e 9000 >= 8000, a linha é inserida em AMBAS as tabelas: eligible_emp e senior_emp. Esse comportamento difere do INSERT FIRST, que para na primeira condição verdadeira encontrada (comportamento de if-else encadeado). Se você precisar que cada linha seja inserida em apenas uma tabela com base na primeira condição aplicável, use INSERT FIRST ... WHEN ... WHEN ... ELSE ... SELECT. O INSERT ALL é ideal para desnormalização ou para distribuir dados em múltiplas tabelas de destino simultaneamente."
+    },
+    {
+      "id": 291,
+      "topic": "ddl",
+      "context": "CREATE TABLE products (\n  product_id     NUMBER PRIMARY KEY,\n  unit_price     NUMBER(10,2),\n  tax_rate       NUMBER(5,4) DEFAULT 0.1,\n  price_with_tax NUMBER GENERATED ALWAYS AS (unit_price * (1 + tax_rate)) VIRTUAL\n);",
+      "text": "Which statement is true about the PRICE_WITH_TAX virtual column?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It stores the computed value physically on disk; the value is recalculated and persisted on each INSERT or UPDATE"
+        },
+        {
+          "key": "B",
+          "text": "It does not store data physically; the value is calculated from UNIT_PRICE and TAX_RATE each time it is queried"
+        },
+        {
+          "key": "C",
+          "text": "It requires a BEFORE INSERT trigger to maintain the computed value automatically"
+        },
+        {
+          "key": "D",
+          "text": "Virtual columns cannot reference other columns of the same table — only literal values and built-in functions"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Colunas virtuais (VIRTUAL) no Oracle não armazenam dados fisicamente no disco. A expressão é avaliada em tempo de consulta, calculando o valor dinamicamente a partir das colunas referenciadas na mesma linha. Isso elimina overhead de armazenamento e garante que qualquer alteração em UNIT_PRICE ou TAX_RATE seja imediatamente refletida sem triggers ou updates adicionais. Restrições importantes: não é possível inserir ou atualizar valores diretamente em uma coluna virtual (resulta em ORA-54013); a expressão deve ser determinística (não pode chamar SYSDATE, DBMS_RANDOM.VALUE etc.); e colunas virtuais podem ser indexadas, permitindo índices baseados em função de forma implícita."
+    },
+    {
+      "id": 292,
+      "topic": "ddl",
+      "context": "",
+      "text": "Which statement correctly describes a constraint defined as DEFERRABLE INITIALLY DEFERRED in Oracle?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The constraint is checked immediately on each DML statement but can be temporarily disabled within the transaction"
+        },
+        {
+          "key": "B",
+          "text": "The constraint is not checked until COMMIT; rows that temporarily violate it are allowed during the transaction"
+        },
+        {
+          "key": "C",
+          "text": "The constraint is permanently skipped and must be re-enabled manually with ALTER TABLE ... ENABLE CONSTRAINT"
+        },
+        {
+          "key": "D",
+          "text": "DEFERRABLE INITIALLY DEFERRED is only valid for PRIMARY KEY and UNIQUE constraints, not for FOREIGN KEY constraints"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Uma constraint DEFERRABLE INITIALLY DEFERRED é verificada apenas no momento do COMMIT da transação, não a cada instrução DML. Isso permite inserir temporariamente dados que violam a constraint — por exemplo, inserir registros filhos antes do pai em uma foreign key deferrable — desde que a violação seja resolvida antes do COMMIT. O comportamento pode ser alterado em tempo de execução com SET CONSTRAINT nome_constraint IMMEDIATE (passa a verificar imediatamente) ou DEFERRED. DEFERRABLE INITIALLY IMMEDIATE adia a verificação somente quando explicitamente solicitado. Essa funcionalidade é especialmente útil para carga de dados em lote e para evitar erros de ordenação em inserções com dependências circulares."
+    },
+    {
+      "id": 293,
+      "topic": "set",
+      "context": "SELECT product_id FROM online_orders\nINTERSECT\nSELECT product_id FROM store_orders;",
+      "text": "What does this query return?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "All product IDs from both ONLINE_ORDERS and STORE_ORDERS combined, without duplicates"
+        },
+        {
+          "key": "B",
+          "text": "Product IDs that appear in ONLINE_ORDERS but NOT in STORE_ORDERS"
+        },
+        {
+          "key": "C",
+          "text": "Product IDs that appear in BOTH ONLINE_ORDERS AND STORE_ORDERS"
+        },
+        {
+          "key": "D",
+          "text": "The same result as a FULL OUTER JOIN between the two tables on product_id"
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "O operador INTERSECT retorna apenas as linhas presentes em AMBAS as consultas — a intersecção matemática dos dois conjuntos. Para um produto aparecer no resultado, ele deve ter ao menos um registro em online_orders E ao menos um em store_orders. O INTERSECT elimina automaticamente duplicatas no resultado. Compare com os outros operadores: UNION retorna todos os produtos de ambas as fontes sem duplicatas; UNION ALL retorna todos incluindo duplicatas; MINUS retorna produtos que estão na primeira query mas não na segunda. INTERSECT é equivalente a: SELECT product_id FROM online_orders WHERE product_id IN (SELECT product_id FROM store_orders)."
+    },
+    {
+      "id": 294,
+      "topic": "set",
+      "context": "SELECT commission_pct FROM employees WHERE department_id = 80\nMINUS\nSELECT commission_pct FROM employees WHERE department_id = 30;",
+      "text": "If COMMISSION_PCT is NULL for some employees in department 80, and NULL also appears in department 30's result set, will those NULL rows from department 80 appear in the MINUS result?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Yes — NULL is not equal to NULL in Oracle, so NULL from department 80 is not cancelled out by NULL from department 30"
+        },
+        {
+          "key": "B",
+          "text": "No — set operators treat NULLs as equal; NULLs present in both queries are removed from the MINUS result"
+        },
+        {
+          "key": "C",
+          "text": "An ORA error occurs because NULL values cannot be compared by set operators"
+        },
+        {
+          "key": "D",
+          "text": "Yes — MINUS always retains all NULLs from the first query, regardless of the second query"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Ao contrário dos operadores de comparação comuns (onde NULL <> NULL e NULL = NULL resultam ambos em NULL), os operadores de conjunto do Oracle (UNION, INTERSECT, MINUS) tratam dois NULLs como valores iguais para fins de eliminação de duplicatas e comparação entre conjuntos. Portanto, se NULL aparece em commission_pct em ambas as queries, o MINUS cancela esses NULLs e eles NÃO aparecem no resultado. Esse comportamento é equivalente ao GROUP BY, que também agrupa múltiplos NULLs como se fossem idênticos. Esta é uma das diferenças mais sutis e importantes entre o tratamento de NULL em comparações regulares versus em operações de conjunto."
+    },
+    {
+      "id": 295,
+      "topic": "set",
+      "context": "SELECT employee_id AS \"ID\", last_name AS \"Name\" FROM employees\nUNION\nSELECT department_id, department_name FROM departments;",
+      "text": "What column names will appear in the final result set of this UNION query?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "employee_id and last_name (original column names, ignoring aliases)"
+        },
+        {
+          "key": "B",
+          "text": "ID and Name (aliases defined in the first query)"
+        },
+        {
+          "key": "C",
+          "text": "department_id and department_name (column names from the second query)"
+        },
+        {
+          "key": "D",
+          "text": "Column1 and Column2 (Oracle generates generic names when source columns differ)"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Em operações de conjunto (UNION, UNION ALL, INTERSECT, MINUS), os nomes das colunas do resultado final são determinados SEMPRE pela PRIMEIRA consulta. Os nomes (ou aliases) das consultas subsequentes são ignorados para fins de nomenclatura. No exemplo, como a primeira query define os aliases \"ID\" e \"Name\", essas serão as colunas do resultado, independentemente do que a segunda query retorna. Por isso, a cláusula ORDER BY em um UNION deve referenciar os aliases da primeira query ou as posições numéricas das colunas (ORDER BY 1 DESC), nunca os nomes das colunas das queries seguintes."
+    },
+    {
+      "id": 296,
+      "topic": "advanced",
+      "context": "",
+      "text": "Which query generates a result set containing exactly the integers 1, 2, 3, 4, 5 (one per row)?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "SELECT LEVEL FROM dual WHERE LEVEL <= 5"
+        },
+        {
+          "key": "B",
+          "text": "SELECT LEVEL FROM dual CONNECT BY LEVEL <= 5"
+        },
+        {
+          "key": "C",
+          "text": "SELECT ROWNUM FROM dual WHERE ROWNUM <= 5"
+        },
+        {
+          "key": "D",
+          "text": "SELECT LEVEL FROM dual START WITH LEVEL = 1 WHERE LEVEL <= 5"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "SELECT LEVEL FROM dual CONNECT BY LEVEL <= 5 é o idioma padrão do Oracle para gerar sequências numéricas sem uma tabela real. A pseudo-coluna LEVEL começa em 1 e incrementa a cada iteração hierárquica; a condição CONNECT BY controla quando a expansão para. A opção A falha porque LEVEL só existe em contextos hierárquicos (requer CONNECT BY) — usá-la num WHERE simples causa ORA-01788. A opção C não funciona: dual tem apenas 1 linha, portanto ROWNUM nunca passa de 1, retornando apenas uma linha. A opção D mistura incorretamente WHERE onde deveria estar CONNECT BY, resultando em erro de sintaxe ou comportamento incorreto."
+    },
+    {
+      "id": 297,
+      "topic": "advanced",
+      "context": "-- Table SCORES: name VARCHAR2(20), score NUMBER\n-- Data: ('Alice', 95), ('Bob', 87), ('Carol', 87), ('Dave', 82)\nSELECT name, score,\n       RANK()       OVER (ORDER BY score DESC) AS rnk,\n       DENSE_RANK() OVER (ORDER BY score DESC) AS d_rnk\nFROM scores;",
+      "text": "What RANK and DENSE_RANK values will Dave receive in the query result?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "RANK = 3, DENSE_RANK = 3"
+        },
+        {
+          "key": "B",
+          "text": "RANK = 4, DENSE_RANK = 3"
+        },
+        {
+          "key": "C",
+          "text": "RANK = 3, DENSE_RANK = 2"
+        },
+        {
+          "key": "D",
+          "text": "RANK = 4, DENSE_RANK = 4"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "As funções RANK() e DENSE_RANK() diferem no tratamento de empates. Com as pontuações Alice=95, Bob=87, Carol=87, Dave=82: Alice recebe RANK=1 e DENSE_RANK=1. Bob e Carol empatam com 87; ambos recebem RANK=2 e DENSE_RANK=2. A diferença aparece em Dave: RANK() 'pula' a posição 3 (dois concorrentes ocuparam a posição 2), atribuindo a Dave RANK=4. DENSE_RANK() nunca pula posições, atribuindo a Dave DENSE_RANK=3. Use RANK() quando quiser refletir lacunas reais no ranking (como em competições esportivas) e DENSE_RANK() quando quiser numeração contínua sem saltos. ROW_NUMBER() nunca empata — atribui um número único a cada linha, mesmo em caso de pontuações iguais."
+    },
+    {
+      "id": 298,
+      "topic": "advanced",
+      "context": "SELECT * FROM (\n  SELECT department_id, job_id, salary FROM employees\n)\nPIVOT (\n  SUM(salary)\n  FOR job_id IN ('IT_PROG' AS it_prog, 'SA_REP' AS sa_rep, 'HR_REP' AS hr_rep)\n);",
+      "text": "What does the PIVOT clause produce in this query?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "One row per unique JOB_ID, with DEPARTMENT_ID as a column showing salary totals"
+        },
+        {
+          "key": "B",
+          "text": "One row per unique DEPARTMENT_ID, with separate columns for each specified JOB_ID containing SUM(SALARY) for that combination"
+        },
+        {
+          "key": "C",
+          "text": "A dynamic transposition that automatically creates one column for every distinct JOB_ID in the table"
+        },
+        {
+          "key": "D",
+          "text": "An ORA error — PIVOT cannot be combined with aggregate functions like SUM"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "O PIVOT transforma linhas em colunas (rotaciona o resultado). No exemplo, para cada DEPARTMENT_ID distinto, o resultado terá uma linha com três colunas adicionais: IT_PROG, SA_REP e HR_REP, cada uma contendo a soma dos salários dos empregados daquele departamento com aquele job_id. Combinações sem empregados retornam NULL. Importante: a lista de valores no IN do PIVOT deve ser explícita e estática em tempo de compilação — o Oracle SQL puro não suporta PIVOT dinâmico que gere colunas automaticamente (isso exige SQL dinâmico em PL/SQL). O operador inverso UNPIVOT converte colunas de volta em linhas, sendo útil para normalizar dados desnormalizados."
     }
   ]
 }
