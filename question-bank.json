@@ -9243,6 +9243,636 @@
         "B"
       ],
       "explanation": "O PIVOT transforma linhas em colunas (rotaciona o resultado). No exemplo, para cada DEPARTMENT_ID distinto, o resultado terá uma linha com três colunas adicionais: IT_PROG, SA_REP e HR_REP, cada uma contendo a soma dos salários dos empregados daquele departamento com aquele job_id. Combinações sem empregados retornam NULL. Importante: a lista de valores no IN do PIVOT deve ser explícita e estática em tempo de compilação — o Oracle SQL puro não suporta PIVOT dinâmico que gere colunas automaticamente (isso exige SQL dinâmico em PL/SQL). O operador inverso UNPIVOT converte colunas de volta em linhas, sendo útil para normalizar dados desnormalizados."
+    },
+    {
+      "id": 299,
+      "topic": "fundamentals",
+      "context": "SELECT 1/0 FROM dual;",
+      "text": "What is the result of executing the statement above in Oracle?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Returns NULL"
+        },
+        {
+          "key": "B",
+          "text": "Returns the value Infinity"
+        },
+        {
+          "key": "C",
+          "text": "Raises ORA-01476: divisor is equal to zero"
+        },
+        {
+          "key": "D",
+          "text": "Returns 0 and continues execution normally"
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "Em Oracle, a divisão por zero em expressões numéricas não retorna NULL nem infinito — ela lança o erro ORA-01476: 'divisor is equal to zero'. Esse comportamento difere de linguagens como Java ou C, onde a divisão de ponto flutuante por zero pode retornar Infinity. Para lidar com divisores possivelmente zero em produção, usa-se NULLIF: por exemplo, 1 / NULLIF(coluna, 0) converte 0 em NULL antes da divisão, evitando o erro. Outra alternativa é CASE WHEN divisor = 0 THEN NULL ELSE numerador/divisor END. Conhecer esse comportamento é essencial ao construir expressões de cálculo de taxas e percentuais."
+    },
+    {
+      "id": 300,
+      "topic": "fundamentals",
+      "context": "",
+      "text": "Which of the following statements about SAVEPOINT in Oracle transactions is TRUE?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "ROLLBACK TO SAVEPOINT sp1 also destroys sp1 itself, so it cannot be reused after the rollback"
+        },
+        {
+          "key": "B",
+          "text": "A SAVEPOINT defined within a transaction can be referenced after a COMMIT has been issued"
+        },
+        {
+          "key": "C",
+          "text": "ROLLBACK TO SAVEPOINT sp1 undoes DML performed after sp1 was set but keeps all changes made before sp1, keeping the transaction open"
+        },
+        {
+          "key": "D",
+          "text": "SAVEPOINT names must be unique globally across all active sessions in the database"
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "SAVEPOINT marca um ponto intermediário dentro de uma transação ativa. ROLLBACK TO SAVEPOINT sp1 desfaz apenas as mudanças realizadas APÓS o savepoint ser criado, preservando todas as alterações anteriores — e a transação continua aberta (não é encerrada). Um COMMIT encerra a transação e invalida todos os savepoints criados nela; portanto, um savepoint não pode ser referenciado após um COMMIT (opção B incorreta). A opção A está errada: após ROLLBACK TO SAVEPOINT sp1, o ponto sp1 ainda existe e pode ser referenciado novamente. Savepoints são locais à transação do usuário — não há escopo global entre sessões. Em transações longas com múltiplas etapas, SAVEPOINT é uma ferramenta valiosa para desfazer parcialmente o trabalho sem perder todo o progresso."
+    },
+    {
+      "id": 301,
+      "topic": "select",
+      "context": "SELECT employee_id, last_name, salary\nFROM employees\nWHERE ROWNUM <= 5\nORDER BY salary DESC;",
+      "text": "What does the query above actually return?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The 5 employees with the highest salary across the entire table"
+        },
+        {
+          "key": "B",
+          "text": "The first 5 rows as physically stored in the table, sorted among themselves by salary descending"
+        },
+        {
+          "key": "C",
+          "text": "An error because ROWNUM cannot be combined with ORDER BY"
+        },
+        {
+          "key": "D",
+          "text": "5 randomly selected rows ordered by salary"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Em Oracle, ROWNUM é atribuído ANTES de a cláusula ORDER BY ser processada. Portanto, a consulta acima primeiro filtra as 5 primeiras linhas físicas da tabela (ROWNUM <= 5), e só então ordena esse pequeno subconjunto por SALARY DESC. O resultado NÃO são os 5 maiores salários do banco inteiro. Para obter corretamente os 5 maiores salários, é necessário usar uma subconsulta: SELECT * FROM (SELECT employee_id, last_name, salary FROM employees ORDER BY salary DESC) WHERE ROWNUM <= 5. A partir do Oracle 12c, a cláusula FETCH FIRST N ROWS ONLY resolve o problema de forma elegante sem subquery. Essa pegadinha de ROWNUM + ORDER BY é uma das mais cobradas em certificações Oracle."
+    },
+    {
+      "id": 302,
+      "topic": "select",
+      "context": "",
+      "text": "Which of the following is a valid Oracle 12c SQL statement to retrieve only the top 3 employees ordered by salary (highest first) using the row-limiting clause introduced in Oracle 12c?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "SELECT employee_id, salary FROM employees ORDER BY salary DESC FETCH FIRST 3 ROWS ONLY;"
+        },
+        {
+          "key": "B",
+          "text": "SELECT TOP 3 employee_id, salary FROM employees ORDER BY salary DESC;"
+        },
+        {
+          "key": "C",
+          "text": "SELECT employee_id, salary FROM employees WHERE ROWNUM <= 3 ORDER BY salary DESC;"
+        },
+        {
+          "key": "D",
+          "text": "SELECT employee_id, salary FROM employees LIMIT 3 ORDER BY salary DESC;"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "A partir do Oracle 12c, a cláusula FETCH FIRST N ROWS ONLY foi introduzida para limitar resultados de forma clara e alinhada ao padrão SQL ANSI. A sintaxe completa é: SELECT ... ORDER BY ... [OFFSET n ROWS] FETCH {FIRST|NEXT} n {ROW|ROWS} {ONLY|WITH TIES}. SELECT TOP (opção B) é sintaxe exclusiva do SQL Server/T-SQL — inválida em Oracle. LIMIT (opção D) é sintaxe do MySQL e PostgreSQL — também inválida em Oracle. A opção C usa a abordagem clássica pré-12c com ROWNUM, mas tem o defeito de aplicar o filtro antes da ordenação, retornando 3 linhas físicas da tabela e ordenando apenas esse subconjunto — não necessariamente os 3 maiores salários. FETCH FIRST aplica a limitação após ordenar o resultado completo, resolvendo o problema."
+    },
+    {
+      "id": 303,
+      "topic": "select",
+      "context": "SELECT department_id, AVG(salary) avg_sal\nFROM employees\nGROUP BY department_id\nHAVING AVG(salary) > 8000\n  AND department_id IS NOT NULL;",
+      "text": "In the query above, could the condition 'department_id IS NOT NULL' be moved to the WHERE clause? What is the practical impact of doing so?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "No — only aggregate conditions are allowed in WHERE; moving IS NOT NULL there would cause a syntax error"
+        },
+        {
+          "key": "B",
+          "text": "Yes — but the result would be different because WHERE applies after grouping"
+        },
+        {
+          "key": "C",
+          "text": "Yes — and it would be more efficient because WHERE filters rows before grouping, reducing the number of groups computed"
+        },
+        {
+          "key": "D",
+          "text": "No — WHERE and HAVING are interchangeable and produce the same plan in Oracle's optimizer"
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "Condições sobre colunas não agregadas podem ser colocadas tanto no WHERE quanto no HAVING, com resultados funcionalmente idênticos, mas com diferença de desempenho. A cláusula WHERE filtra linhas ANTES do agrupamento e da agregação, enquanto HAVING filtra grupos DEPOIS que eles foram calculados. Mover department_id IS NOT NULL para o WHERE evita que o Oracle forme e processe um grupo desnecessário para department_id = NULL. A opção A está errada: IS NOT NULL em coluna simples é perfeitamente válido no WHERE — o que é proibido no WHERE são funções de grupo (COUNT, SUM, AVG, etc.). A restrição verdadeira é: condições que envolvem funções de agregação, como AVG(salary) > 8000, DEVEM estar no HAVING. A boa prática é colocar filtros de coluna simples no WHERE e filtros de agregação no HAVING."
+    },
+    {
+      "id": 304,
+      "topic": "functions",
+      "context": "SELECT REGEXP_SUBSTR('2026-06-15', '\\d{4}') FROM dual;",
+      "text": "What does the query above return?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "'2026' — the first occurrence of exactly 4 consecutive digits"
+        },
+        {
+          "key": "B",
+          "text": "'2026-06-15' — the full string, since it matches the pattern"
+        },
+        {
+          "key": "C",
+          "text": "NULL — REGEXP_SUBSTR requires the entire string to match the pattern to return a result"
+        },
+        {
+          "key": "D",
+          "text": "An error — the backslash needs to be escaped differently in Oracle SQL"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "REGEXP_SUBSTR retorna a primeira substring que corresponde ao padrão de expressão regular dentro da string de entrada. O padrão '\\d{4}' representa exatamente 4 dígitos consecutivos. Na string '2026-06-15', a primeira ocorrência de 4 dígitos é '2026', portanto esse é o valor retornado. A função NÃO exige que a string inteira corresponda ao padrão — ela encontra a primeira correspondência. Para obter a terceira ocorrência de dígitos (o '15'), usaríamos o quinto argumento de ocorrência: REGEXP_SUBSTR('2026-06-15', '\\d+', 1, 3). A assinatura completa é REGEXP_SUBSTR(source, pattern, position, occurrence, flags, subexpr). Em Oracle, o metacaractere \\d equivale a [[:digit:]] no padrão POSIX também suportado."
+    },
+    {
+      "id": 305,
+      "topic": "functions",
+      "context": "SELECT TO_CHAR(SYSDATE, 'FMDay, DDth Month YYYY') FROM dual;",
+      "text": "What is the purpose of the 'FM' prefix in the format mask above?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It stands for 'Format Mask' and is required whenever ordinal suffixes like 'th' are used"
+        },
+        {
+          "key": "B",
+          "text": "It removes leading zeros from numeric elements and trailing spaces from spelled-out date words like day and month names"
+        },
+        {
+          "key": "C",
+          "text": "It forces the output to use the session NLS language for month and day names"
+        },
+        {
+          "key": "D",
+          "text": "It applies formatting only to the first date element that follows it, leaving others unaffected"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "O modificador FM (Fill Mode) remove zeros à esquerda de elementos numéricos e espaços ao final de nomes escritos por extenso no resultado de TO_CHAR. Sem FM, nomes de dias e meses são preenchidos com espaços para ter comprimento fixo — por exemplo, 'June      ' em vez de 'June'. Com FM, a saída fica compacta. FM é 'toggling': pode ser ativado e desativado múltiplas vezes na mesma máscara ('FM...FM...' — ativa, depois desativa). O sufixo ordinal TH (ex.: '4th') funciona independentemente do FM: em maiúsculo (TH) gera 'ST', 'ND', 'RD', 'TH'; em minúsculo (th) gera a versão em caixa baixa. A opção C está errada: a linguagem dos nomes de meses é controlada pelo parâmetro NLS_DATE_LANGUAGE, não pelo FM. O FM não é um requisito para nenhum outro elemento de formato específico."
+    },
+    {
+      "id": 306,
+      "topic": "functions",
+      "context": "",
+      "text": "Which statement about CASE expressions in Oracle SQL is TRUE?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "In a simple CASE expression, comparison operators such as > and < can be used: CASE salary WHEN > 10000 THEN 'High' END"
+        },
+        {
+          "key": "B",
+          "text": "A searched CASE expression evaluates each WHEN as an independent boolean condition, supporting range checks, IS NULL, BETWEEN, and IN"
+        },
+        {
+          "key": "C",
+          "text": "Both simple and searched CASE must include an ELSE clause; omitting ELSE causes a syntax error"
+        },
+        {
+          "key": "D",
+          "text": "DECODE is more flexible than CASE because it supports IS NULL checks, which CASE cannot handle"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "O CASE de busca (searched CASE) avalia cada condição WHEN como uma expressão booleana independente, permitindo qualquer operador de comparação, funções, IS NULL, BETWEEN, IN, etc.: CASE WHEN salary > 10000 THEN 'High' WHEN salary > 5000 THEN 'Medium' ELSE 'Low' END. Já o CASE simples (simple CASE) compara o valor de referência com uma constante por igualdade implícita — operadores como > não são permitidos na sintaxe WHEN: CASE job_id WHEN 'CLERK' THEN ... END. A opção C está errada: a cláusula ELSE é opcional em ambas as formas; se omitida e nenhum WHEN for satisfeito, o resultado é NULL. A opção D está incorreta: CASE suporta IS NULL perfeitamente com WHEN coluna IS NULL THEN ...; DECODE, por outro lado, trata internamente NULL = NULL como igual, mas CASE é mais expressivo e é o padrão ANSI SQL."
+    },
+    {
+      "id": 307,
+      "topic": "functions",
+      "context": "SELECT department_id,\n       LISTAGG(last_name, ', ') WITHIN GROUP (ORDER BY last_name) AS names\nFROM employees\nGROUP BY department_id;",
+      "text": "What does the query above produce?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "For each department, a comma-separated list of last names in alphabetical order"
+        },
+        {
+          "key": "B",
+          "text": "A single row with all employee last names from all departments combined into one string"
+        },
+        {
+          "key": "C",
+          "text": "An error because LISTAGG requires a PARTITION BY clause to work correctly"
+        },
+        {
+          "key": "D",
+          "text": "The same result as GROUP_CONCAT, Oracle's built-in equivalent function"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "LISTAGG é uma função de grupo que concatena valores de múltiplas linhas em uma única string, com o separador especificado no primeiro argumento. A cláusula WITHIN GROUP (ORDER BY ...) é obrigatória e define a ordem de concatenação — neste caso, ordem alfabética dos sobrenomes dentro de cada departamento. Com GROUP BY department_id, o resultado terá uma linha por departamento com os sobrenomes concatenados em ordem alfabética. LISTAGG NÃO requer PARTITION BY — essa cláusula é opcional e usada quando LISTAGG funciona como função analítica (preservando as linhas originais em vez de colapsá-las). A opção D está errada: GROUP_CONCAT é função do MySQL, não existe em Oracle. Em Oracle 19c+, foi adicionado suporte a ON OVERFLOW TRUNCATE para evitar erros quando a string resultante excede 32767 bytes."
+    },
+    {
+      "id": 308,
+      "topic": "joins",
+      "context": "CREATE TABLE projects (\n  project_id   NUMBER,\n  department_id NUMBER,\n  manager_id   NUMBER\n);\nCREATE TABLE departments (\n  department_id  NUMBER,\n  department_name VARCHAR2(30),\n  manager_id     NUMBER,\n  location_id    NUMBER\n);",
+      "text": "A developer writes: SELECT project_id, department_name FROM projects NATURAL JOIN departments;\nOn which columns does the NATURAL JOIN automatically join the two tables?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Only department_id, because it is the most logically obvious foreign key between the two tables"
+        },
+        {
+          "key": "B",
+          "text": "Both department_id AND manager_id, because NATURAL JOIN joins on ALL columns that share the same name in both tables"
+        },
+        {
+          "key": "C",
+          "text": "Only the first common column found alphabetically (department_id)"
+        },
+        {
+          "key": "D",
+          "text": "NATURAL JOIN uses ROWID internally and does not rely on column names at all"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "O NATURAL JOIN une duas tabelas automaticamente por TODAS as colunas que compartilham exatamente o mesmo nome em ambas as tabelas — não apenas pela primeira ou pela 'mais lógica'. No exemplo acima, PROJECTS e DEPARTMENTS têm as colunas department_id e manager_id com o mesmo nome; portanto, o NATURAL JOIN aplica: projects.department_id = departments.department_id AND projects.manager_id = departments.manager_id. Esse comportamento pode produzir resultados inesperados se as tabelas tiverem colunas homônimas que representam conceitos diferentes (ex.: manager_id do projeto vs. manager_id do departamento podem não ser o mesmo gerente). Por isso, a maioria dos especialistas recomenda o uso explícito de JOIN ... ON ou USING(coluna) em código de produção, em vez de NATURAL JOIN, que é frágil a mudanças de schema."
+    },
+    {
+      "id": 309,
+      "topic": "joins",
+      "context": "",
+      "text": "A table COLORS has 4 rows and a table SIZES has 3 rows. How many rows does the following query return?\nSELECT * FROM colors CROSS JOIN sizes;",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "4 rows — the number of rows in the larger table"
+        },
+        {
+          "key": "B",
+          "text": "3 rows — the number of rows in the smaller table"
+        },
+        {
+          "key": "C",
+          "text": "12 rows — every row from COLORS combined with every row from SIZES"
+        },
+        {
+          "key": "D",
+          "text": "7 rows — the sum of the rows in both tables"
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "Um CROSS JOIN produz o produto cartesiano das duas tabelas: cada linha da primeira tabela é combinada com cada linha da segunda, sem nenhuma condição de junção. O número de linhas resultante é a multiplicação: 4 × 3 = 12 linhas. Esse tipo de join é útil para gerar combinações intencionais (ex.: todas as variações de cor × tamanho de um produto), mas pode causar explosão de dados se aplicado acidentalmente a tabelas grandes. Em Oracle, a sintaxe clássica equivalente ao CROSS JOIN é separar as tabelas por vírgula na cláusula FROM sem nenhuma condição WHERE relacionando-as: SELECT * FROM colors, sizes. Um CROSS JOIN entre tabelas de 1.000 linhas cada já produz 1.000.000 de linhas."
+    },
+    {
+      "id": 310,
+      "topic": "joins",
+      "context": "",
+      "text": "Which of the following statements about the USING clause in Oracle SQL JOINs is TRUE?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Columns listed in the USING clause must be qualified with their table alias in all SELECT and WHERE clause references"
+        },
+        {
+          "key": "B",
+          "text": "USING(department_id) joins on the named column and, unlike ON, prevents NULL = NULL matches"
+        },
+        {
+          "key": "C",
+          "text": "Columns listed in the USING clause cannot be prefixed with a table alias anywhere in the query; doing so causes ORA-25154"
+        },
+        {
+          "key": "D",
+          "text": "USING and ON are fully interchangeable when joining on a single column with the same name in both tables"
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "Quando se usa a cláusula USING(column_name), o Oracle trata a coluna de junção como uma coluna neutra — não pertencente exclusivamente a nenhuma das duas tabelas. Por isso, referenciar essa coluna com um qualificador de tabela (como e.department_id ou d.department_id) em qualquer parte da consulta — SELECT, WHERE, ORDER BY — causa o erro ORA-25154: 'column part of USING clause cannot have qualifier'. A coluna deve ser referenciada apenas pelo nome simples (department_id), sem prefixo. Isso contrasta com a cláusula ON, onde as colunas pertencem às suas respectivas tabelas e devem (ou podem) ser qualificadas para evitar ambiguidade. A opção D está parcialmente errada: embora o resultado seja o mesmo, ON e USING têm regras de referência de coluna diferentes, tornando-os não 'totalmente intercambiáveis' no código."
+    },
+    {
+      "id": 311,
+      "topic": "dml",
+      "context": "MERGE INTO inventory tgt\nUSING daily_shipments src\n  ON (tgt.product_id = src.product_id)\nWHEN MATCHED THEN\n  UPDATE SET tgt.quantity = tgt.quantity + src.qty\nWHEN NOT MATCHED THEN\n  INSERT (product_id, quantity) VALUES (src.product_id, src.qty);",
+      "text": "Which of the following correctly describes the behavior of the MERGE statement above?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It only updates rows in INVENTORY that already exist in DAILY_SHIPMENTS; new products in DAILY_SHIPMENTS are silently ignored"
+        },
+        {
+          "key": "B",
+          "text": "It updates matching rows by adding the shipped quantity to existing stock, and inserts new products not yet in INVENTORY"
+        },
+        {
+          "key": "C",
+          "text": "MERGE requires both WHEN MATCHED and WHEN NOT MATCHED clauses; omitting either causes a syntax error"
+        },
+        {
+          "key": "D",
+          "text": "The MERGE statement cannot reference source columns (src.qty) in the UPDATE SET clause — only target columns are allowed"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "O MERGE combina INSERT e UPDATE em uma única instrução DML atômica. A condição ON define a correspondência entre a tabela-alvo (tgt) e a tabela-fonte (src). Quando product_id existe em ambas as tabelas (MATCHED), o UPDATE soma src.qty ao estoque existente. Quando o product_id da fonte não existe na tabela-alvo (NOT MATCHED), o INSERT adiciona o novo produto. A opção A está errada: a cláusula NOT MATCHED garante que novos produtos sejam inseridos. A opção C está errada: tanto WHEN MATCHED quanto WHEN NOT MATCHED são opcionais — o MERGE pode conter apenas uma das cláusulas. A opção D está errada: o SET pode referenciar qualquer coluna da tabela-fonte. Atenção: se múltiplas linhas da fonte corresponderem à mesma linha da tabela-alvo, o erro ORA-30926 é lançado."
+    },
+    {
+      "id": 312,
+      "topic": "dml",
+      "context": "CREATE TABLE orders (\n  order_id   NUMBER PRIMARY KEY,\n  order_date DATE    DEFAULT SYSDATE,\n  status     VARCHAR2(20) DEFAULT 'PENDING'\n);\n\nINSERT INTO orders (order_id, order_date, status)\nVALUES (1, DEFAULT, NULL);",
+      "text": "What values are stored for order_date and status after the INSERT above?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "order_date = SYSDATE (the default), status = 'PENDING' (the default)"
+        },
+        {
+          "key": "B",
+          "text": "order_date = SYSDATE (the default), status = NULL"
+        },
+        {
+          "key": "C",
+          "text": "order_date = NULL, status = NULL — DEFAULT is only usable when the column is omitted from the INSERT column list"
+        },
+        {
+          "key": "D",
+          "text": "The statement fails because explicitly passing NULL to a column that has a DEFAULT is not allowed"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "O keyword DEFAULT em uma cláusula VALUES instrui o Oracle a usar o valor padrão definido no DDL da coluna — neste caso, SYSDATE para order_date. Portanto, order_date receberá a data/hora atual. Para status, o INSERT especifica explicitamente NULL, e o Oracle armazena literalmente NULL — não o default 'PENDING'. DEFAULT e NULL são instruções distintas: DEFAULT usa o valor padrão da coluna, enquanto NULL sobrescreve qualquer default e armazena NULL. Se a coluna status tivesse uma constraint NOT NULL, o INSERT falharia com ORA-01400. A opção C está errada: DEFAULT é válido tanto na lista VALUES quanto quando a coluna é completamente omitida da lista de colunas — ambos os casos resultam no valor padrão sendo aplicado."
+    },
+    {
+      "id": 313,
+      "topic": "ddl",
+      "context": "CREATE SEQUENCE order_seq\n  START WITH 100\n  INCREMENT BY 5\n  MAXVALUE 120\n  CYCLE\n  NOCACHE;",
+      "text": "The sequence above has just returned the value 120 (its MAXVALUE). What value will be returned by the next call to order_seq.NEXTVAL?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "125 — the sequence continues incrementing past MAXVALUE"
+        },
+        {
+          "key": "B",
+          "text": "An ORA-08004 error because the sequence has exhausted its maximum value"
+        },
+        {
+          "key": "C",
+          "text": "1 — the sequence restarts from MINVALUE (default 1), not from START WITH"
+        },
+        {
+          "key": "D",
+          "text": "100 — the sequence restarts from its original START WITH value"
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "Com a opção CYCLE, quando uma sequência crescente atinge seu MAXVALUE, ela 'recicla' e o próximo valor é o MINVALUE da sequência — não o valor de START WITH. O START WITH é utilizado apenas na criação inicial da sequência; após um ciclo, o reinício se dá pelo MINVALUE, que por padrão é 1 para sequências crescentes. No exemplo, MINVALUE não foi especificado, então assume o padrão 1; logo, após retornar 120, a próxima chamada a NEXTVAL retorna 1. NOCACHE garante que cada valor seja gerado e persistido imediatamente sem pré-alocação em memória — importante para evitar lacunas após reinicializações ou falhas, mas com custo de I/O por geração. Uma sequência sem CYCLE retornaria ORA-08004 ao esgotar os valores disponíveis."
+    },
+    {
+      "id": 314,
+      "topic": "ddl",
+      "context": "-- Executed by DBA:\nCREATE PUBLIC SYNONYM emp FOR hr.employees;\n\n-- Executed by user SCOTT:\nCREATE SYNONYM emp FOR scott.contractors;",
+      "text": "When user SCOTT executes SELECT * FROM emp; which table is actually queried?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "hr.employees — PUBLIC synonyms take precedence over private synonyms"
+        },
+        {
+          "key": "B",
+          "text": "scott.contractors — private synonyms take precedence over public synonyms for the owning user"
+        },
+        {
+          "key": "C",
+          "text": "An error is raised because emp is already defined as a PUBLIC synonym and cannot be reused as a private synonym name"
+        },
+        {
+          "key": "D",
+          "text": "hr.employees — a DBA-created synonym cannot be overridden by a regular user's private synonym"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Em Oracle, a resolução de nomes de objetos segue uma ordem de precedência definida: primeiro o banco verifica objetos no próprio schema do usuário, depois sinônimos privados do usuário, e por último sinônimos públicos. Portanto, quando SCOTT executa SELECT * FROM emp, o Oracle encontra primeiro o sinônimo PRIVADO emp que aponta para scott.contractors — e ele prevalece sobre o sinônimo público que aponta para hr.employees. Sinônimos públicos têm a menor precedência e servem como 'aliases globais' acessíveis a qualquer usuário, mas qualquer objeto local ou sinônimo privado com o mesmo nome os oculta (shadowing). A opção C está errada: é perfeitamente válido criar um sinônimo privado com o mesmo nome de um sinônimo público — nenhum erro é lançado, e o sinônimo privado simplesmente tem prioridade."
+    },
+    {
+      "id": 315,
+      "topic": "ddl",
+      "context": "",
+      "text": "Which statement about DEFERRABLE constraints in Oracle is TRUE?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "DEFERRABLE constraints are permanently disabled; they exist only to document referential integrity rules without enforcement"
+        },
+        {
+          "key": "B",
+          "text": "With INITIALLY DEFERRED, constraint violations are checked immediately after each DML statement, not at COMMIT"
+        },
+        {
+          "key": "C",
+          "text": "With INITIALLY DEFERRED, constraint violations are checked at COMMIT time, allowing a transaction to temporarily violate the constraint during execution"
+        },
+        {
+          "key": "D",
+          "text": "DEFERRABLE constraints can only be applied to FOREIGN KEY constraints — PRIMARY KEY and UNIQUE do not support deferral"
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "Constraints DEFERRABLE permitem que a verificação de integridade seja adiada para o momento do COMMIT em vez de ser verificada imediatamente após cada instrução DML. Com INITIALLY DEFERRED, a constraint começa deferida por padrão em toda nova transação — violações temporárias são permitidas durante a transação, mas ao executar COMMIT, o Oracle verifica todas as constraints deferidas e faz rollback da transação se alguma for violada. Isso é útil em situações como inserir registros com dependências mútuas. Para alterar o modo durante uma transação, usa-se SET CONSTRAINT nome DEFERRED|IMMEDIATE. PRIMARY KEY, UNIQUE e FOREIGN KEY todos suportam DEFERRABLE — NOT NULL é a exceção, pois não pode ser deferida. A opção B inverteu o comportamento: verificação imediata é o modo INITIALLY IMMEDIATE (padrão)."
+    },
+    {
+      "id": 316,
+      "topic": "set",
+      "context": "SELECT employee_id FROM employees\nMINUS\nSELECT employee_id FROM job_history;",
+      "text": "Which of the following correctly describes the result of the query above?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "All employee_ids from both tables combined, without duplicates"
+        },
+        {
+          "key": "B",
+          "text": "employee_ids that appear in EMPLOYEES but NOT in JOB_HISTORY"
+        },
+        {
+          "key": "C",
+          "text": "employee_ids that appear in JOB_HISTORY but NOT in EMPLOYEES"
+        },
+        {
+          "key": "D",
+          "text": "employee_ids that appear in BOTH tables simultaneously"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "O operador MINUS retorna linhas que existem no resultado do PRIMEIRO SELECT mas NÃO existem no resultado do SEGUNDO SELECT — é a operação de diferença de conjuntos (A − B). Duplicatas são automaticamente eliminadas do resultado, sem necessidade de DISTINCT. A ordem dos operandos importa: employees MINUS job_history é diferente de job_history MINUS employees. A opção A descreve UNION; a opção D descreve INTERSECT. Em outros SGBDs como PostgreSQL, a operação equivalente se chama EXCEPT — Oracle usa MINUS (embora versões recentes do Oracle Database também aceitem EXCEPT como alias). Para obter o resultado oposto (employee_ids em JOB_HISTORY mas não em EMPLOYEES), inverta a ordem: SELECT employee_id FROM job_history MINUS SELECT employee_id FROM employees."
+    },
+    {
+      "id": 317,
+      "topic": "set",
+      "context": "",
+      "text": "Which of the following statements about UNION and UNION ALL in Oracle SQL is TRUE?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "UNION ALL removes duplicate rows, whereas UNION retains all duplicates including repeated rows"
+        },
+        {
+          "key": "B",
+          "text": "UNION implicitly includes an ORDER BY clause, guaranteeing the final result set is always sorted"
+        },
+        {
+          "key": "C",
+          "text": "UNION removes duplicate rows (implicit DISTINCT), while UNION ALL retains all rows including duplicates and is generally faster"
+        },
+        {
+          "key": "D",
+          "text": "Both UNION and UNION ALL require the same data types but allow a different number of columns in each SELECT"
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "UNION combina os resultados de dois ou mais SELECT e elimina linhas duplicadas do resultado final — comportamento equivalente a aplicar DISTINCT. UNION ALL também combina os resultados, mas PRESERVA todas as linhas, incluindo duplicatas. Por não precisar ordenar e comparar linhas para eliminar duplicatas, UNION ALL é geralmente mais rápido e deve ser preferido quando duplicatas são aceitáveis ou impossíveis. A opção A inverteu as definições incorretamente. A opção B está errada: UNION não garante nenhuma ordem específica no resultado; para ordenar, adicione ORDER BY após a última instrução SELECT do conjunto. A opção D está errada: tanto UNION quanto UNION ALL exigem o mesmo número de colunas E tipos de dados compatíveis em cada SELECT — caso contrário, ORA-01789 (número de colunas incorreto) ou ORA-01790 (tipo de dados incompatível) são lançados."
+    },
+    {
+      "id": 318,
+      "topic": "advanced",
+      "context": "SELECT employee_id, salary,\n       RANK()       OVER (ORDER BY salary DESC) AS rnk,\n       DENSE_RANK() OVER (ORDER BY salary DESC) AS dense_rnk\nFROM employees\nWHERE department_id = 30;",
+      "text": "Department 30 has 6 employees with salaries: 11000, 11000, 9000, 8000, 7900, 7700 (highest to lowest). What are the RANK and DENSE_RANK values for the employee with salary 9000?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "RANK = 3, DENSE_RANK = 2"
+        },
+        {
+          "key": "B",
+          "text": "RANK = 2, DENSE_RANK = 2"
+        },
+        {
+          "key": "C",
+          "text": "RANK = 3, DENSE_RANK = 3"
+        },
+        {
+          "key": "D",
+          "text": "RANK = 2, DENSE_RANK = 3"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "RANK() e DENSE_RANK() diferem no tratamento de empates. Os dois funcionários com salary 11000 estão empatados na primeira posição. RANK() atribui o mesmo rank a empates mas 'pula' posições subsequentes: ambos com 11000 recebem RANK=1, e o próximo (9000) recebe RANK=3, pulando o número 2. DENSE_RANK() também atribui o mesmo rank a empates, mas NÃO pula posições: os dois com 11000 recebem DENSE_RANK=1, e o próximo (9000) recebe DENSE_RANK=2, sem lacuna. A mnemônica: DENSE_RANK é 'denso' — sem buracos na sequência de ranks. Compare com ROW_NUMBER(), que nunca cria empates e atribui números sequenciais únicos mesmo a valores iguais (a ordem de desempate seria arbitrária ou determinada por um critério adicional no ORDER BY)."
+    },
+    {
+      "id": 319,
+      "topic": "advanced",
+      "context": "SELECT department_id, last_name, salary,\n       LAG(salary, 1, 0) OVER (PARTITION BY department_id\n                               ORDER BY salary) AS prev_sal\nFROM employees;",
+      "text": "For the first employee (lowest salary) within each department partition, what value does the LAG expression return?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "NULL — there is no previous row in the partition, and LAG always returns NULL when no row exists"
+        },
+        {
+          "key": "B",
+          "text": "The salary of the last employee in the previous department's partition"
+        },
+        {
+          "key": "C",
+          "text": "0 (zero) — the third argument to LAG specifies the default value returned when no prior row exists"
+        },
+        {
+          "key": "D",
+          "text": "An error because LAG cannot be combined with PARTITION BY"
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "A função analítica LAG(value_expr, offset, default) retorna o valor de uma linha anterior dentro da mesma partição. O terceiro argumento define o valor padrão retornado quando a linha anterior não existe — o que acontece para a primeira linha de cada partição (grupo de PARTITION BY). No exemplo, LAG(salary, 1, 0) retorna 0 para a primeira linha de cada departamento, pois o default explícito é 0. Se o terceiro argumento fosse omitido, o valor padrão seria NULL. A função LAG não cruza fronteiras de PARTITION BY — cada partição é tratada de forma completamente independente, sem 'vazamento' de valores de uma partição para outra (opção B está errada). LEAD() é a função análoga que acessa linhas seguintes (à frente) em vez de anteriores, com a mesma sintaxe e comportamento de particionamento."
     }
   ]
 }
