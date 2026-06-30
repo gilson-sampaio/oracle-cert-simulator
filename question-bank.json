@@ -9873,6 +9873,606 @@
         "C"
       ],
       "explanation": "A função analítica LAG(value_expr, offset, default) retorna o valor de uma linha anterior dentro da mesma partição. O terceiro argumento define o valor padrão retornado quando a linha anterior não existe — o que acontece para a primeira linha de cada partição (grupo de PARTITION BY). No exemplo, LAG(salary, 1, 0) retorna 0 para a primeira linha de cada departamento, pois o default explícito é 0. Se o terceiro argumento fosse omitido, o valor padrão seria NULL. A função LAG não cruza fronteiras de PARTITION BY — cada partição é tratada de forma completamente independente, sem 'vazamento' de valores de uma partição para outra (opção B está errada). LEAD() é a função análoga que acessa linhas seguintes (à frente) em vez de anteriores, com a mesma sintaxe e comportamento de particionamento."
+    },
+    {
+      "topic": "fundamentals",
+      "context": "CREATE TABLE products (\n  product_id NUMBER,\n  price      NUMBER CHECK (price > 0)\n);",
+      "text": "What happens when the following statement is executed?\n\nINSERT INTO products (product_id, price) VALUES (1, NULL);",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The INSERT fails because NULL violates the CHECK constraint (price > 0)"
+        },
+        {
+          "key": "B",
+          "text": "The INSERT succeeds, because a CHECK constraint only rejects rows where the condition evaluates to FALSE — when price is NULL, the condition evaluates to UNKNOWN, which is not blocked"
+        },
+        {
+          "key": "C",
+          "text": "The INSERT succeeds, but Oracle silently converts the NULL to 0 to satisfy the constraint"
+        },
+        {
+          "key": "D",
+          "text": "The INSERT fails with ORA-01400, because NULL is never allowed in a column that participates in a CHECK constraint"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Constraints CHECK só rejeitam uma linha quando a condição é avaliada explicitamente como FALSE. Quando price é NULL, a expressão price > 0 não pode ser avaliada como verdadeira nem falsa — o resultado é UNKNOWN (a terceira opção da lógica de três valores do SQL). Como o Oracle só bloqueia o INSERT/UPDATE quando o resultado é FALSE, uma linha com UNKNOWN é aceita normalmente. Por isso, uma coluna com CHECK (price > 0) ainda permite NULL, a menos que uma constraint NOT NULL adicional seja definida na mesma coluna. Esse é um comportamento frequentemente cobrado na certificação: CHECK e NULL não se excluem automaticamente.",
+      "id": 320
+    },
+    {
+      "topic": "fundamentals",
+      "context": "UPDATE employees SET salary = salary * 1.1 WHERE department_id = 50;\nCREATE INDEX idx_emp_dummy ON employees(last_name);\nROLLBACK;",
+      "text": "After the three statements above execute in sequence, what is the final state of the salary UPDATE?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Rolled back — ROLLBACK undoes both the DDL and the DML executed earlier in the session"
+        },
+        {
+          "key": "B",
+          "text": "Committed — CREATE INDEX, like any DDL statement, performs an implicit COMMIT before it runs, so the prior UPDATE was already made permanent before the ROLLBACK executed"
+        },
+        {
+          "key": "C",
+          "text": "Committed only if autocommit is explicitly enabled in the session; otherwise rolled back"
+        },
+        {
+          "key": "D",
+          "text": "Rolled back — DDL statements in Oracle never trigger implicit commits, only explicit COMMIT or DML does"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Toda instrução DDL no Oracle executa um COMMIT implícito imediatamente antes de rodar (e também depois, ao concluir). Isso significa que, no momento em que CREATE INDEX começou a ser processado, a transação pendente contendo o UPDATE já havia sido confirmada (commitada) permanentemente. O ROLLBACK subsequente não tem mais nada da transação anterior para desfazer — ele só afetaria DML executado depois do COMMIT implícito da DDL, e não há nenhum nessa sequência. Esse comportamento é uma armadilha clássica: muitos assumem erroneamente que apenas COMMIT explícito ou o fim da sessão finalizam uma transação.",
+      "id": 321
+    },
+    {
+      "topic": "select",
+      "context": "SELECT employee_id, commission_pct\nFROM employees\nORDER BY commission_pct DESC NULLS LAST;",
+      "text": "Which statement correctly explains where rows with a NULL commission_pct appear in the result?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "NULL values appear first, because DESC always reverses the placement of NULLs regardless of any NULLS clause"
+        },
+        {
+          "key": "B",
+          "text": "NULL values appear last, because NULLS LAST explicitly overrides Oracle's default behavior, which would otherwise place NULLs FIRST when sorting in DESC order"
+        },
+        {
+          "key": "C",
+          "text": "NULL values appear first, because NULLS LAST only has an effect when combined with ASC, not DESC"
+        },
+        {
+          "key": "D",
+          "text": "The query raises an error, because NULLS LAST cannot be combined with the DESC keyword"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Por padrão, o Oracle trata NULL como se fosse o maior valor possível ao ordenar. Em ordem ASC isso significa que NULL aparece por último; em ordem DESC, esse mesmo critério faz com que NULL apareça PRIMEIRO por padrão. A cláusula NULLS LAST sobrescreve explicitamente esse comportamento padrão, forçando os valores NULL para o final do conjunto de resultados independentemente de ASC ou DESC. NULLS FIRST e NULLS LAST são válidos em combinação com qualquer uma das duas direções de ordenação, então a opção D está incorreta.",
+      "id": 322
+    },
+    {
+      "topic": "select",
+      "context": "SELECT DISTINCT department_id, job_id\nFROM employees;",
+      "text": "What exactly does DISTINCT eliminate in the result of this query?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Duplicate values of department_id only; job_id is returned as a plain, unfiltered column"
+        },
+        {
+          "key": "B",
+          "text": "Duplicate rows based on the combination of (department_id, job_id) — a row is removed only when both column values match another row exactly"
+        },
+        {
+          "key": "C",
+          "text": "Duplicate values of job_id only, since it is the last column listed"
+        },
+        {
+          "key": "D",
+          "text": "Nothing — DISTINCT raises an error when applied to more than one column at a time"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Quando DISTINCT é usado com múltiplas colunas na lista do SELECT, ele opera sobre a COMBINAÇÃO de todas as colunas listadas, não sobre cada coluna isoladamente. Uma linha só é considerada duplicada e removida do resultado se TODOS os valores das colunas selecionadas (department_id E job_id, juntos) forem idênticos a outra linha. Isso significa que um mesmo department_id pode aparecer várias vezes no resultado, desde que combinado com job_id diferentes a cada vez.",
+      "id": 323
+    },
+    {
+      "topic": "select",
+      "context": "Department 50 currently has several employees with different salary values.\n\nSELECT employee_id\nFROM employees\nWHERE salary = (SELECT salary FROM employees WHERE department_id = 50);",
+      "text": "What happens when this query is executed?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It returns the employees whose salary matches the highest salary found in department 50"
+        },
+        {
+          "key": "B",
+          "text": "It returns NULL for every row, since the subquery is ambiguous"
+        },
+        {
+          "key": "C",
+          "text": "It raises ORA-01427: single-row subquery returns more than one row, because the subquery returns multiple salary values but is compared using the single-row operator ="
+        },
+        {
+          "key": "D",
+          "text": "It returns every row in EMPLOYEES, since Oracle treats = as ANY when the subquery returns multiple rows"
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "O operador = é um operador de subquery de linha única (single-row): ele exige que a subquery retorne, no máximo, uma única linha e um único valor. Como o departamento 50 tem vários funcionários com salários diferentes, a subquery (SELECT salary FROM employees WHERE department_id = 50) retorna múltiplas linhas, o que é incompatível com =. O Oracle lança o erro ORA-01427. Para comparar contra múltiplos valores, seria necessário usar um operador de múltiplas linhas como IN, ANY ou ALL (por exemplo, salary = ANY (...) ou salary IN (...)).",
+      "id": 324
+    },
+    {
+      "topic": "functions",
+      "context": "SELECT ROUND(1550, -2) AS r, TRUNC(1550, -2) AS t FROM dual;",
+      "text": "What values are returned for r and t?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "r = 1600, t = 1500"
+        },
+        {
+          "key": "B",
+          "text": "r = 1500, t = 1500"
+        },
+        {
+          "key": "C",
+          "text": "r = 1600, t = 1600"
+        },
+        {
+          "key": "D",
+          "text": "r = 1550, t = 1550, since -2 is not a valid second argument for either function"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Quando o segundo argumento de ROUND ou TRUNC é negativo, a operação ocorre à esquerda do ponto decimal (dezenas, centenas, milhares...). ROUND(1550, -2) arredonda para a centena mais próxima: 1550 dividido por 100 dá 15.5, e o Oracle arredonda .5 para cima (longe de zero), resultando em 16, ou seja, 1600. TRUNC(1550, -2), por outro lado, apenas trunca (corta) sem nenhum arredondamento, mantendo a parte inteira das centenas: 15, ou seja, 1500. A diferença essencial é que ROUND pode 'subir' o valor, enquanto TRUNC nunca arredonda — apenas descarta os dígitos à direita da posição indicada.",
+      "id": 325
+    },
+    {
+      "topic": "functions",
+      "context": "-- Employee 100 (Steven King) has commission_pct = NULL\n\nSELECT NVL2(commission_pct, salary + (salary * commission_pct), salary) AS total\nFROM employees\nWHERE employee_id = 100;",
+      "text": "What value does this query return for employee 100?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "NULL, because commission_pct is NULL and any expression involving it evaluates to NULL"
+        },
+        {
+          "key": "B",
+          "text": "Just the value of salary, because when the first argument of NVL2 is NULL, NVL2 returns its third argument unevaluated against the NULL"
+        },
+        {
+          "key": "C",
+          "text": "An error, because NVL2 cannot accept a NULL as its first argument"
+        },
+        {
+          "key": "D",
+          "text": "0, because NULL multiplied by any value defaults to zero inside NVL2"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "NVL2(expr1, expr2, expr3) funciona como um IF/ELSE: se expr1 NÃO for NULL, a função retorna expr2; se expr1 FOR NULL, ela retorna expr3 — e o cálculo de expr2 (que envolveria a multiplicação por commission_pct) simplesmente não é o valor retornado. Como o funcionário 100 tem commission_pct NULL, a função retorna o terceiro argumento, salary, sem nenhuma propagação de NULL pela multiplicação. NVL2 é frequentemente mais conveniente que NVL combinado com CASE, justamente por permitir expressões diferentes para os casos NULL e NOT NULL.",
+      "id": 326
+    },
+    {
+      "topic": "functions",
+      "context": "SELECT REGEXP_SUBSTR('2024-06-15', '[^-]+', 1, 2) AS result FROM dual;",
+      "text": "What value does this query return?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "'2024'"
+        },
+        {
+          "key": "B",
+          "text": "'06'"
+        },
+        {
+          "key": "C",
+          "text": "'15'"
+        },
+        {
+          "key": "D",
+          "text": "NULL, because REGEXP_SUBSTR does not support an occurrence parameter"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "REGEXP_SUBSTR(source, pattern, position, occurrence) extrai a N-ésima ocorrência do padrão a partir da posição indicada. O padrão [^-]+ casa com uma ou mais sequências de caracteres que NÃO sejam hífen. Na string '2024-06-15', a primeira ocorrência é '2024', a segunda é '06' e a terceira é '15'. Como o quarto argumento (occurrence) é 2, a função retorna a segunda ocorrência: '06'. Esse padrão é uma forma comum de 'fatiar' strings delimitadas sem usar SUBSTR e INSTR manualmente.",
+      "id": 327
+    },
+    {
+      "topic": "joins",
+      "context": "SELECT e.last_name, d.department_name\nFROM employees e, departments d\nWHERE e.department_id = d.department_id(+)\n   OR e.manager_id IS NULL;",
+      "text": "What happens when this query is executed?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It returns all employees, including unmatched department_ids and rows where manager_id is null, as a combined outer join result"
+        },
+        {
+          "key": "B",
+          "text": "It raises ORA-01719, because the traditional (+) outer join operator cannot be used in a condition that is combined with OR"
+        },
+        {
+          "key": "C",
+          "text": "It executes successfully as a plain INNER JOIN, silently ignoring the (+) operator"
+        },
+        {
+          "key": "D",
+          "text": "It returns only rows that satisfy both conditions simultaneously, treating OR as if it were AND"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "A sintaxe tradicional de outer join do Oracle, o operador (+), tem uma limitação importante: a condição que contém (+) não pode ser combinada com outras condições usando OR (nem IN). O Oracle exige que (+) apareça em uma condição isolada, normalmente unida a outras por AND. Ao tentar usar OR como no exemplo, a instrução é rejeitada com o erro ORA-01719. A sintaxe ANSI (LEFT OUTER JOIN ... ON ...) não tem essa restrição e é a forma recomendada atualmente, evitando justamente esse tipo de limitação.",
+      "id": 328
+    },
+    {
+      "topic": "joins",
+      "context": "-- EMPLOYEES columns include: employee_id, last_name, department_id, manager_id, ...\n-- DEPARTMENTS columns include: department_id, department_name, manager_id, location_id\n\nSELECT employee_id, department_name\nFROM employees NATURAL JOIN departments;",
+      "text": "Both EMPLOYEES and DEPARTMENTS happen to have a column named MANAGER_ID, in addition to the intended common key DEPARTMENT_ID. What join condition does NATURAL JOIN actually apply?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Only department_id, since that is the intended foreign key relationship between the two tables"
+        },
+        {
+          "key": "B",
+          "text": "Both department_id AND manager_id, because NATURAL JOIN automatically joins on every column that has the same name and compatible data type in both tables — which can silently exclude rows where the two manager_id values differ"
+        },
+        {
+          "key": "C",
+          "text": "employee_id only, because it appears in the SELECT list"
+        },
+        {
+          "key": "D",
+          "text": "It raises an error, because NATURAL JOIN requires all shared columns to be named explicitly with USING"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "NATURAL JOIN não permite escolher a coluna de junção: ele automaticamente une as tabelas por TODAS as colunas que têm o mesmo nome (e tipos compatíveis) nas duas tabelas. Como tanto EMPLOYEES quanto DEPARTMENTS possuem uma coluna manager_id além de department_id, o join resultante exige que AMBAS as colunas coincidam — o que normalmente não é a intenção (um funcionário e o departamento dele não têm necessariamente o mesmo manager_id). Isso pode eliminar silenciosamente linhas válidas do resultado. É exatamente por esse risco que NATURAL JOIN é desencorajado em esquemas com colunas de mesmo nome e significados diferentes; USING (department_id) ou a sintaxe ON explícita evitam essa armadilha.",
+      "id": 329
+    },
+    {
+      "topic": "joins",
+      "context": "-- The subquery below returns at least one row with department_id = NULL\n\n-- Query 1\nSELECT department_name FROM departments d\nWHERE NOT EXISTS (SELECT 1 FROM employees e WHERE e.department_id = d.department_id);\n\n-- Query 2\nSELECT department_name FROM departments d\nWHERE department_id NOT IN (SELECT department_id FROM employees);",
+      "text": "If employees.department_id contains at least one NULL value, what is the difference in behavior between Query 1 and Query 2?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Both return the same set of departments with no employees, since NOT EXISTS and NOT IN are functionally identical"
+        },
+        {
+          "key": "B",
+          "text": "Query 2 (NOT IN) returns no rows at all, because comparing department_id against a NULL inside the subquery list makes every comparison evaluate to UNKNOWN; Query 1 (NOT EXISTS) is unaffected and still correctly returns departments with no employees"
+        },
+        {
+          "key": "C",
+          "text": "Query 1 (NOT EXISTS) returns no rows, while Query 2 (NOT IN) works correctly despite the NULL"
+        },
+        {
+          "key": "D",
+          "text": "Both queries raise an error, because NULL values are not permitted inside a subquery used with NOT IN or NOT EXISTS"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Esta é a famosa 'armadilha do NOT IN com NULL'. NOT IN é avaliado internamente como uma série de comparações != combinadas com AND. Se a lista de valores retornada pela subquery contiver um único NULL, toda comparação x != NULL resulta em UNKNOWN — e como UNKNOWN nunca satisfaz uma condição WHERE, NENHUMA linha é retornada, mesmo que existam departamentos genuinamente sem funcionários. NOT EXISTS, por outro lado, não compara valores diretamente: ele apenas verifica se a subquery correlacionada retorna alguma linha, então a presença de NULL em department_id não afeta sua lógica. Por esse motivo, NOT EXISTS é geralmente a opção mais segura quando a coluna referenciada na subquery pode conter NULL.",
+      "id": 330
+    },
+    {
+      "topic": "dml",
+      "context": "MERGE INTO employees_target t\nUSING employees_source s\nON (t.employee_id = s.employee_id)\nWHEN MATCHED THEN\n  UPDATE SET t.salary = s.salary\n  DELETE WHERE t.salary > 100000\nWHEN NOT MATCHED THEN\n  INSERT (employee_id, salary) VALUES (s.employee_id, s.salary);",
+      "text": "What does the DELETE WHERE clause nested inside WHEN MATCHED actually do?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It deletes rows from employees_source with salary > 100000 before the MERGE evaluates any matches"
+        },
+        {
+          "key": "B",
+          "text": "It deletes, from employees_target, only the rows that were just updated by this MERGE and whose post-update salary exceeds 100000 — rows that don't match the ON condition are never touched by this DELETE"
+        },
+        {
+          "key": "C",
+          "text": "It causes a syntax error, since DELETE cannot legally appear inside a MERGE statement"
+        },
+        {
+          "key": "D",
+          "text": "It unconditionally deletes every row in employees_target, ignoring the WHERE condition"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "A cláusula DELETE WHERE opcional dentro de WHEN MATCHED ... UPDATE é avaliada APÓS o UPDATE, e somente para as linhas que foram efetivamente casadas pela condição ON e atualizadas nesse MERGE. Ela não funciona como um DELETE independente sobre toda a tabela de destino — seu escopo é restrito ao subconjunto de linhas tocadas pela cláusula UPDATE do mesmo WHEN MATCHED. No exemplo, uma linha de employees_target só é excluída se (1) ela tiver correspondência em employees_source E (2) após receber o novo salário, esse salário ultrapassar 100000. Linhas que nunca deram match na condição ON (WHEN NOT MATCHED) não são afetadas por essa cláusula DELETE.",
+      "id": 331
+    },
+    {
+      "topic": "dml",
+      "context": "INSERT ALL\n  WHEN amount > 500  THEN INTO high_value VALUES (order_id, amount)\n  WHEN amount > 1000 THEN INTO premium     VALUES (order_id, amount)\nSELECT order_id, amount FROM orders;",
+      "text": "For a row in ORDERS with amount = 1500, which table(s) receive that row when this INSERT ALL statement executes?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Only premium, because it represents the more specific/restrictive of the two conditions"
+        },
+        {
+          "key": "B",
+          "text": "Only high_value, because INSERT ALL evaluates conditions top-to-bottom and stops at the first WHEN clause that matches"
+        },
+        {
+          "key": "C",
+          "text": "Both high_value AND premium, because INSERT ALL evaluates every WHEN clause independently for each source row, and a row is inserted into every target whose condition is satisfied"
+        },
+        {
+          "key": "D",
+          "text": "Neither table, because Oracle treats overlapping WHEN conditions in INSERT ALL as a conflict and skips the row"
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "Com INSERT ALL (ao contrário de INSERT FIRST), cada cláusula WHEN é avaliada de forma INDEPENDENTE para cada linha retornada pela consulta de origem — não há 'curto-circuito' que pare na primeira condição verdadeira. Para amount = 1500, tanto amount > 500 quanto amount > 1000 são verdadeiras, então a linha é inserida em high_value E em premium, podendo gerar múltiplas inserções a partir de uma única linha de origem. Se a intenção fosse inserir cada linha em no máximo uma tabela (a primeira condição que bater), a instrução correta seria INSERT FIRST, que avalia as condições em ordem e para na primeira que for satisfeita, ignorando as demais para aquela linha.",
+      "id": 332
+    },
+    {
+      "topic": "ddl",
+      "context": "ALTER TABLE orders\n  ADD CONSTRAINT fk_cust FOREIGN KEY (customer_id)\n  REFERENCES customers(customer_id) ENABLE NOVALIDATE;",
+      "text": "What does ENABLE NOVALIDATE mean for this newly added foreign key constraint?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The constraint is enforced for new or modified rows going forward, but Oracle does not check the existing rows in the table against it, so pre-existing violations are tolerated"
+        },
+        {
+          "key": "B",
+          "text": "The constraint is fully validated against every existing row before being enabled — ENABLE NOVALIDATE just skips writing entries to the alert log"
+        },
+        {
+          "key": "C",
+          "text": "The constraint is created but left completely disabled, so neither old nor new rows are ever checked"
+        },
+        {
+          "key": "D",
+          "text": "ENABLE NOVALIDATE is invalid syntax when adding a FOREIGN KEY constraint; it only applies to CHECK constraints"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "ENABLE NOVALIDATE ativa a constraint para todo DML futuro (inserções e atualizações a partir de agora precisam respeitar a referência), mas pula a varredura/validação dos dados já existentes na tabela. Isso é muito usado em tabelas grandes onde se sabe (ou se aceita) que podem existir violações históricas, evitando o custo de uma validação completa que poderia travar a tabela por muito tempo. O comportamento oposto, ENABLE VALIDATE (o padrão implícito de um simples ENABLE), verifica TODAS as linhas existentes e rejeita a operação se encontrar qualquer violação. Já DISABLE simplesmente desativa a constraint, sem checar nada, nem para dados antigos nem para novos.",
+      "id": 333
+    },
+    {
+      "topic": "ddl",
+      "context": "CREATE SEQUENCE order_seq\n  START WITH 1 INCREMENT BY 1 MAXVALUE 5 NOCYCLE;\n\n-- order_seq.NEXTVAL has already been called 5 times, returning 1, 2, 3, 4, 5 in order",
+      "text": "What happens on the sixth call to order_seq.NEXTVAL?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It wraps around and returns 1 again, because sequences cycle by default"
+        },
+        {
+          "key": "B",
+          "text": "It raises ORA-08004: sequence exceeds MAXVALUE and cannot be instantiated, because NOCYCLE is specified and the sequence has already reached its MAXVALUE"
+        },
+        {
+          "key": "C",
+          "text": "It returns NULL to signal that the sequence is exhausted"
+        },
+        {
+          "key": "D",
+          "text": "It keeps returning 5 indefinitely on every subsequent call"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "NOCYCLE (que também é o comportamento padrão quando nem CYCLE nem NOCYCLE são especificados) impede que a sequência reinicie ao atingir o MAXVALUE. Depois que o valor 5 (o MAXVALUE definido) já foi retornado, qualquer chamada adicional a NEXTVAL falha com ORA-08004, pois não há mais valores válidos a fornecer dentro da faixa definida. Para que a sequência reiniciasse automaticamente em 1 após atingir 5, seria necessário criar (ou recriar) a sequência com a opção CYCLE em vez de NOCYCLE.",
+      "id": 334
+    },
+    {
+      "topic": "ddl",
+      "context": "CREATE VIEW high_earners AS\nSELECT employee_id, last_name, salary, department_id\nFROM employees\nWHERE salary > 10000\nWITH CHECK OPTION;",
+      "text": "A user executes: UPDATE high_earners SET salary = 5000 WHERE employee_id = 200; What happens?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The update succeeds, and the row simply stops appearing in future queries against the view, since it no longer satisfies WHERE salary > 10000"
+        },
+        {
+          "key": "B",
+          "text": "The update is rejected with an error (view WITH CHECK OPTION where-clause violation), because the new salary value would produce a row that the view's own WHERE clause would no longer include"
+        },
+        {
+          "key": "C",
+          "text": "The update succeeds, but Oracle silently substitutes 10001 for 5000 to keep the row compliant with the constraint"
+        },
+        {
+          "key": "D",
+          "text": "WITH CHECK OPTION only restricts INSERT statements through the view, so the UPDATE proceeds normally"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "WITH CHECK OPTION garante que nenhuma operação de DML realizada através da view (tanto INSERT quanto UPDATE) possa produzir uma linha que viole a cláusula WHERE que define a view. Como a view high_earners só inclui funcionários com salary > 10000, tentar atualizar o salário de um funcionário visível na view para um valor de 5000 geraria uma linha que a própria definição da view excluiria. Por isso, o Oracle rejeita a operação com um erro de violação de WITH CHECK OPTION, em vez de silenciosamente deixar a linha 'desaparecer' da view. A opção D está incorreta: a cláusula se aplica tanto a INSERT quanto a UPDATE realizados através da view.",
+      "id": 335
+    },
+    {
+      "topic": "set",
+      "context": "-- Both subqueries below return at least one row where commission_pct is NULL\n\nSELECT commission_pct FROM employees WHERE department_id = 80\nINTERSECT\nSELECT commission_pct FROM employees WHERE department_id = 30;",
+      "text": "Will NULL appear as a row in the result of this INTERSECT, given that both department subsets contain at least one employee with a NULL commission_pct?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "No — NULL is never considered equal to NULL under any circumstance in Oracle SQL, including inside set operators"
+        },
+        {
+          "key": "B",
+          "text": "Yes — for the purpose of comparing rows in set operators like UNION, INTERSECT, and MINUS, Oracle treats two NULL values as matching, unlike a direct comparison with the = operator"
+        },
+        {
+          "key": "C",
+          "text": "Only if an explicit IS NULL condition is added to the WHERE clause of both branches"
+        },
+        {
+          "key": "D",
+          "text": "It raises an error, because set operators cannot be applied to columns that allow NULL"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Embora, em uma comparação comum com WHERE, NULL = NULL avalie como UNKNOWN (e portanto nunca seja considerado 'igual'), os operadores de conjunto (UNION, INTERSECT, MINUS) usam uma lógica diferente para determinar linhas duplicadas ou correspondentes: eles comparam linhas inteiras tratando dois NULLs na mesma posição como equivalentes entre si. Por isso, se ambos os ramos da consulta possuem uma linha com commission_pct = NULL, o INTERSECT considera essa linha como presente em ambos os conjuntos e a inclui no resultado final (uma única vez). Esse comportamento é uma exceção notável à lógica de três valores do SQL e costuma surpreender quem espera que NULL nunca 'combine' com outro NULL.",
+      "id": 336
+    },
+    {
+      "topic": "set",
+      "context": "SELECT employee_id, salary AS amt FROM employees WHERE department_id = 10\nUNION\nSELECT employee_id, commission_pct FROM employees WHERE department_id = 20\nORDER BY amt;",
+      "text": "Is the ORDER BY amt clause at the end of this compound query valid, and if so, how is it interpreted?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It raises an error, because ORDER BY can never reference a column alias when used after a set operator"
+        },
+        {
+          "key": "B",
+          "text": "It executes successfully — with a set operator, ORDER BY may appear only once, after the final SELECT, and it resolves column names/aliases against the FIRST SELECT of the compound query (or by column position)"
+        },
+        {
+          "key": "C",
+          "text": "It executes successfully, but amt is resolved against the second SELECT's column instead of the first"
+        },
+        {
+          "key": "D",
+          "text": "It requires the alias amt to be repeated identically in every SELECT of the UNION, or ORA-00904 is raised"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Quando várias instruções SELECT são combinadas por um operador de conjunto (UNION, UNION ALL, INTERSECT, MINUS), apenas UMA cláusula ORDER BY é permitida, e ela deve aparecer depois da ÚLTIMA instrução SELECT do bloco — nunca dentro de cada SELECT individual. Os nomes ou aliases usados nessa cláusula ORDER BY são resolvidos com base nas colunas da PRIMEIRA consulta do conjunto (já que é ela que define os nomes de coluna do resultado combinado); alternativamente, pode-se referenciar a coluna pela sua posição numérica (ORDER BY 2). Não é necessário repetir o alias em cada SELECT, e a cláusula é perfeitamente válida quando usada dessa forma.",
+      "id": 337
+    },
+    {
+      "topic": "advanced",
+      "context": "SELECT employee_id, last_name, LEVEL,\n       SYS_CONNECT_BY_PATH(last_name, '/') AS path\nFROM employees\nSTART WITH manager_id IS NULL\nCONNECT BY PRIOR employee_id = manager_id\nORDER SIBLINGS BY last_name;",
+      "text": "What is the effect of ORDER SIBLINGS BY last_name in this hierarchical query?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It sorts the entire result set alphabetically by last_name, completely ignoring the hierarchical tree structure"
+        },
+        {
+          "key": "B",
+          "text": "It sorts employees that share the same parent (siblings within the hierarchy) alphabetically by last_name, while still preserving the overall parent-before-children traversal order of the tree"
+        },
+        {
+          "key": "C",
+          "text": "It is invalid syntax inside a CONNECT BY query and would raise an error"
+        },
+        {
+          "key": "D",
+          "text": "It behaves identically to a plain ORDER BY last_name placed at the end of the query"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Em uma consulta hierárquica (START WITH ... CONNECT BY), um ORDER BY comum reordenaria todo o resultado de forma plana, destruindo a estrutura de árvore (pais apareceriam misturados com filhos de outros ramos). ORDER SIBLINGS BY resolve isso: ele ordena apenas os nós que são 'irmãos' entre si — ou seja, que compartilham o mesmo nó pai — mantendo intacta a ordem de travessia da hierarquia (cada pai ainda aparece antes de seus próprios filhos). Isso permite, por exemplo, listar os funcionários de cada gerente em ordem alfabética sem quebrar a árvore organizacional representada pelo LEVEL e pelo CONNECT BY.",
+      "id": 338
+    },
+    {
+      "topic": "advanced",
+      "context": "SELECT order_date, amount,\n       SUM(amount) OVER (ORDER BY order_date\n                         ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS moving_sum\nFROM orders;",
+      "text": "What does the moving_sum column compute for each row?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The sum of all amounts from the very first row of the result set up to the current row (a full running total)"
+        },
+        {
+          "key": "B",
+          "text": "The sum of the current row's amount plus the two physically preceding rows in the ORDER BY order_date sequence — a fixed 3-row moving sum based on row position, regardless of whether order_date values tie"
+        },
+        {
+          "key": "C",
+          "text": "The sum of every row whose order_date falls within 2 calendar days of the current row's order_date"
+        },
+        {
+          "key": "D",
+          "text": "It raises an error, because ROWS BETWEEN cannot be combined with an ORDER BY clause inside an analytic OVER() window"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "A cláusula de janela ROWS BETWEEN n PRECEDING AND CURRENT ROW define uma janela FÍSICA baseada em POSIÇÃO de linha dentro da ordenação especificada — sempre exatamente as 2 linhas anteriores mais a linha atual, totalizando até 3 linhas, independentemente dos valores de order_date se repetirem ou não. Isso contrasta com RANGE BETWEEN, que define uma janela LÓGICA baseada no VALOR da coluna de ordenação: com RANGE, todas as linhas que compartilham o mesmo valor de order_date (um 'grupo de pares') seriam incluídas juntas na mesma janela, podendo abranger mais ou menos de 3 linhas. A opção C descreveria um comportamento de RANGE com um intervalo de valores (por exemplo, RANGE BETWEEN INTERVAL '2' DAY PRECEDING AND CURRENT ROW), não ROWS.",
+      "id": 339
     }
   ]
 }
