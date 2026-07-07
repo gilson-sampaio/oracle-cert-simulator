@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#4262ff">
+<meta name="theme-color" content="#12161c">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -16,45 +16,49 @@
 </head>
 <body>
 
+<div class="topbar">
+  <span class="topbar-brand">&#9670; oracle_cert_simulator</span>
+</div>
+
 <div id="app">
 
   <!-- TELA INICIAL -->
   <section id="screen-start" class="screen">
-    <div class="card">
-      <div class="card-header" id="start-title">Simulado 1Z0-071</div>
-      <div class="card-body">
+    <div class="panel">
+      <div class="panel-title" id="start-title">-- Simulado 1Z0-071</div>
+      <div class="panel-body">
         <div class="setup-row">
-          <label for="input-quantity">Quantidade de questões</label>
+          <label for="input-quantity">quantidade de questões</label>
           <input type="number" id="input-quantity" min="5" max="200" value="63">
         </div>
         <div class="setup-row">
-          <label for="input-minutes">Tempo (minutos)</label>
+          <label for="input-minutes">tempo (minutos)</label>
           <input type="number" id="input-minutes" min="5" max="300" value="120">
         </div>
         <p id="bank-info" class="bank-info"></p>
-        <p>Este será um formulário cronometrado.</p>
-        <p>Depois de iniciar, você não poderá pausar o timer. Suas respostas serão enviadas automaticamente quando o tempo expirar. Prepare-se antes de começar.</p>
-        <button id="btn-generate" class="btn secondary">Gerar novo simulado</button>
-        <button id="btn-start" class="btn">Clique para iniciar</button>
+        <p class="lead">Este será um formulário cronometrado.</p>
+        <p class="lead">Depois de iniciar, você não poderá pausar o timer. Suas respostas serão enviadas automaticamente quando o tempo expirar. Prepare-se antes de começar.</p>
+        <div class="actions">
+          <button id="btn-generate" class="btn btn-outline">gerar novo simulado</button>
+          <button id="btn-start" class="btn btn-primary">iniciar simulado</button>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- TELA DE QUESTÃO -->
   <section id="screen-quiz" class="screen hidden">
-    <header class="quiz-header">
-      <div class="progress-wrap">
-        <div id="progress-bar" class="progress-bar"></div>
-      </div>
-      <div class="quiz-header-row">
-        <span id="question-counter"></span>
-        <span id="quiz-timer" class="quiz-timer">⏱ --:--</span>
-      </div>
-    </header>
+    <div class="progress-wrap">
+      <div id="progress-bar" class="progress-bar"></div>
+    </div>
+    <div class="quiz-meta">
+      <span id="question-counter"></span>
+      <span id="quiz-timer" class="quiz-timer">--:--</span>
+    </div>
 
-    <div class="card">
+    <div class="panel">
       <div id="question-context" class="context-box hidden"></div>
-      <div class="card-body">
+      <div class="panel-body">
         <p id="question-text" class="question-text"></p>
         <p id="question-hint" class="hint"></p>
         <div id="options-list" class="options-list"></div>
@@ -62,21 +66,21 @@
     </div>
 
     <div class="nav-row">
-      <button id="btn-prev" class="btn secondary">Anterior</button>
-      <button id="btn-next" class="btn">Próxima</button>
-      <button id="btn-finish" class="btn finish hidden">Finalizar</button>
+      <button id="btn-prev" class="btn btn-outline">anterior</button>
+      <button id="btn-next" class="btn btn-primary">próxima</button>
+      <button id="btn-finish" class="btn finish hidden">finalizar</button>
     </div>
   </section>
 
   <!-- TELA DE RESULTADO -->
   <section id="screen-result" class="screen hidden">
-    <div class="card">
-      <div class="card-header">Resultado</div>
-      <div class="card-body">
+    <div class="panel">
+      <div class="panel-title">-- resultado</div>
+      <div class="panel-body">
         <p id="result-score" class="result-score"></p>
         <p id="result-time"></p>
         <div id="result-review"></div>
-        <button id="btn-restart" class="btn">Refazer simulado</button>
+        <button id="btn-restart" class="btn btn-primary">refazer simulado</button>
       </div>
     </div>
   </section>
