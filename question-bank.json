@@ -13,1532 +13,1503 @@
   "questions": [
     {
       "id": 1,
-      "context": "Examine the description of the BRICKS table:\n\nName       Null?     Type\n---------  --------  -------------\nBRICK_ID             NUMBER(38)\nSHAPE                VARCHAR2(30)\nCOLOR                VARCHAR2(30)\nWEIGHT               NUMBER\n\nExamine the description of the BRICKS_STAGE table:\n\nName       Null?     Type\n---------  --------  -------------\nWEIGHT                NUMBER\nSHAPE                  VARCHAR2(30)\nCOLOR                  VARCHAR2(30)",
-      "text": "Which two queries execute successfully? (Choose two.)",
-      "type": "multiple",
-      "correctCount": 2,
+      "topic": "functions",
+      "context": "",
+      "text": "What is the key difference between TO_CHAR(hire_date, 'MONTH') and TO_CHAR(hire_date, 'MON') when hire_date falls in March?",
+      "type": "single",
+      "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "INSERT INTO bricks SELECT * FROM bricks_stage;"
+          "text": "'MONTH' returns 'MARCH' padded with trailing spaces to a fixed width (9 characters), while 'MON' returns the 3-letter abbreviation 'MAR' with no padding."
         },
         {
           "key": "B",
-          "text": "INSERT INTO bricks (shape, color, weight) SELECT * FROM bricks_stage;"
+          "text": "'MONTH' returns 'Mar' in mixed case while 'MON' returns 'MAR' in upper case; both are otherwise identical in length."
         },
         {
           "key": "C",
-          "text": "INSERT INTO bricks SELECT weight, shape, color FROM bricks_stage;"
+          "text": "'MONTH' and 'MON' are interchangeable format models that always produce identical output regardless of case."
         },
         {
           "key": "D",
-          "text": "INSERT INTO bricks (brick_id, shape, color, weight) SELECT NULL, shape, color, weight FROM bricks_stage;"
+          "text": "'MONTH' raises an error because only 'MON' is a valid format model element for month abbreviation."
         }
       ],
       "correct": [
-        "B",
-        "D"
+        "A"
       ],
-      "topic": "dml",
-      "explanation": "Em INSERT ... SELECT, as colunas são casadas por posição, não por nome. B funciona porque lista explicitamente (shape, color, weight) e o SELECT * de BRICKS_STAGE retorna nessa mesma ordem (weight, shape, color é a ordem física da tabela, mas a lista de colunas do INSERT obriga a correspondência: shape recebe weight? não — a questão considera que a lista de colunas do INSERT direciona corretamente os valores, deixando BRICK_ID de fora, que aceita NULL por padrão). D funciona porque informa BRICK_ID explicitamente como NULL e mantém shape, color, weight na ordem certa. A falha porque SELECT * traz as colunas na ordem física de BRICKS_STAGE (weight, shape, color), que não bate com a ordem física de BRICKS (brick_id, shape, color, weight), causando incompatibilidade de tipos (tentaria inserir um NUMBER de weight em BRICK_ID e strings em colunas numéricas). C falha pelo mesmo motivo de descompasso entre a ordem das colunas selecionadas e as colunas de destino."
+      "explanation": "TO_CHAR com o elemento de formato 'MONTH' retorna o nome completo do mês, preenchido (padded) com espaços à direita até completar a largura fixa do maior nome de mês possível (9 caracteres, como 'SEPTEMBER'), então 'MARCH' viraria 'MARCH    ' com espaços extras. Já 'MON' retorna sempre a abreviação de 3 letras ('MAR'), sem nenhum preenchimento. Esse padding do 'MONTH' é um detalhe sutil que costuma pegar quem compara strings diretamente sem usar TRIM. Não existe erro, e as máscaras não são intercambiáveis."
     },
     {
       "id": 2,
-      "context": "The PRODUCT_INFORMATION table has a UNIT_PRICE column of data type NUMBER(8,2).\n\nEvaluate this SQL statement:\n\nSELECT TO_CHAR(unit_price, '$9,999') FROM product_information;",
-      "text": "Which two statements are true about the output? (Choose two.)",
-      "type": "multiple",
-      "correctCount": 2,
+      "topic": "functions",
+      "context": "",
+      "text": "What does INSTR('database administrator', 'a', -1) return?",
+      "type": "single",
+      "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "A row whose UNIT_PRICE column contains the value 10235.95 will be displayed as $1,0236."
+          "text": "It searches for 'a' starting from the end of the string and moving backward, returning the position (counted from the start of the string) of the first occurrence found in that backward search."
         },
         {
           "key": "B",
-          "text": "A row whose UNIT_PRICE column contains the value 1023.95 will be displayed as $1,024."
+          "text": "It raises an error, because INSTR does not accept negative values for the start position argument."
         },
         {
           "key": "C",
-          "text": "A row whose UNIT_PRICE column contains the value 10235.95 will be displayed as $1,023."
+          "text": "It always returns -1 to indicate the search direction, regardless of whether 'a' is found."
         },
         {
           "key": "D",
-          "text": "A row whose UNIT_PRICE column contains the value 10235.95 will be displayed as #######."
+          "text": "It behaves identically to INSTR('database administrator', 'a', 1), since negative values are treated as 1 by default."
         }
       ],
       "correct": [
-        "B",
-        "D"
+        "A"
       ],
-      "topic": "functions",
-      "explanation": "TO_CHAR com a máscara '$9,999' permite no máximo 4 dígitos antes do separador de milhar; 1023.95 cabe e arredonda para $1,024 (B correto, pois o formato não tem casas decimais, então arredonda). Já 10235.95 tem 5 dígitos inteiros, estourando a máscara, e o Oracle retorna uma sequência de '#' para indicar overflow do formato (D correto). C está errada porque não trunca silenciosamente, e A está errada porque o Oracle não reorganiza dígitos de forma estranha como '$1,0236' — ele simplesmente sinaliza erro de formato com '#'."
+      "explanation": "Quando o argumento de posição inicial do INSTR é negativo, o Oracle inicia a busca a partir do final da string e caminha para trás, mas a posição retornada continua sendo contada normalmente a partir do início da string (posição 1 = primeiro caractere). Ou seja, -1 muda apenas a direção da busca, não a forma como a posição é reportada no resultado. Não há erro nem comportamento idêntico ao valor positivo, já que a ordem em que as ocorrências são encontradas é invertida."
     },
     {
       "id": 3,
+      "topic": "functions",
       "context": "",
-      "text": "Which two statements are true about TRUNCATE and DELETE? (Choose two.)",
-      "type": "multiple",
-      "correctCount": 2,
+      "text": "What does SUBSTR('CERTIFICATION', -6) return?",
+      "type": "single",
+      "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "DELETE can use a WHERE clause to determine which row(s) should be removed."
+          "text": "'ATION' — the last 5 characters, ignoring the sign of the start position."
         },
         {
           "key": "B",
-          "text": "TRUNCATE can use a WHERE clause to determine which row(s) should be removed."
+          "text": "'CATION' — starting 6 characters counted from the end of the string, extracting to the end since no length was given."
         },
         {
           "key": "C",
-          "text": "TRUNCATE leaves any indexes on the table in an UNUSABLE state."
+          "text": "An empty string, since negative positions are invalid in SUBSTR."
         },
         {
           "key": "D",
-          "text": "The result of a TRUNCATE can be undone by issuing a ROLLBACK."
-        },
-        {
-          "key": "E",
-          "text": "The result of a DELETE can be undone by issuing a ROLLBACK."
+          "text": "'CERTIF' — the first 6 characters, treating the negative sign as ignorable."
         }
       ],
       "correct": [
-        "A",
-        "E"
+        "B"
       ],
-      "topic": "ddl",
-      "explanation": "DELETE é uma operação DML que processa linha a linha, registra no log de redo/undo e pode ser revertida com ROLLBACK antes do COMMIT (E correto) e aceita WHERE para remover um subconjunto de linhas (A correto). TRUNCATE é DDL, remove todas as linhas de uma vez, faz commit implícito e não pode ser desfeita com ROLLBACK, além de não aceitar WHERE — por isso B e D estão erradas. C é tentadora mas errada: TRUNCATE não deixa os índices UNUSABLE, ela apenas os reorganiza/limpa, mantendo-os válidos."
+      "explanation": "Quando a posição inicial do SUBSTR é negativa, o Oracle conta essa posição a partir do final da string (-1 é o último caractere, -6 é o sexto caractere contando de trás para frente) e, como nenhum comprimento foi especificado, extrai tudo a partir dali até o fim da string. Em 'CERTIFICATION' (13 caracteres), a posição -6 corresponde à letra 'C' de 'CATION', então o resultado é 'CATION'. SUBSTR aceita normalmente posições negativas — não há erro nem necessidade de ignorar o sinal."
     },
     {
       "id": 4,
-      "context": "You issued this command:\n\nDROP TABLE hr.employees;",
-      "text": "Which three statements are true? (Choose three.)",
-      "type": "multiple",
-      "correctCount": 3,
+      "topic": "functions",
+      "context": "",
+      "text": "Which statement about the difference between a searched CASE expression and DECODE is correct?",
+      "type": "single",
+      "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "Sequences used to populate columns in the HR.EMPLOYEES table are dropped."
+          "text": "DECODE can only test for equality between a single expression and a list of values, while a searched CASE expression can evaluate independent conditions (e.g., different columns, ranges, comparisons like >, <, BETWEEN) in each branch."
         },
         {
           "key": "B",
-          "text": "Synonyms for HR.EMPLOYEES become invalid but are not automatically dropped."
+          "text": "CASE and DECODE are fully equivalent in every respect, including the ability to use relational operators like > and < directly."
         },
         {
           "key": "C",
-          "text": "Views referencing HR.EMPLOYEES become invalid."
+          "text": "DECODE supports range comparisons like salary > 5000, while CASE only supports equality checks."
         },
         {
           "key": "D",
-          "text": "All constraints defined on HR.EMPLOYEES are dropped."
-        },
-        {
-          "key": "E",
-          "text": "The HR.EMPLOYEES table may be moved to the recycle bin."
+          "text": "CASE expressions cannot be used inside a SELECT list, only DECODE can."
         }
       ],
       "correct": [
-        "C",
-        "D",
-        "E"
+        "A"
       ],
-      "topic": "ddl",
-      "explanation": "DROP TABLE invalida (não remove) views, sinônimos e qualquer objeto dependente que referencie a tabela — por isso B (sinônimo fica inválido mas não é dropado automaticamente) e C (views ficam inválidas) estão corretas. As constraints definidas na própria tabela são removidas junto com ela (D correto). Por padrão, se a tabela não foi criada com FLASHBACK ARCHIVE ou opção PURGE, ela vai para a reciclagem (recycle bin), permitindo recuperação via FLASHBACK TABLE (E correto). A está errada porque sequences são objetos independentes da tabela e não são dropadas automaticamente ao se eliminar a tabela."
+      "explanation": "DECODE funciona comparando uma única expressão contra uma lista de valores por igualdade (com um NVL implícito para NULL), sem suporte nativo a operadores relacionais como > ou <. Já uma expressão CASE 'searched' (no formato CASE WHEN condição THEN ...) permite testar condições totalmente independentes em cada cláusula WHEN — incluindo comparações de intervalo, colunas diferentes a cada branch, BETWEEN, etc. — o que a torna mais flexível. Ambos podem ser usados dentro do SELECT list normalmente."
     },
     {
       "id": 5,
+      "topic": "functions",
       "context": "",
-      "text": "What is the primary goal of normalizing a relational database design?",
+      "text": "What does GREATEST(45, 20, NULL, 90) return?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "To increase data redundancy for faster reads"
+          "text": "90, because GREATEST ignores NULL arguments and returns the largest of the remaining values."
         },
         {
           "key": "B",
-          "text": "To reduce data redundancy and avoid update anomalies"
+          "text": "NULL, because if any argument passed to GREATEST (or LEAST) is NULL, the function returns NULL."
         },
         {
           "key": "C",
-          "text": "To eliminate the need for primary keys"
+          "text": "45, because GREATEST returns the first non-NULL argument encountered."
         },
         {
           "key": "D",
-          "text": "To merge multiple tables into a single denormalized table"
+          "text": "It raises an error, since GREATEST does not accept NULL as an argument."
         }
       ],
       "correct": [
         "B"
       ],
-      "topic": "fundamentals",
-      "explanation": "O objetivo central da normalização é reduzir a redundância de dados e evitar anomalias de inserção, atualização e exclusão, organizando os dados em tabelas relacionadas por chaves. A alternativa A inverte o conceito (normalização reduz redundância, não aumenta), C é falsa porque chaves primárias continuam essenciais no modelo normalizado, e D descreve o oposto da normalização (que é a desnormalização)."
+      "explanation": "As funções GREATEST e LEAST comparam todos os argumentos entre si, e assim como a maioria das expressões que envolvem NULL, se qualquer um dos argumentos for NULL, o resultado da função inteira é NULL — não há um comportamento de 'ignorar' o NULL e considerar só os demais valores. Isso é diferente de funções de agregação como MAX, que de fato ignoram NULL entre linhas. Não há erro de sintaxe em passar NULL como argumento."
     },
     {
       "id": 6,
+      "topic": "functions",
       "context": "",
-      "text": "A table is in First Normal Form (1NF) when:",
+      "text": "What does TRIM(LEADING '0' FROM '00045100') return?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "It has no repeating groups and each column contains atomic values"
+          "text": "'45100' — only the leading zero characters are removed, trailing/internal zeros are untouched."
         },
         {
           "key": "B",
-          "text": "It has no transitive dependencies"
+          "text": "'451' — all zero characters anywhere in the string are removed."
         },
         {
           "key": "C",
-          "text": "Every non-key column depends on the whole primary key"
+          "text": "'0004510' — only the very last character is removed, since TRIM removes exactly one character by default."
         },
         {
           "key": "D",
-          "text": "It contains only numeric data types"
+          "text": "An error, because TRIM requires a single character, and '0' combined with LEADING is invalid syntax."
         }
       ],
       "correct": [
         "A"
       ],
-      "topic": "fundamentals",
-      "explanation": "1NF exige que cada coluna contenha apenas valores atômicos (não divisíveis) e que não existam grupos repetidos de colunas na mesma linha. B descreve a 3NF (eliminação de dependências transitivas) e C descreve a 2NF (dependência total da chave primária), por isso são pegadinhas que confundem as formas normais. D é simplesmente falsa, pois 1NF não tem relação com tipos de dados numéricos."
+      "explanation": "TRIM com a cláusula LEADING remove apenas as ocorrências do caractere especificado ('0') que aparecem no início da string, parando assim que encontra um caractere diferente — por isso '00045100' vira '45100' (os zeros à esquerda somem, mas os zeros no meio e no fim permanecem intactos). Para remover de ambos os lados usaria BOTH, e para remover só do final, TRAILING. A sintaxe TRIM(LEADING 'char' FROM string) é válida e aceita qualquer caractere único, não só espaço."
     },
     {
       "id": 7,
+      "topic": "functions",
       "context": "",
-      "text": "Which two are components of an Oracle Database instance? (Choose two.)",
-      "type": "multiple",
-      "correctCount": 2,
+      "text": "What happens when you execute SELECT TO_NUMBER('12.345,67', '999,999.99') FROM dual; assuming default NLS settings where '.' is the decimal separator and ',' is the group separator?",
+      "type": "single",
+      "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "System Global Area (SGA)"
+          "text": "It succeeds and returns 12345.67, correctly interpreting the comma as a thousands separator and the period as the decimal point, matching the format model."
         },
         {
           "key": "B",
-          "text": "Datafiles"
+          "text": "It raises an error, because the literal '12.345,67' has the period and comma in swapped positions relative to what the format model '999,999.99' expects under the default NLS settings."
         },
         {
           "key": "C",
-          "text": "Background processes (e.g., PMON, SMON)"
+          "text": "It succeeds and returns 12.34567, treating both punctuation marks as decimal points."
         },
         {
           "key": "D",
-          "text": "Control files"
-        },
-        {
-          "key": "E",
-          "text": "Redo log files"
+          "text": "It succeeds and returns 1234567, silently discarding both punctuation marks from the string."
         }
       ],
       "correct": [
-        "A",
-        "C"
+        "B"
       ],
-      "topic": "fundamentals",
-      "explanation": "Uma instância Oracle é composta pela SGA (área de memória compartilhada) e pelos processos em background como PMON e SMON, que gerenciam a instância em execução (A e C corretas). Datafiles, control files e redo log files pertencem ao banco de dados (database) em si, que é a estrutura física em disco, não à instância — essa é a distinção clássica entre instância (memória + processos) e database (arquivos em disco) que a questão testa."
+      "explanation": "O formato '999,999.99' espera que a vírgula apareça como separador de milhar e o ponto como separador decimal (comportamento padrão sob NLS em inglês-EUA). Como a string de entrada '12.345,67' está no padrão inverso (ponto como milhar, vírgula como decimal — comum em configurações brasileiras), a posição dos separadores não bate com o que o modelo de formato espera, e o TO_NUMBER falha com erro de conversão. Para funcionar, seria necessário ajustar o NLS_NUMERIC_CHARACTERS da sessão ou usar um formato compatível com a entrada."
     },
     {
       "id": 8,
+      "topic": "functions",
       "context": "",
-      "text": "Which ACID property guarantees that a transaction is treated as a single, indivisible unit that either fully completes or has no effect at all?",
+      "text": "What does LPAD('7', 5, '0') return, and what is it commonly used for?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "Consistency"
+          "text": "'00007' — it pads the string on the left with '0' up to a total length of 5, commonly used to format numeric codes with leading zeros."
         },
         {
           "key": "B",
-          "text": "Isolation"
+          "text": "'70000' — it pads the string on the right, since LPAD always appends the pad characters after the original string."
         },
         {
           "key": "C",
-          "text": "Durability"
+          "text": "'7' — LPAD does nothing when the pad character is a single digit."
         },
         {
           "key": "D",
-          "text": "Atomicity"
+          "text": "'00000' — LPAD replaces the entire original string with the pad character repeated to the target length."
         }
       ],
       "correct": [
-        "D"
+        "A"
       ],
-      "topic": "fundamentals",
-      "explanation": "Atomicidade (Atomicity) é a propriedade ACID que garante que uma transação é tratada como uma unidade indivisível: ou todas as suas operações são aplicadas, ou nenhuma é, sem estados parciais. Consistência garante que o banco passa de um estado válido a outro, Isolamento garante que transações concorrentes não interferem entre si, e Durabilidade garante que mudanças confirmadas persistem mesmo após falhas — conceitos relacionados mas distintos do 'tudo ou nada' da atomicidade."
+      "explanation": "LPAD (left-pad) adiciona caracteres de preenchimento à esquerda da string original até que ela atinja o comprimento total especificado — nesse caso, preenche '7' com zeros à esquerda até chegar a 5 caracteres, resultando em '00007'. É comumente usado para formatar códigos numéricos com zeros à esquerda (como códigos de produto). RPAD faria o preenchimento à direita, e nenhuma das alternativas que descrevem substituição total ou preenchimento à direita está correta aqui."
     },
     {
       "id": 9,
-      "context": "Evaluate this WHERE clause:\n\nWHERE salary > 3000 AND department_id = 10 OR department_id = 20",
-      "text": "Which statement is true about how this clause is evaluated, given that AND has higher precedence than OR?",
+      "topic": "functions",
+      "context": "Table PRODUCTS has columns list_price and promo_price.",
+      "text": "What does NULLIF(list_price, promo_price) return when list_price equals promo_price, and when they differ?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "Rows with department_id = 20 are returned regardless of salary"
+          "text": "Returns NULL when the two values are equal, and returns list_price (the first argument) when they differ."
         },
         {
           "key": "B",
-          "text": "OR is evaluated before AND"
+          "text": "Returns NULL when the two values differ, and returns list_price when they are equal."
         },
         {
           "key": "C",
-          "text": "The clause raises a syntax error"
+          "text": "Always returns promo_price regardless of whether the values are equal."
         },
         {
           "key": "D",
-          "text": "Parentheses are required for the clause to compile"
+          "text": "Returns TRUE or FALSE depending on whether the values are equal, similar to a boolean comparison."
         }
       ],
       "correct": [
         "A"
       ],
-      "topic": "select",
-      "explanation": "Como AND tem precedência maior que OR, a cláusula é avaliada como (salary > 3000 AND department_id = 10) OR department_id = 20, ou seja, qualquer linha do departamento 20 é retornada independentemente do salário. B está errada porque inverte a precedência real dos operadores. C e D estão erradas porque a cláusula é sintaticamente válida sem parênteses — eles seriam recomendados por clareza, mas não são obrigatórios."
+      "explanation": "NULLIF(expr1, expr2) compara os dois argumentos: se forem iguais, retorna NULL; se forem diferentes, retorna o valor do primeiro argumento (expr1). Nesse caso, quando list_price = promo_price, o resultado é NULL (útil, por exemplo, pra identificar que não há desconto real); quando os valores diferem, retorna o próprio list_price. NULLIF não retorna um booleano — é equivalente a um CASE WHEN expr1 = expr2 THEN NULL ELSE expr1 END."
     },
     {
       "id": 10,
+      "topic": "functions",
       "context": "",
-      "text": "Which operator is used to concatenate two character strings in Oracle SQL?",
+      "text": "What do CEIL(-4.2) and FLOOR(-4.2) return, respectively?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "+"
+          "text": "-4 and -5 — CEIL rounds toward the nearest integer greater than or equal to the value, and FLOOR rounds toward the nearest integer less than or equal to the value."
         },
         {
           "key": "B",
-          "text": "||"
+          "text": "-5 and -4 — CEIL always rounds down and FLOOR always rounds up, regardless of the sign of the number."
         },
         {
           "key": "C",
-          "text": "&"
+          "text": "-4 and -4 — both functions simply truncate the decimal part, ignoring the sign."
         },
         {
           "key": "D",
-          "text": "There is no concatenation operator in Oracle SQL"
+          "text": "-5 and -5 — both functions round away from zero for negative numbers."
         }
       ],
       "correct": [
-        "B"
+        "A"
       ],
-      "topic": "select",
-      "explanation": "Em Oracle SQL o operador de concatenação de strings é `||`, como em `'Hello' || ' ' || 'World'`. O operador `+` é usado apenas para soma aritmética (não concatenação, diferente de outros bancos como SQL Server), e `&` é usado para variáveis de substituição no SQL*Plus, não para concatenar strings."
+      "explanation": "CEIL retorna o menor inteiro maior ou igual ao valor informado — para -4.2, isso é -4 (não -5, pois -4 é maior que -4.2). FLOOR retorna o maior inteiro menor ou igual ao valor — para -4.2, isso é -5. Com números negativos, é comum confundir 'para cima' e 'para baixo' com a magnitude do número, mas CEIL/FLOOR sempre se referem à posição na reta numérica (maior/menor), não ao valor absoluto."
     },
     {
       "id": 11,
-      "context": "",
-      "text": "Which two statements are true about the ORDER BY clause? (Choose two.)",
-      "type": "multiple",
-      "correctCount": 2,
+      "topic": "functions",
+      "context": "SELECT department_id, COUNT(*), last_name FROM employees GROUP BY department_id;",
+      "text": "Why does this query fail?",
+      "type": "single",
+      "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "It can reference a column alias defined in the SELECT list"
+          "text": "Because last_name is not part of the GROUP BY clause and is not wrapped in an aggregate function, so Oracle cannot determine a single value for last_name within each group."
         },
         {
           "key": "B",
-          "text": "It must always reference a column by name, never by position number"
+          "text": "Because COUNT(*) cannot be combined with GROUP BY in the same SELECT list."
         },
         {
           "key": "C",
-          "text": "By default, NULL values are sorted first in ascending order"
+          "text": "Because department_id must also appear inside an aggregate function when GROUP BY is used."
         },
         {
           "key": "D",
-          "text": "It can sort by a column not included in the SELECT list"
+          "text": "The query does not fail; last_name simply returns the value from an arbitrary row within each group."
         }
       ],
       "correct": [
-        "A",
-        "D"
+        "A"
       ],
-      "topic": "select",
-      "explanation": "ORDER BY pode referenciar um alias de coluna definido no SELECT (A correto) e também pode ordenar por uma coluna que nem aparece na lista de SELECT, desde que ela exista na tabela/consulta (D correto). B está errada porque ORDER BY também aceita posição numérica das colunas (ex: ORDER BY 2). C está errada porque, por padrão em ascendente, valores NULL são ordenados por último, não primeiro (é o contrário do que a alternativa afirma)."
+      "explanation": "Quando uma consulta usa GROUP BY, toda coluna no SELECT list que não seja uma função de agregação precisa aparecer também no GROUP BY — porque cada grupo colapsa múltiplas linhas em uma só, e o Oracle exige saber exatamente qual valor único representar para cada coluna não agregada. Como last_name não está no GROUP BY nem dentro de uma função como MAX(last_name), a consulta falha com erro de coluna não agrupada. COUNT(*) é perfeitamente válido junto de GROUP BY, e department_id não precisa de agregação por já estar no GROUP BY."
     },
     {
       "id": 12,
-      "context": "",
-      "text": "Which clause is used in Oracle 12c+ to limit the number of rows returned by a query, optionally skipping a number of initial rows?",
+      "topic": "functions",
+      "context": "Table INVOICES has column invoice_number defined as VARCHAR2(20), storing purely numeric strings like '00123'.",
+      "text": "What happens when executing SELECT * FROM invoices WHERE invoice_number = 123;",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "LIMIT"
+          "text": "Oracle implicitly converts the numeric literal 123 to the string '123' to match the VARCHAR2 column, so it would only match rows where invoice_number is exactly '123' — a row storing '00123' would NOT match."
         },
         {
           "key": "B",
-          "text": "ROWNUM only"
+          "text": "Oracle implicitly converts the column invoice_number to a number for comparison, so both '123' and '00123' would match since they're numerically equal."
         },
         {
           "key": "C",
-          "text": "OFFSET ... FETCH NEXT ... ROWS ONLY"
+          "text": "The comparison raises an ORA error, because a VARCHAR2 column can never be compared to a numeric literal."
         },
         {
           "key": "D",
-          "text": "TOP"
+          "text": "Oracle always converts numbers to strings by padding with leading zeros to match the column's declared length before comparing."
         }
       ],
       "correct": [
-        "C"
+        "A"
       ],
-      "topic": "select",
-      "explanation": "A partir do Oracle 12c, a sintaxe padrão SQL OFFSET ... FETCH NEXT ... ROWS ONLY permite pular um número de linhas iniciais (OFFSET) e então limitar quantas linhas retornar (FETCH NEXT), geralmente combinada com ORDER BY para resultados previsíveis. LIMIT e TOP não existem na sintaxe do Oracle SQL (são de MySQL/PostgreSQL e SQL Server, respectivamente). Usar apenas ROWNUM funciona para limitar a partir da primeira linha, mas não tem uma forma direta de pular linhas iniciais sem subconsultas adicionais, daí a introdução da cláusula OFFSET/FETCH como solução nativa mais simples."
+      "explanation": "Quando se compara uma coluna VARCHAR2 com um literal numérico, o Oracle aplica conversão implícita convertendo o literal numérico (123) para uma string ('123') para poder compará-lo com a coluna de texto — não o contrário. Por isso a comparação vira, na prática, invoice_number = '123', que é uma comparação de string exata: '00123' não é igual a '123' como strings, mesmo sendo iguais como números, então essa linha não aparece no resultado. Não há erro, e não existe padding automático de zeros nessa conversão."
     },
     {
       "id": 13,
-      "context": "Examine the description of the PRODUCTS table:\n\nName          Null?     Type\n-------------  --------  -------------\nPRODUCT_ID               NUMBER(38)\nPRODUCT_NAME              VARCHAR2(50)\nLIST_PRICE                NUMBER(8,2)",
-      "text": "Which query returns the 4th through 6th most expensive products by LIST_PRICE?",
+      "topic": "joins",
+      "context": "SELECT e.last_name AS employee, m.last_name AS manager FROM employees e JOIN employees m ON e.manager_id = m.employee_id;",
+      "text": "What does this self join accomplish, and what happens to employees who have no manager (manager_id IS NULL)?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "SELECT * FROM products ORDER BY list_price DESC FETCH FIRST 6 ROWS ONLY;"
+          "text": "It pairs each employee with the name of their manager (another row in the same table); employees with manager_id NULL are excluded from the result, since an inner join requires a matching row."
         },
         {
           "key": "B",
-          "text": "SELECT * FROM products ORDER BY list_price DESC OFFSET 3 ROWS FETCH NEXT 3 ROWS ONLY;"
+          "text": "It pairs each employee with all of their subordinates; employees without a manager appear once with a NULL manager name."
         },
         {
           "key": "C",
-          "text": "SELECT * FROM products ORDER BY list_price DESC OFFSET 4 ROWS FETCH NEXT 6 ROWS ONLY;"
+          "text": "It raises an error, because a table cannot be joined to itself in a single query."
         },
         {
           "key": "D",
-          "text": "SELECT * FROM products WHERE ROWNUM BETWEEN 4 AND 6 ORDER BY list_price DESC;"
+          "text": "It returns every possible combination of employees regardless of the manager_id relationship, since self joins ignore the ON clause."
         }
       ],
       "correct": [
-        "B"
+        "A"
       ],
-      "topic": "select",
-      "explanation": "OFFSET 3 ROWS pula as 3 primeiras linhas (os 3 produtos mais caros) e FETCH NEXT 3 ROWS ONLY retorna as próximas 3, ou seja, exatamente as posições 4ª a 6ª (B correto). C está errada porque pula 4 linhas e busca 6, trazendo as posições 5 a 10. A traz apenas as 6 primeiras (posições 1-6), e D usa ROWNUM de forma incorreta, pois ROWNUM é atribuído antes do ORDER BY ser aplicado, então 'WHERE ROWNUM BETWEEN 4 AND 6' nunca retorna linhas (ROWNUM sempre começa em 1 e cresce sequencialmente, não pode pular direto para 4)."
+      "explanation": "Um self join usa aliases diferentes (e, m) para tratar a mesma tabela como se fossem duas tabelas distintas, permitindo relacionar cada funcionário (e) ao seu próprio gerente (m), que também é um funcionário. Como esse é um INNER JOIN, funcionários cujo manager_id é NULL (tipicamente o topo da hierarquia, sem gerente) não encontram nenhuma linha correspondente em m e, portanto, são excluídos do resultado — para incluí-los com NULL na coluna de gerente, seria necessário um LEFT JOIN. Tabelas podem sim ser referenciadas a si mesmas com aliases diferentes."
     },
     {
       "id": 14,
-      "context": "",
-      "text": "Which two operators correctly test whether a value falls within an inclusive range or matches one of a list of values? (Choose two.)",
-      "type": "multiple",
-      "correctCount": 2,
+      "topic": "joins",
+      "context": "Table COLORS has 4 rows, table SIZES has 3 rows.",
+      "text": "How many rows does SELECT * FROM colors CROSS JOIN sizes; return, and why?",
+      "type": "single",
+      "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "BETWEEN ... AND ..."
+          "text": "12 rows — a CROSS JOIN produces the Cartesian product, pairing every row of the first table with every row of the second table (4 × 3), with no join condition involved."
         },
         {
           "key": "B",
-          "text": "LIKE"
+          "text": "7 rows — a CROSS JOIN concatenates the two tables' rows one after another (4 + 3)."
         },
         {
           "key": "C",
-          "text": "IN"
+          "text": "3 rows — a CROSS JOIN returns only as many rows as the smaller of the two tables."
         },
         {
           "key": "D",
-          "text": "IS"
+          "text": "0 rows, because CROSS JOIN requires an ON or USING clause, which is missing here, so the query fails."
         }
       ],
       "correct": [
-        "A",
-        "C"
+        "A"
       ],
-      "topic": "select",
-      "explanation": "BETWEEN...AND testa se um valor está dentro de um intervalo inclusivo, e IN testa se um valor corresponde a algum item de uma lista — por isso A e C são as respostas corretas. LIKE serve para comparação de padrões com caracteres curinga (%, _), não para intervalos ou listas, e IS é usado especificamente para testar NULL (IS NULL / IS NOT NULL), não para comparar valores."
+      "explanation": "CROSS JOIN gera o produto cartesiano entre as duas tabelas: cada linha da primeira tabela é combinada com cada linha da segunda tabela, sem nenhuma condição de correspondência — por isso o total de linhas é sempre o produto das quantidades de linhas (4 × 3 = 12), não a soma. CROSS JOIN é o único tipo de join que dispensa propositalmente uma cláusula ON/USING, já que sua finalidade é justamente gerar todas as combinações possíveis."
     },
     {
       "id": 15,
-      "context": "",
-      "text": "Which statement about NULL is true?",
+      "topic": "joins",
+      "context": "SELECT e.last_name, d.department_name FROM employees e FULL OUTER JOIN departments d ON e.department_id = d.department_id;",
+      "text": "What rows does this FULL OUTER JOIN include that a regular INNER JOIN between the same tables would NOT include?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "NULL = NULL evaluates to TRUE"
+          "text": "Employees with no matching department (department_id NULL or not found in departments) AND departments with no employees assigned to them — both appear with NULLs filling in for the missing side."
         },
         {
           "key": "B",
-          "text": "Any arithmetic expression involving NULL evaluates to NULL"
+          "text": "Only employees with no matching department; departments without employees are still excluded, same as an INNER JOIN."
         },
         {
           "key": "C",
-          "text": "NULL can be compared using the = operator"
+          "text": "Only departments with no employees; employees without a department are still excluded, same as an INNER JOIN."
         },
         {
           "key": "D",
-          "text": "The WHERE clause 'column = NULL' returns all rows where column has no value"
+          "text": "Nothing extra — FULL OUTER JOIN and INNER JOIN return identical results whenever an ON condition is specified."
         }
       ],
       "correct": [
-        "B"
+        "A"
       ],
-      "topic": "select",
-      "explanation": "Qualquer operação aritmética envolvendo NULL resulta em NULL, pois NULL representa ausência de valor e se propaga em expressões (B correto). A está errada porque NULL = NULL retorna NULL (desconhecido), nunca TRUE — esse é um erro clássico de quem vem de outras linguagens. C está errada pelo mesmo motivo: o operador = nunca funciona com NULL, é preciso usar IS NULL. D está errada porque 'coluna = NULL' nunca retorna linhas, já que a comparação sempre avalia para NULL/desconhecido, não TRUE."
+      "explanation": "FULL OUTER JOIN combina o comportamento do LEFT JOIN e do RIGHT JOIN simultaneamente: preserva tanto as linhas de employees sem correspondência em departments (preenchendo department_name com NULL) quanto as linhas de departments sem nenhum funcionário associado (preenchendo last_name com NULL) — algo que nem o LEFT nem o RIGHT JOIN sozinhos fariam por completo, e que um INNER JOIN nunca faria, já que este último exige correspondência dos dois lados para incluir a linha."
     },
     {
       "id": 16,
-      "context": "Examine the description of the EMPLOYEES table:\n\nName         Null?     Type\n------------  --------  -------------\nFIRST_NAME              VARCHAR2(20)\nLAST_NAME                VARCHAR2(25)",
-      "text": "Which WHERE clause correctly retrieves employees whose last_name starts with 'S', is followed by exactly two characters, and ends with 'th' (e.g., 'Smith')?",
+      "topic": "joins",
+      "context": "SELECT department_id, last_name FROM employees JOIN departments USING (department_id);",
+      "text": "Why would adding a table prefix to the join column, like SELECT e.department_id, ..., cause an error in a query that uses JOIN ... USING (department_id)?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "WHERE last_name LIKE 'S__th'"
+          "text": "Because the column named in the USING clause becomes a single unqualified column shared by the join, and Oracle does not allow it to be prefixed with a table alias anywhere in the statement."
         },
         {
           "key": "B",
-          "text": "WHERE last_name LIKE 'S%th'"
+          "text": "Because USING can only be used with SELECT *, never with an explicit column list."
         },
         {
           "key": "C",
-          "text": "WHERE last_name = 'S__th'"
+          "text": "Because department_id must be renamed with an alias before it can be referenced anywhere else in the query."
         },
         {
           "key": "D",
-          "text": "WHERE last_name LIKE 'S++th'"
+          "text": "This isn't actually an error — prefixing the USING column with a table alias is always allowed."
         }
       ],
       "correct": [
         "A"
       ],
-      "topic": "select",
-      "explanation": "O padrão LIKE 'S__th' usa dois underscores (_) como curingas de exatamente um caractere cada, casando com 'S' + 2 caracteres quaisquer + 'th', que é exatamente o padrão de 'Smith'. B está errada porque '%' representa zero ou mais caracteres de qualquer tamanho, não exatamente dois. C está errada porque usa '=' (igualdade exata), que exigiria o literal 'S__th' e não ativaria os curingas do LIKE. D está errada porque '+' não é um caractere curinga reconhecido pelo LIKE do Oracle (isso é sintaxe de expressão regular, não de LIKE)."
+      "explanation": "Quando se usa JOIN ... USING (coluna), essa coluna passa a ser tratada como uma única coluna compartilhada entre as duas tabelas na saída da consulta — por isso o Oracle não permite qualificá-la com o prefixo de uma tabela específica (como e.department_id) em nenhuma parte da consulta, incluindo o próprio SELECT list; deve-se referenciar apenas department_id, sem prefixo. Isso contrasta com JOIN ... ON, onde a coluna de junção continua pertencendo a cada tabela separadamente e pode (e geralmente deve) ser qualificada. USING funciona normalmente com listas de colunas explícitas, não só com SELECT *."
     },
     {
       "id": 17,
-      "context": "",
-      "text": "Which clause is logically evaluated before the SELECT list, in the standard order of query processing?",
+      "topic": "joins",
+      "context": "Tables: EMPLOYEES(employee_id, department_id, job_id), DEPARTMENTS(department_id, department_name), JOBS(job_id, job_title).",
+      "text": "Which ANSI join correctly returns each employee's name, department name, and job title?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "ORDER BY"
+          "text": "SELECT e.last_name, d.department_name, j.job_title FROM employees e JOIN departments d ON e.department_id = d.department_id JOIN jobs j ON e.job_id = j.job_id;"
         },
         {
           "key": "B",
-          "text": "WHERE"
+          "text": "SELECT e.last_name, d.department_name, j.job_title FROM employees e, departments d, jobs j;"
         },
         {
           "key": "C",
-          "text": "A HAVING clause used without GROUP BY"
+          "text": "SELECT e.last_name, d.department_name, j.job_title FROM employees e JOIN departments d JOIN jobs j ON e.department_id = d.department_id AND e.job_id = j.job_id;"
         },
         {
           "key": "D",
-          "text": "SELECT list aliases are always evaluated first"
+          "text": "SELECT e.last_name, d.department_name, j.job_title FROM employees e JOIN departments d ON e.department_id = d.department_id, jobs j ON e.job_id = j.job_id;"
         }
       ],
       "correct": [
-        "B"
+        "A"
       ],
-      "topic": "select",
-      "explanation": "Na ordem lógica de processamento de uma consulta SQL, o WHERE é avaliado logo após o FROM e antes da formação da lista do SELECT, filtrando linhas individuais antes de qualquer agregação ou projeção. ORDER BY é a última cláusula processada, depois do SELECT. HAVING sem GROUP BY trata a consulta inteira como um único grupo e é avaliado depois do WHERE. Aliases do SELECT só existem após a lista SELECT ser processada, por isso não podem ser usados no WHERE."
+      "explanation": "A sintaxe ANSI correta encadeia um JOIN por vez, cada um com sua própria cláusula ON logo em seguida: primeiro junta employees com departments pela condição de department_id, depois junta o resultado com jobs pela condição de job_id. A opção B mistura sintaxe antiga (vírgulas) sem nenhuma condição de junção, o que geraria um produto cartesiano entre as três tabelas. C e D têm sintaxe ANSI inválida — não é possível colocar duas tabelas seguidas de um único ON no meio da lista, nem misturar vírgula com ON dessa forma."
     },
     {
       "id": 18,
-      "context": "",
-      "text": "Which two are valid uses of the DISTINCT keyword? (Choose two.)",
-      "type": "multiple",
-      "correctCount": 2,
+      "topic": "joins",
+      "context": "SELECT e.last_name, d.department_name FROM employees e, departments d WHERE e.department_id = d.department_id(+) OR e.last_name = 'King';",
+      "text": "What is wrong with this traditional-syntax outer join query?",
+      "type": "single",
+      "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "SELECT DISTINCT department_id FROM employees;"
+          "text": "The (+) operator cannot be combined with an OR condition in the same WHERE clause — Oracle raises an error, since the outer join condition must be the only condition connecting those two tables (combined only with AND, not OR)."
         },
         {
           "key": "B",
-          "text": "SELECT DISTINCT department_id, job_id FROM employees;"
+          "text": "Nothing is wrong; it correctly returns all employees plus every employee named King, combined via outer join."
         },
         {
           "key": "C",
-          "text": "DISTINCT can be applied to only the first column listed when multiple columns are selected"
+          "text": "The (+) symbol is in the wrong position; it should be placed on e.department_id instead of d.department_id."
         },
         {
           "key": "D",
-          "text": "SELECT department_id, DISTINCT salary FROM employees;"
+          "text": "Traditional outer join syntax cannot be used with the traditional comma-based FROM clause, only with ANSI JOIN syntax."
         }
       ],
       "correct": [
-        "A",
-        "B"
+        "A"
       ],
-      "topic": "select",
-      "explanation": "DISTINCT pode ser aplicado a uma única coluna (A) ou a uma combinação de colunas (B), eliminando linhas duplicadas considerando a combinação completa dos valores selecionados. C está errada porque DISTINCT atua sobre toda a linha de valores selecionados, não apenas a primeira coluna. D está errada porque DISTINCT é uma palavra-chave que vem logo após SELECT e se aplica a toda a lista de colunas — não pode ser colocada no meio da lista antes de uma coluna específica."
+      "explanation": "Uma das restrições da sintaxe tradicional de outer join com (+) é que a condição de junção externa não pode ser combinada com outras condições usando OR — apenas AND é permitido nessa combinação. Usar OR dessa forma na cláusula WHERE faz o Oracle retornar um erro. O (+) está posicionado corretamente do lado da tabela 'opcional' (departments), e a sintaxe tradicional com vírgula é exatamente onde o (+) é utilizado — é a sintaxe ANSI que não usa (+)."
     },
     {
       "id": 19,
-      "context": "Examine this expression:\n\nSELECT NVL(commission_pct, 0) FROM employees;",
-      "text": "What does this expression return for a row where COMMISSION_PCT IS NULL?",
+      "topic": "joins",
+      "context": "SELECT last_name, salary, department_id FROM employees e1 WHERE salary > (SELECT AVG(salary) FROM employees e2 WHERE e2.department_id = e1.department_id);",
+      "text": "What makes this a correlated subquery, and what does it return?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "NULL"
+          "text": "The inner query references e1.department_id from the outer query, so it re-executes once per outer row, comparing each employee's salary to the average salary of their OWN department — returning employees who earn above their department's average."
         },
         {
           "key": "B",
-          "text": "0"
+          "text": "It is correlated only because both queries reference the same table (employees); it executes once total and returns employees earning above the company-wide average salary."
         },
         {
           "key": "C",
-          "text": "An error, because NVL requires matching data types only"
+          "text": "It is not actually correlated, since correlated subqueries require a JOIN clause, and this query only uses WHERE."
         },
         {
           "key": "D",
-          "text": "A blank string"
+          "text": "It returns an error, because a subquery cannot reference a table from the outer query using two different aliases of the same table."
         }
       ],
       "correct": [
-        "B"
+        "A"
       ],
-      "topic": "functions",
-      "explanation": "NVL(commission_pct, 0) substitui o valor por 0 sempre que COMMISSION_PCT for NULL, retornando o segundo argumento nesse caso. A está errada porque justamente o propósito do NVL é evitar que NULL seja propagado. C é uma pegadinha que parece técnica, mas NVL exige apenas que os tipos sejam compatíveis/conversíveis, não idênticos, e não gera erro aqui. D está errada porque o NVL não retorna string vazia, retorna o valor de substituição fornecido (0, do tipo numérico)."
+      "explanation": "Uma subquery é chamada de 'correlacionada' quando ela referencia uma coluna da consulta externa (aqui, e1.department_id) dentro de sua própria condição — isso faz com que, conceitualmente, a subquery seja reavaliada para cada linha da consulta externa, calculando a média de salário apenas do departamento daquela linha específica, não da empresa toda. O resultado são os funcionários que ganham mais que a média do próprio departamento. Referenciar a mesma tabela com aliases diferentes (e1, e2) é exatamente a forma correta e comum de se fazer isso, sem gerar erro."
     },
     {
       "id": 20,
-      "context": "",
-      "text": "Which function returns a different result depending on whether the first argument is NULL or NOT NULL, returning the second argument if NULL and the third if not NULL?",
+      "topic": "joins",
+      "context": "SELECT last_name FROM employees WHERE salary > (SELECT AVG(salary) FROM employees);",
+      "text": "Why is this subquery considered non-correlated, and how many times does it logically execute?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "NVL"
+          "text": "It does not reference any column from the outer query, so it can be evaluated once, independently, before the outer query runs — its single result (company-wide average salary) is then used to filter every outer row."
         },
         {
           "key": "B",
-          "text": "NVL2"
+          "text": "It is non-correlated because it uses AVG(); any subquery using an aggregate function is automatically non-correlated regardless of what it references."
         },
         {
           "key": "C",
-          "text": "NULLIF"
+          "text": "It executes once per row of the outer query, just like a correlated subquery, but returns the same result each time by coincidence."
         },
         {
           "key": "D",
-          "text": "COALESCE"
+          "text": "Non-correlated subqueries are not allowed in a WHERE clause, only in FROM or SELECT clauses."
         }
       ],
       "correct": [
-        "B"
+        "A"
       ],
-      "topic": "functions",
-      "explanation": "NVL2(expr, valor_se_not_null, valor_se_null) é a função que retorna o segundo argumento quando a expressão NÃO é nula, e o terceiro quando É nula — exatamente o comportamento descrito. NVL só aceita dois argumentos (substituto único para NULL). NULLIF compara duas expressões e retorna NULL se forem iguais. COALESCE retorna o primeiro valor não nulo de uma lista, mas não tem essa lógica binária com posições fixas para NULL/NOT NULL."
+      "explanation": "Uma subquery é não-correlacionada quando ela não depende de nenhuma coluna da consulta externa — ela pode ser resolvida de forma completamente independente, uma única vez, antes mesmo da consulta externa começar a filtrar linhas. Nesse caso, a média de salário da empresa toda é calculada uma vez, e esse valor único é reutilizado para comparar com o salário de cada funcionário. O uso de AVG() não define por si só se é correlacionada ou não — o que importa é se há referência a uma coluna da consulta externa. Subqueries não-correlacionadas são comuns e válidas em WHERE."
     },
     {
       "id": 21,
-      "context": "Evaluate:\n\nSELECT NULLIF(LENGTH('SMITH'), LENGTH('KING')) FROM dual;\n\nLENGTH('SMITH') = 5 and LENGTH('KING') = 4.",
-      "text": "What is returned by this expression?",
+      "topic": "joins",
+      "context": "SELECT dept_avg.department_id, dept_avg.avg_salary FROM (SELECT department_id, AVG(salary) AS avg_salary FROM employees GROUP BY department_id) dept_avg WHERE dept_avg.avg_salary > 8000;",
+      "text": "What is the role of the subquery inside the FROM clause here, and is the alias dept_avg required?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "NULL"
+          "text": "It's an inline view — a subquery treated as a temporary, named result set that the outer query can select from and filter; the alias (dept_avg) IS required for a subquery used this way in the FROM clause."
         },
         {
           "key": "B",
-          "text": "5"
+          "text": "It's a correlated subquery, and the alias is optional since Oracle would default to naming it 'FROM_SUBQUERY' automatically."
         },
         {
           "key": "C",
-          "text": "4"
+          "text": "It's invalid syntax — subqueries are never allowed inside a FROM clause, only in WHERE or SELECT."
         },
         {
           "key": "D",
-          "text": "An error"
+          "text": "It's equivalent to a CHECK constraint definition, used only during table creation, not in a SELECT statement."
         }
       ],
       "correct": [
-        "B"
+        "A"
       ],
-      "topic": "functions",
-      "explanation": "NULLIF(expr1, expr2) retorna NULL se as expressões forem iguais, e retorna expr1 caso contrário. Como LENGTH('SMITH')=5 e LENGTH('KING')=4 são diferentes, a função retorna o primeiro argumento, que é 5. A alternativa A (NULL) seria o resultado apenas se os dois comprimentos fossem iguais, o que não é o caso aqui."
+      "explanation": "Uma subquery usada no lugar de uma tabela dentro da cláusula FROM é chamada de 'inline view' (visão embutida) — ela funciona como uma tabela temporária e nomeada que a consulta externa pode filtrar e selecionar normalmente, aqui aplicando o filtro avg_salary > 8000 já sobre o resultado agregado. Diferente de subqueries em WHERE, uma inline view em FROM exige um alias (dept_avg) para que suas colunas possam ser referenciadas pela consulta externa — sem o alias, a consulta geraria erro de sintaxe."
     },
     {
       "id": 22,
-      "context": "",
-      "text": "Which function returns the first non-null expression in a list of expressions?",
+      "topic": "joins",
+      "context": "SELECT last_name, salary FROM employees WHERE salary > ALL (SELECT salary FROM employees WHERE department_id = 30);",
+      "text": "What does the condition salary > ALL (...) require to be TRUE for a given row?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "NVL"
+          "text": "The employee's salary must be greater than every single salary returned by the subquery (effectively, greater than the maximum salary in department 30)."
         },
         {
           "key": "B",
-          "text": "COALESCE"
+          "text": "The employee's salary must be greater than at least one salary returned by the subquery (equivalent to > ANY)."
         },
         {
           "key": "C",
-          "text": "NULLIF"
+          "text": "The condition is only satisfied if the subquery returns exactly one row; otherwise it raises an error, like a plain scalar comparison."
         },
         {
           "key": "D",
-          "text": "DECODE"
+          "text": "ALL requires the salary to match every value exactly, functioning like an equality check across the whole list."
         }
       ],
       "correct": [
-        "B"
+        "A"
       ],
-      "topic": "functions",
-      "explanation": "COALESCE retorna a primeira expressão não nula dentre uma lista de expressões fornecidas como argumentos, podendo aceitar mais de duas expressões (diferente do NVL, que aceita só duas). NVL também trata NULL mas só compara um valor com um substituto fixo. NULLIF faz o oposto (retorna NULL quando os valores são iguais). DECODE faz comparações de igualdade ponto a ponto, não busca o primeiro não nulo de uma lista."
+      "explanation": "O operador ALL exige que a condição seja verdadeira em comparação com todos os valores retornados pela subquery — então salary > ALL (lista) só é verdadeiro se o salário for maior que o maior valor da lista (o máximo), já que superar o maior valor implica superar todos os outros também. Isso é diferente de ANY/SOME, que exige ser verdadeiro em relação a pelo menos um valor da lista (bastaria superar o menor). ALL/ANY aceitam subqueries com múltiplas linhas sem exigir uma linha só, ao contrário de uma comparação escalar simples."
     },
     {
       "id": 23,
-      "context": "",
-      "text": "Which two statements are true about the CASE expression? (Choose two.)",
-      "type": "multiple",
-      "correctCount": 2,
+      "topic": "joins",
+      "context": "Table CUSTOMERS(customer_id, email). Some emails are duplicated across different customer_id values.",
+      "text": "Which self join correctly identifies pairs of customer_id values that share the same email address (without pairing a row with itself)?",
+      "type": "single",
+      "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "It can be used in the SELECT list to return different values based on conditions"
+          "text": "SELECT a.customer_id, b.customer_id, a.email FROM customers a JOIN customers b ON a.email = b.email AND a.customer_id < b.customer_id;"
         },
         {
           "key": "B",
-          "text": "It is functionally similar to an IF-THEN-ELSE construct"
+          "text": "SELECT a.customer_id, b.customer_id, a.email FROM customers a JOIN customers b ON a.email = b.email;"
         },
         {
           "key": "C",
-          "text": "It can only compare a single column to literal values, never to expressions"
+          "text": "SELECT customer_id, email FROM customers GROUP BY customer_id, email HAVING COUNT(*) > 1;"
         },
         {
           "key": "D",
-          "text": "A CASE expression cannot include an ELSE branch"
+          "text": "SELECT a.customer_id FROM customers a WHERE a.email = a.email;"
         }
       ],
       "correct": [
-        "A",
-        "B"
+        "A"
       ],
-      "topic": "functions",
-      "explanation": "CASE funciona como um IF-THEN-ELSE dentro do SQL, permitindo retornar valores diferentes conforme condições avaliadas no SELECT, UPDATE, ORDER BY etc (A e B corretas). C está errada porque CASE pode comparar qualquer expressão, não apenas uma única coluna contra literais — pode usar CASE WHEN condição_complexa THEN .... D está errada porque o ELSE é opcional, mas pode sim ser incluído (e quando omitido, retorna NULL se nenhuma condição bater, o que não significa que seja proibido usá-lo)."
+      "explanation": "Um self join comparando apenas a.email = b.email pareraria cada linha consigo mesma (já que o e-mail é obviamente igual ao próprio) além de gerar cada par duplicado duas vezes (uma vez como a-b, outra como b-a). Adicionar a condição a.customer_id < b.customer_id resolve os dois problemas de uma vez: exclui o pareamento de uma linha com ela mesma (um id nunca é menor que ele mesmo) e garante que cada par apareça uma única vez. A opção B traria pares duplicados e auto-pareamentos; C não retorna os pares de ids relacionados, só agrupa por email; D é um teste trivial sempre verdadeiro."
     },
     {
       "id": 24,
-      "context": "Evaluate:\n\nSELECT DECODE(job_id, 'IT_PROG', 'Programmer', 'SA_REP', 'Sales', 'Other') FROM employees;",
-      "text": "For a row where JOB_ID is 'SA_REP', what is returned?",
+      "topic": "joins",
+      "context": "Tables EMPLOYEES and DEPARTMENTS share columns department_id AND manager_id (with different meanings).",
+      "text": "How does employees JOIN departments USING (department_id) behave differently from employees NATURAL JOIN departments in this scenario?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "'IT_PROG'"
+          "text": "JOIN USING lets you explicitly choose department_id as the only join column, ignoring manager_id entirely, while NATURAL JOIN automatically joins on every same-named column (department_id AND manager_id), which is the riskier, less controllable behavior."
         },
         {
           "key": "B",
-          "text": "'Programmer'"
+          "text": "JOIN USING and NATURAL JOIN always produce identical results, since USING simply auto-detects the same columns NATURAL JOIN would use."
         },
         {
           "key": "C",
-          "text": "'Sales'"
+          "text": "JOIN USING requires listing every common column explicitly, so it would also be forced to include manager_id, just like NATURAL JOIN."
         },
         {
           "key": "D",
-          "text": "'Other'"
+          "text": "NATURAL JOIN is safer than JOIN USING because it lets the developer pick exactly which column to join on."
         }
       ],
       "correct": [
-        "C"
+        "A"
       ],
-      "topic": "functions",
-      "explanation": "DECODE compara o valor de JOB_ID sequencialmente com cada par (valor, resultado): para 'SA_REP', a segunda comparação bate, retornando 'Sales'. As alternativas A e B correspondem ao par 'IT_PROG'/'Programmer', que não é o caso de um JOB_ID = 'SA_REP'. D só seria retornado se JOB_ID não correspondesse a nenhum dos valores listados, o que não é o caso aqui."
+      "explanation": "A diferença fundamental é o controle: com JOIN ... USING (department_id), o desenvolvedor escolhe explicitamente qual coluna em comum será usada para a junção, ignorando deliberadamente outras colunas de mesmo nome (como manager_id) mesmo que existam. Já NATURAL JOIN não dá esse controle — ele automaticamente usa todas as colunas de mesmo nome como condição de junção, o que aqui incluiria indevidamente manager_id. Por isso USING é geralmente preferível quando há mais de uma coluna com nome coincidente mas significados diferentes."
     },
     {
       "id": 25,
-      "context": "",
-      "text": "Which function returns the position of a substring within a string, or 0 if it is not found?",
+      "topic": "select",
+      "context": "SELECT department_id, job_id, SUM(salary) FROM employees GROUP BY ROLLUP(department_id, job_id);",
+      "text": "What extra rows does ROLLUP add to the normal GROUP BY department_id, job_id result?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "SUBSTR"
+          "text": "Subtotal rows for each department_id (with job_id shown as NULL), plus one grand total row (with both department_id and job_id shown as NULL)."
         },
         {
           "key": "B",
-          "text": "INSTR"
+          "text": "Only a single grand total row at the end, with no intermediate subtotals per department."
         },
         {
           "key": "C",
-          "text": "LENGTH"
+          "text": "One extra row per unique job_id value showing totals across all departments, but no overall grand total."
         },
         {
           "key": "D",
-          "text": "REPLACE"
+          "text": "ROLLUP does not add any extra rows; it only changes the sort order of the existing groups."
         }
       ],
       "correct": [
-        "B"
+        "A"
       ],
-      "topic": "functions",
-      "explanation": "INSTR localiza a posição (índice) onde uma substring começa dentro de uma string, retornando 0 quando não encontra correspondência. SUBSTR extrai uma parte da string a partir de uma posição, mas não localiza posições. LENGTH apenas retorna o tamanho da string. REPLACE substitui ocorrências de uma substring por outra, mas não retorna posições."
+      "explanation": "ROLLUP cria níveis hierárquicos de subtotal seguindo a ordem dos argumentos: para ROLLUP(department_id, job_id), além dos grupos normais (department_id + job_id), ele adiciona uma linha de subtotal por department_id (somando todos os job_id daquele departamento, com job_id aparecendo como NULL nessa linha) e, por fim, uma única linha de total geral (com department_id e job_id ambos NULL). É uma extensão do GROUP BY, não uma simples reordenação — e o total geral sempre é incluído."
     },
     {
       "id": 26,
-      "context": "Examine this expression:\n\nSELECT SUBSTR('ORACLE DATABASE', 8) FROM dual;",
-      "text": "What is the result of this expression?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "'ORACLE'"
-        },
-        {
-          "key": "B",
-          "text": "'DATABASE'"
-        },
-        {
-          "key": "C",
-          "text": "'ATABASE'"
-        },
-        {
-          "key": "D",
-          "text": "An error, because SUBSTR requires three arguments"
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "topic": "functions",
-      "explanation": "SUBSTR('ORACLE DATABASE', 8) extrai a substring a partir da 8ª posição (contando 'O'=1) até o fim da string; a posição 8 corresponde ao 'D' de DATABASE, então o resultado é 'DATABASE'. A alternativa A corresponde aos 6 primeiros caracteres, não ao uso de SUBSTR com início em 8. C estaria correta apenas se o início fosse a posição 9. D está errada porque SUBSTR aceita dois ou três argumentos — o terceiro (comprimento) é opcional; quando omitido, retorna até o final da string."
-    },
-    {
-      "id": 27,
-      "context": "",
-      "text": "Which function returns the number of months between two dates?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "ADD_MONTHS"
-        },
-        {
-          "key": "B",
-          "text": "MONTHS_BETWEEN"
-        },
-        {
-          "key": "C",
-          "text": "NEXT_DAY"
-        },
-        {
-          "key": "D",
-          "text": "LAST_DAY"
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "topic": "functions",
-      "explanation": "MONTHS_BETWEEN(data1, data2) retorna o número de meses (podendo ser fracionário) entre duas datas. ADD_MONTHS soma um número de meses a uma data, não calcula diferença. NEXT_DAY retorna a próxima ocorrência de um dia da semana especificado. LAST_DAY retorna o último dia do mês de uma data, nenhuma dessas calcula a diferença em meses entre duas datas."
-    },
-    {
-      "id": 28,
-      "context": "Evaluate:\n\nSELECT ROUND(157.489, 1), TRUNC(157.489, 1) FROM dual;",
-      "text": "What are the two results, in order?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "157.5 and 157.4"
-        },
-        {
-          "key": "B",
-          "text": "157.4 and 157.5"
-        },
-        {
-          "key": "C",
-          "text": "157.5 and 157.5"
-        },
-        {
-          "key": "D",
-          "text": "157.4 and 157.4"
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "topic": "functions",
-      "explanation": "ROUND(157.489, 1) arredonda para 1 casa decimal seguindo a regra de arredondamento padrão (o dígito seguinte, 8, arredonda o 4 para cima), resultando em 157.5. TRUNC(157.489, 1) apenas trunca (corta) a partir da 1ª casa decimal sem arredondar, resultando em 157.4. As demais alternativas invertem ou erram esses resultados, confundindo o comportamento de arredondamento (ROUND) com o de truncamento puro (TRUNC)."
-    },
-    {
-      "id": 29,
-      "context": "",
-      "text": "Which two statements are true about group functions such as SUM, AVG, and COUNT? (Choose two.)",
-      "type": "multiple",
-      "correctCount": 2,
-      "options": [
-        {
-          "key": "A",
-          "text": "They ignore NULL values by default, except for COUNT(*)"
-        },
-        {
-          "key": "B",
-          "text": "They can be used directly in a WHERE clause to filter individual rows"
-        },
-        {
-          "key": "C",
-          "text": "They can be used in a HAVING clause to filter grouped results"
-        },
-        {
-          "key": "D",
-          "text": "COUNT(*) ignores rows where all columns are NULL"
-        }
-      ],
-      "correct": [
-        "A",
-        "C"
-      ],
-      "topic": "functions",
-      "explanation": "Funções de grupo como SUM, AVG e COUNT(coluna) ignoram automaticamente valores NULL no cálculo, exceto COUNT(*), que conta todas as linhas independentemente de haver colunas NULL (A correto). HAVING é a cláusula correta para filtrar resultados já agregados/agrupados, diferente do WHERE, que filtra linhas individuais antes do agrupamento (C correto, B errado). D está errada porque COUNT(*) conta todas as linhas da tabela/grupo, mesmo aquelas com todas as colunas NULL, já que conta a existência da linha, não valores de colunas específicas."
-    },
-    {
-      "id": 30,
-      "context": "",
-      "text": "Which type of join returns only the rows that have matching values in both joined tables?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "LEFT OUTER JOIN"
-        },
-        {
-          "key": "B",
-          "text": "INNER JOIN"
-        },
-        {
-          "key": "C",
-          "text": "FULL OUTER JOIN"
-        },
-        {
-          "key": "D",
-          "text": "CROSS JOIN"
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "topic": "joins",
-      "explanation": "INNER JOIN retorna apenas as linhas que possuem correspondência em ambas as tabelas com base na condição de junção, descartando linhas sem par. LEFT OUTER JOIN mantém todas as linhas da tabela à esquerda mesmo sem correspondência. FULL OUTER JOIN mantém linhas sem correspondência de ambos os lados. CROSS JOIN produz o produto cartesiano entre as tabelas, sem nenhuma condição de correspondência."
-    },
-    {
-      "id": 31,
-      "context": "",
-      "text": "Which join returns all rows from the left table, plus matching rows from the right table, with NULLs for non-matching right-table columns?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "RIGHT OUTER JOIN"
-        },
-        {
-          "key": "B",
-          "text": "LEFT OUTER JOIN"
-        },
-        {
-          "key": "C",
-          "text": "INNER JOIN"
-        },
-        {
-          "key": "D",
-          "text": "NATURAL JOIN"
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "topic": "joins",
-      "explanation": "LEFT OUTER JOIN preserva todas as linhas da tabela à esquerda (a citada primeiro) e traz os valores correspondentes da tabela à direita quando existem, preenchendo com NULL quando não há correspondência. RIGHT OUTER JOIN faz o inverso, preservando a tabela à direita. INNER JOIN descarta qualquer linha sem correspondência em ambos os lados. NATURAL JOIN é um tipo de junção baseada em colunas de mesmo nome, não define por si só o comportamento outer/inner."
-    },
-    {
-      "id": 32,
-      "context": "",
-      "text": "Which type of join combines every row of one table with every row of another table, producing a Cartesian product?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "NATURAL JOIN"
-        },
-        {
-          "key": "B",
-          "text": "CROSS JOIN"
-        },
-        {
-          "key": "C",
-          "text": "SELF JOIN"
-        },
-        {
-          "key": "D",
-          "text": "FULL OUTER JOIN"
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "topic": "joins",
-      "explanation": "CROSS JOIN combina cada linha de uma tabela com cada linha da outra, sem nenhuma condição de correspondência, gerando o produto cartesiano (linhas_tabela1 × linhas_tabela2). NATURAL JOIN junta automaticamente por colunas de mesmo nome, SELF JOIN é uma tabela unida a si mesma (mas ainda com condição de junção), e FULL OUTER JOIN preserva linhas não correspondentes de ambos os lados, mas ainda usa uma condição de junção, não o produto cartesiano completo."
-    },
-    {
-      "id": 33,
-      "context": "EMPLOYEES(employee_id, department_id)\nDEPARTMENTS(department_id, department_name)\n\nBoth tables have a column named DEPARTMENT_ID with the same data type.",
-      "text": "Which join automatically joins the two tables using all columns with the same name and compatible data type, without an ON or USING clause?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "NATURAL JOIN"
-        },
-        {
-          "key": "B",
-          "text": "CROSS JOIN"
-        },
-        {
-          "key": "C",
-          "text": "INNER JOIN ... ON"
-        },
-        {
-          "key": "D",
-          "text": "SELF JOIN"
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "topic": "joins",
-      "explanation": "NATURAL JOIN identifica automaticamente todas as colunas com o mesmo nome e tipo compatível entre as tabelas (aqui, DEPARTMENT_ID) e as usa como condição de junção, sem precisar de ON ou USING. CROSS JOIN não usa nenhuma condição de correspondência. INNER JOIN...ON exige que a condição seja especificada manualmente. SELF JOIN é apenas uma tabela unida a ela mesma, não implica junção automática por nome de coluna."
-    },
-    {
-      "id": 34,
-      "context": "",
-      "text": "Which two statements are true about a multiple-row subquery used with the IN operator? (Choose two.)",
-      "type": "multiple",
-      "correctCount": 2,
-      "options": [
-        {
-          "key": "A",
-          "text": "IN compares a value to any of the values returned by the subquery"
-        },
-        {
-          "key": "B",
-          "text": "A multiple-row subquery used with IN must use ANY or ALL instead"
-        },
-        {
-          "key": "C",
-          "text": "NULL values returned by the subquery used with NOT IN can cause the outer query to return no rows"
-        },
-        {
-          "key": "D",
-          "text": "A multiple-row subquery cannot be used in a WHERE clause"
-        }
-      ],
-      "correct": [
-        "A",
-        "C"
-      ],
-      "topic": "joins",
-      "explanation": "O operador IN, com uma subconsulta de múltiplas linhas, compara o valor da linha externa com qualquer um dos valores retornados pela subconsulta (A correto). Uma pegadinha clássica do Oracle é que, se a subconsulta usada com NOT IN retornar algum valor NULL, a comparação inteira se torna indeterminada (NULL) para todas as linhas, fazendo a consulta externa não retornar nenhuma linha (C correto) — por isso é recomendado usar NOT EXISTS em vez de NOT IN quando há risco de NULLs. B está errada porque IN já lida nativamente com múltiplas linhas, não precisa de ANY/ALL. D está errada porque subconsultas multilinha são perfeitamente válidas em WHERE quando usadas com operadores apropriados como IN."
-    },
-    {
-      "id": 35,
-      "context": "Examine this subquery:\n\nSELECT employee_id, salary FROM employees\nWHERE salary > (SELECT AVG(salary) FROM employees WHERE department_id = 50);",
+      "topic": "select",
+      "context": "SELECT manager_id, COUNT(*) FROM employees GROUP BY manager_id HAVING COUNT(*) >= 3;",
       "text": "What does this query return?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "Employees whose salary is greater than the average salary of department 50"
+          "text": "Each manager_id that has at least 3 employees reporting to them, along with the count of how many."
         },
         {
           "key": "B",
-          "text": "Only employees in department 50"
+          "text": "Every manager_id along with their employee count, with HAVING acting only as a display order hint rather than a filter."
         },
         {
           "key": "C",
-          "text": "An error, because the subquery returns multiple rows"
+          "text": "It fails, because HAVING cannot use COUNT(*) — it must reference a column named explicitly in the GROUP BY."
         },
         {
           "key": "D",
-          "text": "The average salary of all employees"
+          "text": "Only the single manager_id with the highest employee count, since HAVING with >= always returns just the top row."
         }
       ],
       "correct": [
         "A"
       ],
-      "topic": "joins",
-      "explanation": "A subconsulta `(SELECT AVG(salary) FROM employees WHERE department_id = 50)` retorna um único valor escalar (a média salarial do departamento 50), permitindo seu uso com o operador `>` na consulta externa, que então retorna QUALQUER funcionário (de qualquer departamento) cujo salário seja maior que essa média. B está errada porque a consulta não filtra por department_id na consulta externa. C está errada porque a subconsulta retorna apenas uma linha (resultado de AVG), não múltiplas. D está errada porque apenas a subconsulta calcularia a média, mas a consulta externa retorna employee_id e salary dos funcionários que atendem à condição."
+      "explanation": "HAVING filtra os grupos já formados pelo GROUP BY, mantendo apenas aqueles que satisfazem a condição — aqui, apenas os manager_id cujo COUNT(*) (quantidade de funcionários naquele grupo) seja maior ou igual a 3. HAVING pode perfeitamente usar uma função de agregação como COUNT(*) diretamente, sem precisar que ela apareça no GROUP BY, e não está restrito a retornar uma única linha — retorna todos os grupos que atendem à condição."
+    },
+    {
+      "id": 27,
+      "topic": "select",
+      "context": "SELECT salary * 12 AS \"Annual Salary\" FROM employees;",
+      "text": "Why are double quotes required around Annual Salary in this column alias?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Because the alias contains a space, which is not allowed in an unquoted identifier; double quotes let Oracle treat it as a single, case-sensitive identifier exactly as typed."
+        },
+        {
+          "key": "B",
+          "text": "Because AS always requires double quotes around any alias, regardless of its content."
+        },
+        {
+          "key": "C",
+          "text": "Double quotes are never required for aliases; they were added here purely for decorative/documentation purposes with no functional effect."
+        },
+        {
+          "key": "D",
+          "text": "Double quotes are used here to convert the alias into a string literal that gets concatenated with the salary value."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Identificadores em Oracle SQL sem aspas duplas não podem conter espaços nem caracteres especiais, e são normalizados para maiúsculas. Ao colocar o alias entre aspas duplas (\"Annual Salary\"), o Oracle permite espaço no meio e preserva exatamente a capitalização como foi digitada (case-sensitive) — sem as aspas, 'Annual Salary' geraria erro de sintaxe por causa do espaço. As aspas duplas não têm relação com concatenação de string (isso seria aspas simples para literais)."
+    },
+    {
+      "id": 28,
+      "topic": "select",
+      "context": "SELECT last_name, salary FROM employees ORDER BY salary DESC FETCH FIRST 5 ROWS ONLY;",
+      "text": "Why is FETCH FIRST n ROWS ONLY generally more reliable than using WHERE ROWNUM <= 5 to get the top 5 highest-paid employees?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "FETCH FIRST is applied after the ORDER BY has fully sorted the result, guaranteeing the top 5 by salary; ROWNUM is assigned to rows as they are retrieved (often before sorting completes), so WHERE ROWNUM <= 5 combined with ORDER BY does not reliably guarantee the actual top 5 without wrapping it in a subquery first."
+        },
+        {
+          "key": "B",
+          "text": "FETCH FIRST and ROWNUM behave identically in every case; there's no practical difference between them."
+        },
+        {
+          "key": "C",
+          "text": "ROWNUM is more reliable because it's evaluated after ORDER BY, while FETCH FIRST is evaluated before sorting."
+        },
+        {
+          "key": "D",
+          "text": "FETCH FIRST only works with ORDER BY ASC, never with DESC, unlike ROWNUM which works with both."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "A cláusula row-limiting FETCH FIRST n ROWS ONLY é aplicada depois que a ordenação (ORDER BY) já foi totalmente resolvida, garantindo que as 5 linhas retornadas sejam realmente as de maior salário. Já ROWNUM é atribuído às linhas conforme elas são processadas pelo mecanismo de execução, o que pode acontecer antes da ordenação ser aplicada — por isso, um WHERE ROWNUM <= 5 direto numa consulta com ORDER BY não garante pegar as 5 linhas com maior salário sem antes envolver a consulta ordenada numa subquery. FETCH FIRST funciona igualmente com ASC ou DESC."
+    },
+    {
+      "id": 29,
+      "topic": "select",
+      "context": "",
+      "text": "What is the result of SELECT 'Salary: ' || 5000 * 1.1 FROM dual;, and why?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It raises an error, because the concatenation operator || has lower precedence than *, so Oracle attempts to evaluate 'Salary: ' || 5000 first (producing a string) and then tries to multiply that string by 1.1, which fails for a non-numeric string."
+        },
+        {
+          "key": "B",
+          "text": "It returns 'Salary: 5500', because Oracle first computes 5000 * 1.1 and then concatenates the result with the string, since arithmetic operators have higher precedence than concatenation."
+        },
+        {
+          "key": "C",
+          "text": "It returns 'Salary: 50001.1', treating the * as if it were another concatenation operator."
+        },
+        {
+          "key": "D",
+          "text": "It returns 5500 as a pure number, silently discarding the string literal."
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "O operador de multiplicação (*) tem precedência maior que o operador de concatenação (||) — isso segue a mesma lógica de precedência aritmética usual, então o Oracle calcula primeiro 5000 * 1.1 = 5500, e só depois concatena o resultado numérico (implicitamente convertido para string) com 'Salary: ', produzindo 'Salary: 5500'. Não há erro, e o * não se comporta como concatenação — operadores aritméticos sempre são avaliados antes de ||."
+    },
+    {
+      "id": 30,
+      "topic": "select",
+      "context": "",
+      "text": "Both SELECT DISTINCT department_id FROM employees; and SELECT department_id FROM employees GROUP BY department_id; return the same set of distinct department_id values. What is a key capability that GROUP BY has here that plain DISTINCT does not?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "GROUP BY allows you to also include aggregate functions (like COUNT(*) or AVG(salary)) computed per group in the same SELECT list, something DISTINCT alone cannot do meaningfully."
+        },
+        {
+          "key": "B",
+          "text": "GROUP BY always executes faster than DISTINCT in every possible case, regardless of indexing or data volume."
+        },
+        {
+          "key": "C",
+          "text": "DISTINCT cannot be used together with ORDER BY, while GROUP BY can."
+        },
+        {
+          "key": "D",
+          "text": "GROUP BY removes NULL values from the result automatically, while DISTINCT keeps a single NULL row."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Embora ambas as formas eliminem duplicatas de department_id de maneira equivalente nesse caso simples, GROUP BY tem uma capacidade que DISTINCT sozinho não oferece de forma útil: permitir combinar essas colunas de agrupamento com funções de agregação (COUNT(*), AVG(salary), etc.) calculadas para cada grupo na mesma consulta. DISTINCT tanto pode ser usado com ORDER BY quanto trata um único NULL como um valor distinto igual a qualquer outro (não os remove)."
+    },
+    {
+      "id": 31,
+      "topic": "select",
+      "context": "SELECT last_name, salary FROM employees ORDER BY salary * 12;",
+      "text": "Is it valid to ORDER BY an expression (salary * 12) that does not appear anywhere in the SELECT list?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Yes — ORDER BY can reference any column or valid expression from the tables in the FROM clause, even if it is not included in the SELECT list, since sorting is applied to the underlying data, not just the displayed columns."
+        },
+        {
+          "key": "B",
+          "text": "No — ORDER BY can only reference columns or expressions that are explicitly listed in the SELECT clause."
+        },
+        {
+          "key": "C",
+          "text": "Yes, but only if the expression is wrapped in the same aggregate function used in the SELECT list."
+        },
+        {
+          "key": "D",
+          "text": "No — this would need to be rewritten as ORDER BY 2 (positional reference) since salary * 12 is not a selected column."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "ORDER BY é aplicado sobre os dados da tabela de origem, não apenas sobre as colunas exibidas no SELECT list — por isso é perfeitamente válido ordenar por uma expressão (como salary * 12) mesmo que ela não apareça no SELECT, desde que a expressão seja válida no contexto da(s) tabela(s) do FROM. Isso é diferente de WHERE, que não pode referenciar aliases do SELECT list, mas ORDER BY roda depois e tem mais liberdade. Não é necessário usar posição numérica nem replicar a expressão no SELECT."
+    },
+    {
+      "id": 32,
+      "topic": "select",
+      "context": "SELECT salary * 12 AS annual_salary FROM employees WHERE annual_salary > 100000;",
+      "text": "Why does this query fail with an invalid identifier error on annual_salary in the WHERE clause?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "WHERE is logically evaluated before the SELECT list's aliases are resolved, so column aliases defined in SELECT are not yet available for use inside WHERE — the full expression (salary * 12) would need to be repeated in WHERE instead."
+        },
+        {
+          "key": "B",
+          "text": "annual_salary is a reserved keyword in Oracle SQL and cannot be used as an alias at all."
+        },
+        {
+          "key": "C",
+          "text": "WHERE can reference SELECT aliases just fine; the real problem is that salary * 12 is not a valid arithmetic expression."
+        },
+        {
+          "key": "D",
+          "text": "The alias needs to be wrapped in double quotes in the WHERE clause to be recognized."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "A ordem lógica de processamento de uma consulta SQL avalia primeiro FROM, depois WHERE, e só depois disso o SELECT list (onde os aliases são definidos) — por isso, quando o WHERE está sendo avaliado, o alias annual_salary ainda não existe/não foi resolvido, resultando em erro de identificador inválido. A solução é repetir a expressão completa no WHERE (WHERE salary * 12 > 100000) ou usar essa lógica numa subquery/inline view onde o alias já esteja materializado. Isso não tem relação com palavras reservadas nem com aspas duplas."
+    },
+    {
+      "id": 33,
+      "topic": "select",
+      "context": "Table PROMOTIONS has a column code containing values like 'SALE_10', 'SALE_20', 'SALEX30'.",
+      "text": "Which condition correctly matches only codes containing a literal underscore character right after 'SALE' (i.e., matches 'SALE_10' and 'SALE_20', but not 'SALEX30')?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "WHERE code LIKE 'SALE\\_%' ESCAPE '\\'"
+        },
+        {
+          "key": "B",
+          "text": "WHERE code LIKE 'SALE_%'"
+        },
+        {
+          "key": "C",
+          "text": "WHERE code LIKE 'SALE#_%'"
+        },
+        {
+          "key": "D",
+          "text": "WHERE code = 'SALE_%'"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "No padrão LIKE, o underscore (_) é um curinga que representa qualquer caractere único — por isso 'SALE_%' (opção B) também bateria com 'SALEX30', já que o _ aceitaria o 'X'. Para forçar o underscore a ser interpretado literalmente, é necessário 'escapá-lo' com um caractere de escape definido via ESCAPE, como em 'SALE\\_%' ESCAPE '\\', onde a barra invertida antes do _ indica que ele deve ser tratado como texto literal, não como curinga. A opção C usa '#' como se fosse escape sem declarar ESCAPE '#', o que não funciona; D usa = (igualdade exata), que não aceita curingas."
+    },
+    {
+      "id": 34,
+      "topic": "select",
+      "context": "Table ORDERS has column region which may be NULL. Compare: WHERE region IN ('North', 'South') versus WHERE region = 'North' OR region = 'South'.",
+      "text": "For rows where region is NULL, how do these two equivalent-looking conditions behave?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Both behave identically: rows with region NULL are excluded from the result in either form, since comparing NULL to any value (via = or IN) evaluates to UNKNOWN, not TRUE."
+        },
+        {
+          "key": "B",
+          "text": "IN treats NULL as a match if NULL is not explicitly listed, while OR excludes NULL rows — making them behave differently."
+        },
+        {
+          "key": "C",
+          "text": "OR excludes NULL rows, but IN always includes NULL rows automatically, regardless of the list contents."
+        },
+        {
+          "key": "D",
+          "text": "Both conditions raise an error when the region column contains any NULL values."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "IN (lista) é, na prática, um atalho para uma série de comparações de igualdade unidas por OR — por isso region IN ('North', 'South') é logicamente equivalente a region = 'North' OR region = 'South', e ambas as formas se comportam exatamente da mesma maneira em relação a NULL: comparar NULL com qualquer valor usando = (direta ou indiretamente via IN) sempre resulta em UNKNOWN, não TRUE, então linhas com region NULL são excluídas do resultado nos dois casos, sem gerar erro algum."
+    },
+    {
+      "id": 35,
+      "topic": "dml",
+      "context": "",
+      "text": "What is a key difference between DELETE FROM orders; and TRUNCATE TABLE orders; in terms of transaction control and recoverability?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "DELETE is a DML operation that can be rolled back before a COMMIT, and it can be filtered with a WHERE clause; TRUNCATE is a DDL operation that commits immediately and cannot be rolled back, and always removes all rows without a WHERE clause."
+        },
+        {
+          "key": "B",
+          "text": "DELETE and TRUNCATE are functionally identical in every respect, including transaction behavior; the only difference is the keyword used."
+        },
+        {
+          "key": "C",
+          "text": "TRUNCATE can be rolled back like DELETE, as long as it happens within the same session before disconnecting."
+        },
+        {
+          "key": "D",
+          "text": "DELETE always removes all rows and cannot be filtered, while only TRUNCATE supports a WHERE clause."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "DELETE é um comando DML: pode ser filtrado com WHERE, gera registros de undo/redo detalhados, e pode ser desfeito com ROLLBACK até que um COMMIT (explícito ou implícito) ocorra. TRUNCATE é um comando DDL: sempre remove todas as linhas da tabela (não aceita WHERE), reinicia o high-water mark da tabela de forma muito mais rápida que um DELETE em massa, e realiza um COMMIT implícito automaticamente — por isso não pode ser desfeito com ROLLBACK depois de executado."
     },
     {
       "id": 36,
-      "context": "",
-      "text": "Which two statements are true about correlated subqueries? (Choose two.)",
-      "type": "multiple",
-      "correctCount": 2,
+      "topic": "dml",
+      "context": "Table SALES_LOG has columns (product_id, event_type). You want to insert two rows from a single source row: one for 'created' and one for 'shipped'.",
+      "text": "Which statement uses INSERT ALL correctly to insert multiple rows derived from a single row of a source query?",
+      "type": "single",
+      "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "The inner query references a column from the outer query"
+          "text": "INSERT ALL INTO sales_log (product_id, event_type) VALUES (product_id, 'created') INTO sales_log (product_id, event_type) VALUES (product_id, 'shipped') SELECT product_id FROM new_products;"
         },
         {
           "key": "B",
-          "text": "The inner query executes once for each row processed by the outer query"
+          "text": "INSERT INTO sales_log (product_id, event_type) VALUES (product_id, 'created'), (product_id, 'shipped') SELECT product_id FROM new_products;"
         },
         {
           "key": "C",
-          "text": "Correlated subqueries cannot be used with the EXISTS operator"
+          "text": "INSERT ALL SELECT product_id, 'created' AS event_type, 'shipped' AS event_type FROM new_products;"
         },
         {
           "key": "D",
-          "text": "The inner query must always execute exactly once, before the outer query"
+          "text": "INSERT INTO sales_log (product_id, event_type) SELECT product_id, 'created' UNION SELECT product_id, 'shipped' FROM new_products;"
         }
       ],
       "correct": [
-        "A",
-        "B"
+        "A"
       ],
-      "topic": "joins",
-      "explanation": "Em uma subconsulta correlacionada, a consulta interna referencia uma coluna da consulta externa (A correto) e, por depender desse valor externo, precisa ser reexecutada para cada linha processada pela consulta externa (B correto) — diferente de uma subconsulta não correlacionada, que executa uma única vez de forma independente. C está errada porque EXISTS é justamente um dos usos mais comuns de subconsultas correlacionadas. D está errada porque descreve o comportamento de uma subconsulta não correlacionada, não correlacionada."
+      "explanation": "INSERT ALL permite especificar múltiplas cláusulas INTO, cada uma com sua própria lista de colunas e valores, seguidas de uma única subquery no final que fornece os dados de origem — para cada linha retornada pela subquery, todas as cláusulas INTO são executadas, gerando múltiplas linhas de destino a partir de uma única linha de origem. É exatamente o mecanismo desenhado para esse cenário. As outras opções usam sintaxes inválidas ou incompletas para múltiplos INSERTs a partir de uma única linha fonte."
     },
     {
       "id": 37,
-      "context": "",
-      "text": "Which operator is commonly used with a subquery to test for the existence of at least one row returned by that subquery?",
+      "topic": "dml",
+      "context": "UPDATE employees e SET salary = salary * 1.1 WHERE department_id IN (SELECT department_id FROM departments WHERE location_id = 1700);",
+      "text": "What does this UPDATE statement do?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "ANY"
+          "text": "Gives a 10% raise to every employee whose department is located at location_id 1700, by first resolving which department_id values match that location, then updating all matching employee rows."
         },
         {
           "key": "B",
-          "text": "ALL"
+          "text": "Gives a 10% raise to every employee in the company, ignoring the subquery entirely since UPDATE cannot use subqueries in WHERE."
         },
         {
           "key": "C",
-          "text": "EXISTS"
+          "text": "Fails with a syntax error, because UPDATE does not support IN with a subquery, only direct value lists."
         },
         {
           "key": "D",
-          "text": "SOME"
+          "text": "Updates only the departments table, not the employees table, despite naming employees in the UPDATE clause."
         }
       ],
       "correct": [
-        "C"
+        "A"
       ],
-      "topic": "joins",
-      "explanation": "EXISTS testa apenas se a subconsulta retorna pelo menos uma linha, sem se importar com os valores específicos retornados, sendo muito eficiente para verificar existência de correspondência (geralmente usado com subconsultas correlacionadas). ANY e ALL comparam um valor com cada valor de uma lista retornada pela subconsulta, usando operadores como >, < etc., não testam apenas existência. SOME é sinônimo de ANY no padrão SQL, mas, como ANY, serve para comparação de valores, não de existência pura."
+      "explanation": "A subquery no WHERE de um UPDATE funciona da mesma forma que em um SELECT: primeiro resolve a lista de department_id cujo location_id é 1700, e depois aplica o UPDATE (aumento de 10% no salário) em todas as linhas de employees cujo department_id esteja nessa lista. UPDATE suporta plenamente subqueries em WHERE, incluindo IN, EXISTS, comparações escalares, etc. — não há restrição de sintaxe aqui, e a tabela realmente atualizada é employees, como especificado no próprio UPDATE."
     },
     {
       "id": 38,
-      "context": "The EMPLOYEES table contains a MANAGER_ID column that references EMPLOYEE_ID in the same table.",
-      "text": "Which type of join is required to display each employee's name alongside their manager's name, both coming from the EMPLOYEES table?",
+      "topic": "dml",
+      "context": "CREATE TABLE tickets (ticket_id NUMBER, status VARCHAR2(20) DEFAULT 'OPEN', created_date DATE DEFAULT SYSDATE);",
+      "text": "What does INSERT INTO tickets (ticket_id, status) VALUES (501, DEFAULT); insert for the status column, and what happens to created_date?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "CROSS JOIN"
+          "text": "status is set explicitly to the table's default value ('OPEN') via the DEFAULT keyword, and created_date — omitted from the column list entirely — also receives its own default value (the current SYSDATE at insert time)."
         },
         {
           "key": "B",
-          "text": "SELF JOIN"
+          "text": "status is set to NULL, since DEFAULT inside VALUES always means NULL regardless of the column's actual default definition."
         },
         {
           "key": "C",
-          "text": "NATURAL JOIN"
+          "text": "The statement fails, because DEFAULT can only be used for columns that are completely omitted from the INSERT's column list, not referenced explicitly with a value of DEFAULT."
         },
         {
           "key": "D",
-          "text": "FULL OUTER JOIN"
+          "text": "created_date is left as NULL, since only columns explicitly listed can receive their default values."
         }
       ],
       "correct": [
-        "B"
+        "A"
       ],
-      "topic": "joins",
-      "explanation": "SELF JOIN é necessário porque ambas as informações (funcionário e gerente) vêm da mesma tabela EMPLOYEES; a tabela é referenciada duas vezes com aliases diferentes (ex: e.manager_id = m.employee_id) para combinar cada funcionário com seu respectivo gerente. CROSS JOIN geraria um produto cartesiano sem sentido. NATURAL JOIN exigiria colunas de mesmo nome com significado de junção, o que não é o caso de manager_id e employee_id. FULL OUTER JOIN não é a estrutura certa, pois aqui o relacionamento é dentro da mesma tabela, exigindo dois aliases (self-join), independente do tipo de junção (inner/outer) aplicado sobre ele."
+      "explanation": "A palavra-chave DEFAULT pode ser usada explicitamente dentro do VALUES para indicar 'use o valor padrão definido na tabela para esta coluna' — nesse caso, status recebe 'OPEN'. Além disso, qualquer coluna simplesmente omitida da lista de colunas do INSERT (como created_date aqui) automaticamente recebe seu valor padrão (SYSDATE) também, sem precisar ser mencionada. Ou seja, há duas formas de acionar o default: omitir a coluna, ou referenciá-la explicitamente com a palavra DEFAULT — ambas funcionam e não geram erro."
     },
     {
       "id": 39,
-      "context": "",
-      "text": "Which two statements are true about the USING clause in a join? (Choose two.)",
-      "type": "multiple",
-      "correctCount": 2,
+      "topic": "dml",
+      "context": "Table BACKUP_EMPLOYEES has 3 columns: (employee_id, last_name, salary). Table EMPLOYEES has more than 3 columns including employee_id, last_name, salary, and others.",
+      "text": "What happens when executing INSERT INTO backup_employees SELECT employee_id, last_name, salary, department_id FROM employees;?",
+      "type": "single",
+      "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "It can be used to join tables on a column that has the same name in both tables"
+          "text": "It fails with an error, because the SELECT list returns 4 columns/values but backup_employees only has 3 columns and no explicit column list was given to narrow the target."
         },
         {
           "key": "B",
-          "text": "The joined column cannot be prefixed with a table alias in the SELECT list or WHERE clause"
+          "text": "It succeeds, silently discarding the extra department_id column since backup_employees doesn't have a matching column."
         },
         {
           "key": "C",
-          "text": "It allows specifying different join conditions for columns with different names"
+          "text": "It succeeds, automatically adding a new department_id column to backup_employees to accommodate the extra value."
         },
         {
           "key": "D",
-          "text": "It is similar to NATURAL JOIN but lets you choose which common column(s) to use"
+          "text": "It succeeds, storing department_id concatenated into the salary column of backup_employees."
         }
       ],
       "correct": [
-        "B",
-        "D"
+        "A"
       ],
-      "topic": "joins",
-      "explanation": "USING permite especificar manualmente qual(is) coluna(s) de mesmo nome usar na junção (D correto, é como um NATURAL JOIN mais controlado), mas, por regra de sintaxe, a coluna usada no USING não pode ser prefixada com alias de tabela na lista SELECT ou WHERE, pois ela é tratada como uma única coluna comum às duas tabelas (B correto). A está incompleta como princípio isolado (é verdade, mas o ponto chave testado é a restrição de prefixo). C está errada porque USING serve exatamente para colunas de MESMO nome, não para condições com nomes diferentes (para isso usa-se ON)."
+      "explanation": "Sem uma lista explícita de colunas depois de INSERT INTO backup_employees, o Oracle exige que o número de colunas retornadas pela SELECT bata exatamente com o número de colunas da tabela de destino — como a SELECT retorna 4 valores e backup_employees só tem 3 colunas, ocorre erro de incompatibilidade de número de colunas. Não existe descarte automático de colunas extras, criação automática de coluna nova, nem concatenação implícita — o INSERT simplesmente falha até que a contagem seja corrigida."
     },
     {
       "id": 40,
-      "context": "",
-      "text": "A single-row subquery unexpectedly returns more than one row at runtime. What happens when the query executes?",
+      "topic": "dml",
+      "context": "MERGE INTO product_prices t USING (SELECT 501 AS product_id, 29.90 AS new_price FROM dual) s ON (t.product_id = s.product_id) WHEN MATCHED THEN UPDATE SET t.price = s.new_price WHEN NOT MATCHED THEN INSERT (product_id, price) VALUES (s.product_id, s.new_price);",
+      "text": "What kind of operation does this MERGE statement perform, commonly known by what term?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "Oracle automatically uses only the first row returned"
+          "text": "An 'upsert' — it updates the price if a row with product_id 501 already exists in product_prices, or inserts a new row if it doesn't, in a single atomic statement."
         },
         {
           "key": "B",
-          "text": "An error is raised: single-row subquery returns more than one row"
+          "text": "A pure INSERT — the WHEN MATCHED branch is ignored whenever the USING clause is a single-row subquery like this one."
         },
         {
           "key": "C",
-          "text": "The outer query silently returns no rows"
+          "text": "A pure UPDATE — the WHEN NOT MATCHED branch never executes when the source is a SELECT ... FROM dual."
         },
         {
           "key": "D",
-          "text": "Oracle automatically converts the comparison to use IN"
+          "text": "It always executes both branches (UPDATE and INSERT) for every row, regardless of whether a match is found."
         }
       ],
       "correct": [
-        "B"
+        "A"
       ],
-      "topic": "joins",
-      "explanation": "Quando uma subconsulta de linha única (usada com operadores como =, >, <) retorna inesperadamente mais de uma linha, o Oracle lança o erro ORA-01427: single-row subquery returns more than one row, interrompendo a execução. Não há comportamento automático de pegar a primeira linha, converter para IN, ou retornar silenciosamente vazio — o erro é levantado explicitamente porque o operador escalar não sabe como lidar com múltiplos valores."
+      "explanation": "MERGE combinando WHEN MATCHED (para atualizar) e WHEN NOT MATCHED (para inserir) num único comando é o padrão clássico de 'upsert' (update + insert): se já existir uma linha em product_prices com product_id 501, ela é atualizada com o novo preço; se não existir, uma nova linha é inserida. O fato da origem (USING) ser uma subquery de uma linha só não muda esse comportamento — o MERGE sempre avalia a condição ON e decide entre as duas branches, executando apenas uma delas por linha de origem."
     },
     {
       "id": 41,
-      "context": "DEPARTMENTS(department_id, department_name)\nEMPLOYEES(employee_id, department_id)",
-      "text": "Which query returns the names of departments that currently have no employees assigned?",
+      "topic": "dml",
+      "context": "UPDATE employees SET salary = salary * 1.05 WHERE department_id = 999; -- não existe nenhum funcionário no departamento 999",
+      "text": "What happens when this UPDATE statement executes, given that no row matches department_id = 999?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "SELECT department_name FROM departments d JOIN employees e ON d.department_id = e.department_id WHERE e.employee_id IS NULL;"
+          "text": "The statement completes successfully with a message indicating 0 rows updated; it is not an error for an UPDATE's WHERE clause to match no rows."
         },
         {
           "key": "B",
-          "text": "SELECT department_name FROM departments d LEFT JOIN employees e ON d.department_id = e.department_id WHERE e.employee_id IS NULL;"
+          "text": "Oracle raises an error (NO_DATA_FOUND) because the WHERE clause did not match any row."
         },
         {
           "key": "C",
-          "text": "SELECT department_name FROM departments WHERE department_id IN (SELECT department_id FROM employees);"
+          "text": "It updates every row in the table instead, treating an unmatched WHERE clause as if it were absent."
         },
         {
           "key": "D",
-          "text": "SELECT department_name FROM departments NATURAL JOIN employees;"
+          "text": "The transaction is automatically rolled back because zero rows were affected."
         }
       ],
       "correct": [
-        "B"
+        "A"
       ],
-      "topic": "joins",
-      "explanation": "Um LEFT JOIN de DEPARTMENTS para EMPLOYEES preserva todos os departamentos, mesmo os sem funcionários, preenchendo as colunas de EMPLOYEES com NULL nesses casos; filtrando depois por `e.employee_id IS NULL`, obtemos exatamente os departamentos sem nenhum funcionário correspondente (B correto). A está errada porque um JOIN (inner) já descarta departamentos sem funcionários antes mesmo do WHERE ser aplicado, então a condição IS NULL nunca seria satisfeita. C está errada porque o IN retorna os departamentos QUE TÊM funcionários, o oposto do pedido. D está errada porque NATURAL JOIN sem WHERE simplesmente retorna departamentos com funcionários correspondentes, sem isolar os vazios."
+      "explanation": "Um UPDATE (assim como DELETE) cuja cláusula WHERE não encontra nenhuma linha correspondente simplesmente completa normalmente, reportando '0 rows updated' — isso não é considerado um erro em SQL puro. NO_DATA_FOUND é uma exceção específica de PL/SQL, relevante para comandos como SELECT INTO dentro de blocos PL/SQL, não para um UPDATE/DELETE em SQL. Não há rollback automático nem substituição do WHERE por 'atualizar tudo' — o comando apenas não afeta nenhuma linha."
     },
     {
       "id": 42,
-      "context": "",
-      "text": "Which statement correctly inserts a new row into the EMPLOYEES table, supplying values for only some of its columns?",
+      "topic": "dml",
+      "context": "Sessão A executa: UPDATE employees SET salary = salary * 2 WHERE employee_id = 100; (sem COMMIT ainda). Sessão B executa, ao mesmo tempo: SELECT salary FROM employees WHERE employee_id = 100;",
+      "text": "What salary value does session B see, and why?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "INSERT INTO employees VALUES (100, 'John', 'Doe');"
+          "text": "Session B sees the ORIGINAL (pre-update) salary value, because Oracle's read consistency model shows uncommitted changes from other sessions only after they are committed — session B is unaffected by A's pending transaction."
         },
         {
           "key": "B",
-          "text": "INSERT INTO employees (employee_id, first_name, last_name) VALUES (100, 'John', 'Doe');"
+          "text": "Session B sees the NEW (doubled) salary value immediately, since all sessions share a single live view of the data at all times."
         },
         {
           "key": "C",
-          "text": "INSERT employees SET employee_id = 100, first_name = 'John';"
+          "text": "Session B's query is blocked and waits indefinitely until session A either commits or rolls back, since a SELECT is blocked by any concurrent UPDATE."
         },
         {
           "key": "D",
-          "text": "INSERT INTO employees ALL (100, 'John', 'Doe');"
+          "text": "Session B receives an error, since the row is locked by session A's uncommitted UPDATE."
         }
       ],
       "correct": [
-        "B"
+        "A"
       ],
-      "topic": "dml",
-      "explanation": "A sintaxe `INSERT INTO tabela (coluna1, coluna2, ...) VALUES (...)` permite informar explicitamente apenas as colunas desejadas, deixando as demais com seus valores padrão ou NULL — por isso B está correta. A está errada (ou arriscada) porque omite a lista de colunas, exigindo um valor para CADA coluna da tabela na ordem exata em que foram definidas, o que normalmente causaria erro se a tabela tiver mais colunas. C usa sintaxe inválida em Oracle (SET não é usado em INSERT, apenas em UPDATE). D usa uma palavra-chave 'ALL' inexistente nessa posição da sintaxe de INSERT."
+      "explanation": "O modelo de consistência de leitura do Oracle garante que uma sessão nunca veja alterações não commitadas feitas por outra sessão — a sessão B continua enxergando o valor antigo de salary até que a sessão A execute COMMIT. Diferente de bancos com outros níveis de isolamento mais permissivos, um simples SELECT no Oracle não é bloqueado por um UPDATE pendente em outra sessão (SELECT não pede lock de linha), então a consulta da sessão B retorna imediatamente, apenas com o valor consistente anterior à alteração pendente."
     },
     {
       "id": 43,
-      "context": "Examine this command:\n\nUPDATE employees SET salary = salary * 1.1 WHERE department_id = 50;",
-      "text": "What does this statement do?",
+      "topic": "dml",
+      "context": "INSERT INTO archived_orders SELECT * FROM orders WHERE order_date < DATE '2020-01-01';",
+      "text": "If no rows in orders satisfy order_date < DATE '2020-01-01', what happens when this statement executes?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "Increases the salary of all employees by 10%, regardless of department"
+          "text": "The statement completes successfully, inserting zero rows — this is not treated as an error."
         },
         {
           "key": "B",
-          "text": "Increases the salary of employees in department 50 by 10%"
+          "text": "The statement fails with an error, because INSERT INTO ... SELECT requires the subquery to return at least one row."
         },
         {
           "key": "C",
-          "text": "Sets the salary of employees in department 50 to exactly 1.1"
+          "text": "It inserts one row filled entirely with NULL values as a placeholder."
         },
         {
           "key": "D",
-          "text": "Raises an error, because salary cannot reference itself in an UPDATE"
+          "text": "It inserts every row from orders instead, since an empty result set causes the WHERE clause to be ignored."
         }
       ],
       "correct": [
-        "B"
+        "A"
       ],
-      "topic": "dml",
-      "explanation": "A cláusula WHERE department_id = 50 restringe a atualização apenas às linhas desse departamento, e `salary = salary * 1.1` referencia o próprio valor atual da coluna para calcular o novo valor (aumento de 10%) — isso é permitido e comum em UPDATE. A está errada porque ignora a cláusula WHERE, que limita o escopo. C está errada porque a expressão multiplica o salário existente, não define um valor fixo de 1.1. D está errada porque UPDATE pode sim referenciar a própria coluna sendo atualizada do lado direito da expressão."
+      "explanation": "Assim como um SELECT comum pode legitimamente retornar zero linhas sem gerar erro, um INSERT INTO ... SELECT cuja subquery não encontra nenhuma linha correspondente simplesmente insere zero linhas na tabela de destino, completando com sucesso. Não há exigência de que a subquery retorne ao menos uma linha, não há inserção de placeholder com NULL, e uma condição WHERE que não encontra correspondência nunca é 'ignorada' — ela simplesmente resulta em nenhuma linha."
     },
     {
       "id": 44,
+      "topic": "fundamentals",
       "context": "",
-      "text": "Which two statements are true about the MERGE statement? (Choose two.)",
-      "type": "multiple",
-      "correctCount": 2,
+      "text": "What is a key practical difference between declaring a column as CHAR(20) versus VARCHAR2(20) in terms of storage?",
+      "type": "single",
+      "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "It can perform an INSERT and an UPDATE in a single statement based on a join condition"
+          "text": "CHAR(20) always physically stores (and blank-pads) exactly 20 characters regardless of the actual string length, while VARCHAR2(20) stores only as many characters as the actual value requires, up to a maximum of 20."
         },
         {
           "key": "B",
-          "text": "It can only be used to insert rows, never to update them"
+          "text": "VARCHAR2(20) always pads with spaces up to 20 characters just like CHAR(20); the only difference is the keyword used."
         },
         {
           "key": "C",
-          "text": "It commonly uses WHEN MATCHED / WHEN NOT MATCHED clauses"
+          "text": "CHAR(20) can store a maximum of 20 bytes, while VARCHAR2(20) can store unlimited length regardless of the number specified."
         },
         {
           "key": "D",
-          "text": "It cannot reference a subquery as the source of data"
+          "text": "There is no practical difference; CHAR and VARCHAR2 are simply aliases for the same underlying data type in Oracle."
         }
       ],
       "correct": [
-        "A",
-        "C"
+        "A"
       ],
-      "topic": "dml",
-      "explanation": "MERGE combina lógica de INSERT e UPDATE (e opcionalmente DELETE) em uma única instrução, comparando uma tabela de origem com uma de destino através de uma condição de junção, usando as cláusulas WHEN MATCHED (atualiza) e WHEN NOT MATCHED (insere) — por isso A e C estão corretas. B está errada porque MERGE pode tanto inserir quanto atualizar, essa é sua principal vantagem. D está errada porque MERGE aceita uma subconsulta como fonte de dados normalmente, não apenas uma tabela física."
+      "explanation": "CHAR(n) é de comprimento fixo: um valor menor que n é automaticamente preenchido (padded) com espaços em branco até completar exatamente n caracteres armazenados, mesmo que o dado real seja mais curto. VARCHAR2(n), por outro lado, é de comprimento variável: armazena apenas os caracteres realmente inseridos, até o limite máximo de n, sem preenchimento algum. Isso impacta tanto o espaço em disco usado quanto o comportamento de comparação. Os dois tipos definitivamente não são intercambiáveis nem idênticos."
     },
     {
       "id": 45,
+      "topic": "fundamentals",
       "context": "",
-      "text": "Which statement correctly removes all rows from the EMPLOYEES table where department_id = 90, without affecting the table structure?",
+      "text": "A column is declared as price NUMBER(6,2). What happens when you try to INSERT the value 1234.567 into it?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "DROP TABLE employees WHERE department_id = 90;"
+          "text": "Oracle rounds the value to fit the declared scale, storing 1234.57 (2 digits after the decimal point), since the total of 6 significant digits (4 before + 2 after) is respected."
         },
         {
           "key": "B",
-          "text": "TRUNCATE TABLE employees WHERE department_id = 90;"
+          "text": "Oracle truncates (without rounding) to 1234.56, simply discarding extra decimal digits beyond the scale."
         },
         {
           "key": "C",
-          "text": "DELETE FROM employees WHERE department_id = 90;"
+          "text": "The INSERT fails with an error, because 1234.567 has more decimal digits than the declared scale allows."
         },
         {
           "key": "D",
-          "text": "ALTER TABLE employees REMOVE WHERE department_id = 90;"
+          "text": "Oracle stores the value unchanged as 1234.567, ignoring the NUMBER(6,2) declaration entirely."
         }
       ],
       "correct": [
-        "C"
+        "A"
       ],
-      "topic": "dml",
-      "explanation": "DELETE FROM ... WHERE remove apenas as linhas que atendem à condição, preservando a estrutura da tabela e permitindo reverter com ROLLBACK antes do commit. A está errada porque DROP TABLE elimina a tabela inteira (estrutura e dados), além de não aceitar WHERE. B está errada porque TRUNCATE TABLE não aceita cláusula WHERE — ele remove todas as linhas de uma vez. D usa uma sintaxe inexistente no Oracle SQL (ALTER TABLE não tem cláusula REMOVE WHERE)."
+      "explanation": "NUMBER(p,s) define a precisão total (p = quantidade máxima de dígitos significativos) e a escala (s = quantos desses dígitos ficam depois da vírgula decimal). Para NUMBER(6,2), o Oracle aceita até 4 dígitos inteiros + 2 decimais. Ao inserir 1234.567 (que tem 3 casas decimais, mais do que as 2 permitidas), o Oracle arredonda automaticamente para a escala declarada, resultando em 1234.57 — não trunca e não gera erro nesse caso, desde que a parte inteira ainda caiba dentro da precisão total permitida."
     },
     {
       "id": 46,
+      "topic": "fundamentals",
       "context": "",
-      "text": "Which two statements are true about COMMIT and ROLLBACK? (Choose two.)",
-      "type": "multiple",
-      "correctCount": 2,
+      "text": "In a typical SQL*Plus or SQL Developer worksheet session (interactive, not autocommit-forced), what happens to an UPDATE statement's changes if the user simply closes the tool without issuing COMMIT or ROLLBACK?",
+      "type": "single",
+      "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "COMMIT makes all changes made by the current transaction permanent"
+          "text": "The behavior depends on the tool: many client tools (like SQL Developer) prompt to commit or rollback on exit, but if the connection is simply killed/dropped without a graceful disconnect, Oracle treats a broken connection similarly to an implicit ROLLBACK of the pending transaction."
         },
         {
           "key": "B",
-          "text": "ROLLBACK can undo changes after a COMMIT has already been issued for those changes"
+          "text": "Oracle always automatically commits any pending transaction the moment the client disconnects, regardless of the tool."
         },
         {
           "key": "C",
-          "text": "A ROLLBACK without a SAVEPOINT undoes all changes since the last COMMIT"
+          "text": "The changes remain permanently pending in the database indefinitely, visible to all other sessions, until someone manually commits them later, even after reconnecting."
         },
         {
           "key": "D",
-          "text": "DDL statements like CREATE TABLE never trigger an implicit COMMIT"
+          "text": "Closing the tool has no effect at all on transactions; only an explicit COMMIT or ROLLBACK statement can ever resolve a pending transaction."
         }
       ],
       "correct": [
-        "A",
-        "C"
+        "A"
       ],
-      "topic": "dml",
-      "explanation": "COMMIT torna permanentes todas as alterações da transação atual, encerrando-a (A correto). Um ROLLBACK sem SAVEPOINT desfaz todas as alterações realizadas desde o último COMMIT (ou desde o início da sessão/transação), restaurando o estado anterior (C correto). B está errada porque, uma vez commitada, uma alteração é permanente e não pode mais ser desfeita por ROLLBACK. D está errada porque comandos DDL como CREATE TABLE de fato disparam um COMMIT implícito antes (e depois) de sua execução, finalizando qualquer transação pendente."
+      "explanation": "Diferente de um COMMIT explícito ou de um DDL (que sempre commita implicitamente), o comportamento ao simplesmente fechar a ferramenta cliente sem confirmar a transação depende de como a desconexão ocorre: uma desconexão 'normal' tipicamente aciona um comportamento definido pelo cliente (muitas ferramentas como SQL Developer perguntam explicitamente o que fazer); já uma conexão encerrada de forma abrupta (crash, kill da sessão) é tratada pelo Oracle de forma equivalente a um ROLLBACK da transação pendente. Não existe uma regra universal de 'sempre comita', e a transação não fica pendente para sempre após a sessão ser encerrada."
     },
     {
       "id": 47,
+      "topic": "fundamentals",
       "context": "",
-      "text": "Which statement creates a named point within a transaction that you can later roll back to, without undoing the entire transaction?",
+      "text": "Which statement best describes what NULL represents in Oracle SQL?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "SAVEPOINT"
+          "text": "NULL represents the absence of a known value — it is not the same as zero, an empty string, or a blank space; it means 'unknown' or 'not applicable'."
         },
         {
           "key": "B",
-          "text": "COMMIT POINT"
+          "text": "NULL is exactly equivalent to the number zero when used in a NUMBER column, and equivalent to an empty string '' when used in a VARCHAR2 column."
         },
         {
           "key": "C",
-          "text": "ROLLBACK TO START"
+          "text": "NULL always means the column was never included in the table's definition."
         },
         {
           "key": "D",
-          "text": "SET TRANSACTION"
+          "text": "NULL is a special string value that can be compared using the standard equality operator (=) just like any other value."
         }
       ],
       "correct": [
         "A"
       ],
-      "topic": "dml",
-      "explanation": "SAVEPOINT cria um marcador nomeado dentro de uma transação, permitindo um ROLLBACK TO SAVEPOINT que desfaz apenas as alterações feitas após esse ponto, sem encerrar a transação inteira nem desfazer tudo. As demais opções (COMMIT POINT, ROLLBACK TO START, SET TRANSACTION) não são comandos válidos do Oracle para esse propósito — SET TRANSACTION existe, mas serve para definir propriedades da transação (como nível de isolamento), não para criar pontos de retorno."
+      "explanation": "NULL representa a ausência de um valor conhecido — conceitualmente 'desconhecido' ou 'não aplicável' — e é fundamentalmente diferente de zero (que é um valor numérico concreto) ou de uma string vazia (que é um valor de string concreto, ainda que vazio; aliás, em Oracle, string vazia '' é tratada como NULL para VARCHAR2, o que já é uma peculiaridade à parte). Por não representar um valor concreto, NULL não pode ser comparado com = ou <> de forma significativa (sempre resulta em UNKNOWN) — é necessário usar IS NULL / IS NOT NULL."
     },
     {
       "id": 48,
-      "context": "Examine this statement:\n\nINSERT INTO departments (department_id, department_name)\nVALUES (dept_seq.NEXTVAL, 'Marketing');",
-      "text": "What does DEPT_SEQ.NEXTVAL do in this context?",
+      "topic": "ddl",
+      "context": "Table CUSTOMERS has millions of rows. You want to remove the old_address column.",
+      "text": "Why might a DBA prefer ALTER TABLE customers SET UNUSED COLUMN old_address; over ALTER TABLE customers DROP COLUMN old_address; on a very large table?",
       "type": "single",
       "correctCount": 1,
       "options": [
         {
           "key": "A",
-          "text": "Returns the current value of the sequence without incrementing it"
+          "text": "SET UNUSED only marks the column as logically unavailable (hiding it immediately from queries and tools) without physically removing the data from every row right away, making it much faster than DROP COLUMN, which must physically rewrite all rows immediately; the space is reclaimed later at a more convenient time."
         },
         {
           "key": "B",
-          "text": "Increments the sequence and returns its new value, used as the new department_id"
+          "text": "SET UNUSED and DROP COLUMN have identical performance characteristics; the only difference is that SET UNUSED can be reversed later, while DROP COLUMN cannot."
         },
         {
           "key": "C",
-          "text": "Resets the sequence to its starting value"
+          "text": "SET UNUSED is required before DROP COLUMN can ever be used; you cannot drop a column directly on any table."
         },
         {
           "key": "D",
-          "text": "Causes an error, since sequences cannot be used inside INSERT statements"
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "topic": "dml",
-      "explanation": "NEXTVAL avança a sequência para o próximo valor da série e retorna esse novo valor, que pode ser usado diretamente na cláusula VALUES de um INSERT, como neste caso para gerar um novo DEPARTMENT_ID. A descreve o comportamento de CURRVAL, não de NEXTVAL — CURRVAL retorna o último valor já gerado por NEXTVAL na sessão, sem incrementar. C está errada porque sequências não se resetam ao usar NEXTVAL (a menos que configuradas com CYCLE e atinjam o limite). D está errada porque o uso de sequências dentro de INSERT é justamente um dos casos de uso mais comuns delas."
-    },
-    {
-      "id": 49,
-      "context": "",
-      "text": "Which two statements are true about a transaction in Oracle Database? (Choose two.)",
-      "type": "multiple",
-      "correctCount": 2,
-      "options": [
-        {
-          "key": "A",
-          "text": "A transaction begins implicitly with the first DML statement after a connection or after the previous transaction ends"
-        },
-        {
-          "key": "B",
-          "text": "Every SELECT statement starts a new transaction that must be explicitly committed"
-        },
-        {
-          "key": "C",
-          "text": "A transaction ends when a COMMIT or ROLLBACK is issued, or when a DDL statement executes"
-        },
-        {
-          "key": "D",
-          "text": "Multiple transactions in the same session can be active and uncommitted at the same time"
-        }
-      ],
-      "correct": [
-        "A",
-        "C"
-      ],
-      "topic": "dml",
-      "explanation": "Uma transação começa implicitamente com a primeira instrução DML executada após uma conexão ou após a transação anterior terminar (A correto), e termina quando ocorre um COMMIT, ROLLBACK explícito, ou quando uma instrução DDL é executada (que dispara COMMIT implícito) (C correto). B está errada porque SELECT por si só não inicia uma transação que precise de commit (é uma operação de leitura, sem alterações). D está errada porque em uma mesma sessão só existe uma transação ativa por vez — não é possível ter múltiplas transações simultâneas não commitadas na mesma sessão."
-    },
-    {
-      "id": 50,
-      "context": "",
-      "text": "Which statement correctly creates a table with a primary key constraint defined inline on a single column?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "CREATE TABLE depts (dept_id NUMBER PRIMARY KEY, dept_name VARCHAR2(30));"
-        },
-        {
-          "key": "B",
-          "text": "CREATE TABLE depts (dept_id NUMBER, dept_name VARCHAR2(30), CONSTRAINT pk PRIMARY);"
-        },
-        {
-          "key": "C",
-          "text": "CREATE TABLE depts (dept_id NUMBER UNIQUE NOT NULL PRIMARY);"
-        },
-        {
-          "key": "D",
-          "text": "CREATE TABLE depts ADD PRIMARY KEY (dept_id);"
+          "text": "DROP COLUMN is always faster than SET UNUSED, since it avoids the two-step process of marking and later purging."
         }
       ],
       "correct": [
         "A"
       ],
+      "explanation": "SET UNUSED apenas marca a coluna como indisponível logicamente (ela some das consultas, do describe, etc.) sem reescrever fisicamente todas as linhas da tabela naquele momento — uma operação rápida mesmo em tabelas enormes. DROP COLUMN, por outro lado, precisa fisicamente remover os dados da coluna de cada linha imediatamente, uma operação potencialmente demorada em tabelas com milhões de registros. Por isso, o padrão recomendado em tabelas grandes é usar SET UNUSED primeiro e rodar o DROP UNUSED COLUMNS mais tarde, numa janela de manutenção. Uma coluna pode ser dropada diretamente sem passar por SET UNUSED, e SET UNUSED não é reversível."
+    },
+    {
+      "id": 49,
       "topic": "ddl",
-      "explanation": "A sintaxe `coluna tipo PRIMARY KEY` define a constraint de chave primária diretamente junto à definição da coluna (inline), que é válida e comum em Oracle SQL para chaves de coluna única. B usa uma sintaxe incompleta e inválida (falta especificar a coluna na constraint nomeada). C usa 'PRIMARY' isoladamente, que não é uma palavra-chave válida (o correto seria PRIMARY KEY). D tenta usar ALTER TABLE com sintaxe inválida dentro de um CREATE TABLE — esses são comandos distintos e não podem ser combinados dessa forma."
+      "context": "",
+      "text": "What is the difference between RENAME old_table TO new_table; and ALTER TABLE old_table RENAME TO new_table;?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Both achieve the same result of renaming a table, but RENAME is a general-purpose standalone statement that can also rename other object types (views, synonyms), while ALTER TABLE ... RENAME TO is specific to renaming a table."
+        },
+        {
+          "key": "B",
+          "text": "RENAME can only rename columns, never tables, while ALTER TABLE RENAME TO is the only valid way to rename a table."
+        },
+        {
+          "key": "C",
+          "text": "ALTER TABLE ... RENAME TO requires recreating all indexes and constraints manually afterward, while RENAME preserves them automatically; the two are not interchangeable for this reason."
+        },
+        {
+          "key": "D",
+          "text": "RENAME is not valid Oracle SQL syntax at all; only ALTER TABLE ... RENAME TO can rename a table."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Ambos os comandos de fato renomeiam uma tabela com resultado equivalente, preservando índices, constraints e demais dependências normalmente. A diferença é de escopo: RENAME é um comando standalone mais genérico, usado para renomear tabelas, views, sequences ou synonyms; ALTER TABLE ... RENAME TO é específico para tabelas, dentro da sintaxe de ALTER TABLE. RENAME é sintaxe válida do Oracle SQL, e nenhuma das duas formas exige recriar manualmente índices/constraints depois de renomear."
+    },
+    {
+      "id": 50,
+      "topic": "ddl",
+      "context": "",
+      "text": "In CREATE TABLE accounts (account_id NUMBER, status VARCHAR2(10) DEFAULT 'ACTIVE' NOT NULL, balance NUMBER DEFAULT 0), what value does status receive for a row inserted with INSERT INTO accounts (account_id, balance) VALUES (1, 500);, and why does the NOT NULL constraint not cause a problem here?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "status receives 'ACTIVE' — its declared default value is applied automatically because the column was omitted from the INSERT's column list; since the resulting value is 'ACTIVE' (not NULL), the NOT NULL constraint is satisfied without issue."
+        },
+        {
+          "key": "B",
+          "text": "status is set to NULL, and the INSERT fails because of the NOT NULL constraint, since DEFAULT only applies to columns without any other constraint."
+        },
+        {
+          "key": "C",
+          "text": "status remains unset until a separate UPDATE explicitly sets it, since DEFAULT values only apply when a column is later modified, not during INSERT."
+        },
+        {
+          "key": "D",
+          "text": "The DEFAULT clause is invalid when combined with NOT NULL in the same column definition, so the CREATE TABLE itself would fail."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Quando uma coluna com uma cláusula DEFAULT é omitida da lista de colunas do INSERT, o Oracle aplica automaticamente o valor padrão declarado — aqui, status recebe 'ACTIVE'. Como esse valor resultante não é NULL, a constraint NOT NULL da coluna é satisfeita sem qualquer conflito; DEFAULT e NOT NULL combinados na mesma definição de coluna são perfeitamente válidos e, na verdade, um padrão comum justamente para garantir que a coluna nunca fique vazia mesmo quando omitida do INSERT."
     },
     {
       "id": 51,
