@@ -48,3 +48,7 @@ E abrir `http://localhost:3000`.
 ## Tecnologias
 
 HTML, CSS e JavaScript puro (sem frameworks), com Service Worker para funcionamento como PWA.
+
+## Aviso
+
+Projeto independente, sem afiliação com a Oracle Corporation. As questões são de autoria própria, criadas para praticar os conceitos cobrados na certificação — não são reproduções de provas reais. "Oracle" e "1Z0-071" são marcas da Oracle Corporation, citadas aqui apenas para referência ao exame.

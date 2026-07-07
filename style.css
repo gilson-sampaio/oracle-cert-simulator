@@ -232,3 +232,13 @@ body {
   color: #2c5234;
 }
 .explanation-correct .explanation-title { color: #1a7d3a; }
+
+.app-disclaimer {
+  max-width: 480px;
+  margin: 16px auto 0;
+  padding: 0 8px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #9a9aa0;
+  text-align: center;
+}
