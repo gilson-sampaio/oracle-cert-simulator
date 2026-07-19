@@ -1,6 +1,23 @@
 {
   "examTitle": "1Z0-082 Oracle Database Administration I",
   "examCode": "1Z0-082",
-  "topicLabels": {},
+  "topicLabels": {
+    "architecture": "Arquitetura do Oracle Database (instância, memória, processos, estruturas lógicas e físicas)",
+    "instance": "Gerenciamento de Instâncias (startup/shutdown, data dictionary, dynamic views, ADR, alert log, parâmetros)",
+    "users": "Usuários, Papéis e Privilégios (quotas, profiles, autenticação, least privilege)",
+    "storage": "Gerenciamento de Storage (segmentos, compressão, espaço, block space management)",
+    "movedata": "Movimentação de Dados (Data Pump, SQL*Loader, External Tables)",
+    "tools": "Ferramentas Oracle (DBCA, EM Cloud Control, EM Express, SQL Developer, SQL*Plus)",
+    "network": "Oracle Net Services (listener, naming methods, dedicated vs shared server, conexões)",
+    "tablespaces": "Tablespaces e Datafiles (criar/alterar/dropar, OMF, mover datafiles online)",
+    "undo": "Gerenciamento de Undo (transações e undo data, undo retention, undo vs redo, temporary undo)",
+    "sql-select": "SQL: Recuperação e Restrição de Dados (SELECT, WHERE, ORDER BY, aliases, DISTINCT, row limiting, substitution variables)",
+    "sql-functions": "SQL: Funções de Linha Única, Conversão e Fusos (char/num/date, ROUND/TRUNC/MOD, NVL/NULLIF/COALESCE, TO_*, CASE, INTERVAL, CURRENT_*)",
+    "sql-groups": "SQL: Funções de Grupo e Agregação (GROUP BY, HAVING, funções de grupo)",
+    "sql-joins": "SQL: Joins e Subqueries (self, outer, non-equi, various joins, subqueries de linha única e múltipla)",
+    "sql-setops": "SQL: Operadores de Conjunto (UNION, UNION ALL, INTERSECT, MINUS)",
+    "sql-dml": "SQL: DML e Transações (INSERT, UPDATE, DELETE, COMMIT, ROLLBACK, controle de transações)",
+    "sql-ddl": "SQL: DDL e Objetos de Esquema (tabelas, constraints, views, sequences, synonyms, indexes, temporary tables)"
+  },
   "questions": []
 }
