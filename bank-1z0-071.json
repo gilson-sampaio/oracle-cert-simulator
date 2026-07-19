@@ -2,14 +2,17 @@
   "examTitle": "1Z0-071 Oracle Database SQL",
   "examCode": "1Z0-071",
   "topicLabels": {
-    "fundamentals": "Conceitos Fundamentais",
-    "select": "Recuperação e Agrupamento de Dados (SELECT)",
-    "functions": "Funções Nativas do Oracle",
-    "joins": "Relacionamento de Tabelas (Joins e Subqueries)",
-    "dml": "Manipulação de Dados (DML)",
-    "ddl": "DDL e DCL",
+    "fundamentals": "Conceitos de Banco de Dados Relacional",
+    "select": "Recuperação, Restrição e Ordenação de Dados (SELECT, WHERE, ORDER BY, row limiting, substitution variables)",
+    "functions": "Funções de Linha Única, Conversão e Condicionais",
+    "groups": "Funções de Grupo e Dados Agregados (GROUP BY, HAVING)",
+    "joins": "Joins e Subqueries",
     "set": "Operadores de Conjunto",
-    "advanced": "Consultas Avançadas"
+    "dml": "Manipulação de Dados e Transações (DML, MERGE, multitable insert)",
+    "ddl": "DDL, Constraints, Views, Indexes, Synonyms, Sequences",
+    "access": "Controle de Acesso do Usuário (privilégios de sistema/objeto, GRANT, roles)",
+    "dictionary": "Objetos e Data Dictionary Views",
+    "timezone": "Dados em Diferentes Fusos Horários (CURRENT_DATE/TIMESTAMP, INTERVAL)"
   },
   "questions": [
     {
@@ -314,7 +317,7 @@
     },
     {
       "id": 11,
-      "topic": "functions",
+      "topic": "groups",
       "context": "SELECT department_id, COUNT(*), last_name FROM employees GROUP BY department_id;",
       "text": "Why does this query fail?",
       "type": "single",
@@ -733,38 +736,8 @@
       "explanation": "A diferença fundamental é o controle: com JOIN ... USING (department_id), o desenvolvedor escolhe explicitamente qual coluna em comum será usada para a junção, ignorando deliberadamente outras colunas de mesmo nome (como manager_id) mesmo que existam. Já NATURAL JOIN não dá esse controle — ele automaticamente usa todas as colunas de mesmo nome como condição de junção, o que aqui incluiria indevidamente manager_id. Por isso USING é geralmente preferível quando há mais de uma coluna com nome coincidente mas significados diferentes."
     },
     {
-      "id": 25,
-      "topic": "select",
-      "context": "SELECT department_id, job_id, SUM(salary) FROM employees GROUP BY ROLLUP(department_id, job_id);",
-      "text": "What extra rows does ROLLUP add to the normal GROUP BY department_id, job_id result?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "Subtotal rows for each department_id (with job_id shown as NULL), plus one grand total row (with both department_id and job_id shown as NULL)."
-        },
-        {
-          "key": "B",
-          "text": "Only a single grand total row at the end, with no intermediate subtotals per department."
-        },
-        {
-          "key": "C",
-          "text": "One extra row per unique job_id value showing totals across all departments, but no overall grand total."
-        },
-        {
-          "key": "D",
-          "text": "ROLLUP does not add any extra rows; it only changes the sort order of the existing groups."
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "explanation": "ROLLUP cria níveis hierárquicos de subtotal seguindo a ordem dos argumentos: para ROLLUP(department_id, job_id), além dos grupos normais (department_id + job_id), ele adiciona uma linha de subtotal por department_id (somando todos os job_id daquele departamento, com job_id aparecendo como NULL nessa linha) e, por fim, uma única linha de total geral (com department_id e job_id ambos NULL). É uma extensão do GROUP BY, não uma simples reordenação — e o total geral sempre é incluído."
-    },
-    {
       "id": 26,
-      "topic": "select",
+      "topic": "groups",
       "context": "SELECT manager_id, COUNT(*) FROM employees GROUP BY manager_id HAVING COUNT(*) >= 3;",
       "text": "What does this query return?",
       "type": "single",
@@ -884,7 +857,7 @@
     },
     {
       "id": 30,
-      "topic": "select",
+      "topic": "groups",
       "context": "",
       "text": "Both SELECT DISTINCT department_id FROM employees; and SELECT department_id FROM employees GROUP BY department_id; return the same set of distinct department_id values. What is a key capability that GROUP BY has here that plain DISTINCT does not?",
       "type": "single",
@@ -1631,7 +1604,7 @@
       "correct": [
         "A"
       ],
-      "topic": "ddl",
+      "topic": "access",
       "explanation": "A sintaxe correta do GRANT é `GRANT privilegio(s) ON objeto TO usuário`, então A está correta ao listar os privilégios antes do ON e o usuário destinatário depois do TO. B inverte a ordem das cláusulas ON e TO, o que é sintaticamente inválido. C usa a palavra-chave inexistente 'ALLOW' em vez de GRANT. D usa uma sintaxe genérica inválida ('PRIVILEGES' não é uma forma de especificar privilégios individuais dessa maneira)."
     },
     {
@@ -1661,7 +1634,7 @@
       "correct": [
         "A"
       ],
-      "topic": "ddl",
+      "topic": "access",
       "explanation": "A sintaxe correta do REVOKE é `REVOKE privilegio ON objeto FROM usuário`, simetricamente oposta ao GRANT — por isso A está correta. B inverte as cláusulas ON e FROM de forma inválida. C usa 'DENY', que não existe no Oracle (esse comando existe em SQL Server, não em Oracle). D usa uma sintaxe inválida ('DROP PRIVILEGE' não é um comando Oracle)."
     },
     {
@@ -1786,129 +1759,8 @@
       "explanation": "INTERSECT retorna apenas as linhas que aparecem nos resultados de AMBAS as consultas, já eliminando duplicatas por natureza da operação de conjunto. UNION combina todas as linhas distintas de ambas (não exige que estejam em ambas). UNION ALL mantém todas as linhas, incluindo duplicatas, sem filtrar por presença em ambos os conjuntos. MINUS retorna a diferença (linhas só na primeira consulta), o oposto da interseção."
     },
     {
-      "id": 60,
-      "context": "",
-      "text": "Which function performs pattern matching using regular expressions and is usable as a condition in a WHERE clause?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "REGEXP_SUBSTR"
-        },
-        {
-          "key": "B",
-          "text": "REGEXP_LIKE"
-        },
-        {
-          "key": "C",
-          "text": "REGEXP_REPLACE"
-        },
-        {
-          "key": "D",
-          "text": "REGEXP_COUNT"
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "topic": "advanced",
-      "explanation": "REGEXP_LIKE é uma condição booleana (não uma função que retorna valor) projetada especificamente para ser usada em cláusulas WHERE ou CHECK, testando se uma string corresponde a um padrão de expressão regular. REGEXP_SUBSTR extrai a substring que casa com o padrão. REGEXP_REPLACE substitui ocorrências do padrão por outro texto. REGEXP_COUNT conta quantas ocorrências do padrão existem — nenhuma dessas três é projetada como condição direta de filtro em WHERE como o REGEXP_LIKE."
-    },
-    {
-      "id": 61,
-      "context": "Examine this expression:\n\nSELECT REGEXP_REPLACE('500-1234', '[^0-9]', '') FROM dual;",
-      "text": "What is the result of this expression?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "'5001234'"
-        },
-        {
-          "key": "B",
-          "text": "'500-1234'"
-        },
-        {
-          "key": "C",
-          "text": "'-'"
-        },
-        {
-          "key": "D",
-          "text": "An error, since REGEXP_REPLACE requires four arguments"
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "topic": "advanced",
-      "explanation": "O padrão de expressão regular `[^0-9]` representa 'qualquer caractere que NÃO seja um dígito de 0 a 9'; REGEXP_REPLACE substitui cada ocorrência desse padrão (ou seja, o hífen '-') por uma string vazia, restando apenas os dígitos: '5001234'. B estaria correta apenas se nada fosse substituído. C inverteria a lógica, mantendo só o que não é dígito. D está errada porque REGEXP_REPLACE aceita de 3 a 6 argumentos, sendo o quarto em diante (posição, ocorrência, flags) opcionais — três argumentos já são suficientes para a chamada ser válida."
-    },
-    {
-      "id": 62,
-      "context": "",
-      "text": "Which two statements are true about analytic functions such as RANK, DENSE_RANK, and ROW_NUMBER used with an OVER() clause? (Choose two.)",
-      "type": "multiple",
-      "correctCount": 2,
-      "options": [
-        {
-          "key": "A",
-          "text": "They compute a value across a set of rows related to the current row, without collapsing the result set as GROUP BY does"
-        },
-        {
-          "key": "B",
-          "text": "PARTITION BY within the OVER() clause divides the result set into groups for separate calculation"
-        },
-        {
-          "key": "C",
-          "text": "RANK and DENSE_RANK always produce identical results for tied values"
-        },
-        {
-          "key": "D",
-          "text": "Analytic functions cannot be combined with ORDER BY inside the OVER() clause"
-        }
-      ],
-      "correct": [
-        "A",
-        "B"
-      ],
-      "topic": "advanced",
-      "explanation": "Funções analíticas como RANK, DENSE_RANK e ROW_NUMBER com OVER() calculam um valor relacionado a um conjunto de linhas (a 'janela'), mas mantêm todas as linhas originais no resultado, ao contrário do GROUP BY, que colapsa as linhas em grupos (A correto). PARTITION BY dentro do OVER() divide o conjunto de resultados em partições independentes, dentro das quais a função analítica é recalculada separadamente (B correto). C está errada porque RANK pula números após empates (ex: 1,1,3) enquanto DENSE_RANK não pula (1,1,2), produzindo resultados diferentes para valores empatados. D está errada porque ORDER BY dentro do OVER() é, na verdade, essencial e amplamente usado para definir a ordem de cálculo do ranking/numeração."
-    },
-    {
-      "id": 63,
-      "context": "",
-      "text": "Which clause is used in a hierarchical query to define the relationship between parent and child rows, typically combined with START WITH?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "GROUP BY"
-        },
-        {
-          "key": "B",
-          "text": "CONNECT BY"
-        },
-        {
-          "key": "C",
-          "text": "PARTITION BY"
-        },
-        {
-          "key": "D",
-          "text": "ORDER SIBLINGS BY"
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "topic": "advanced",
-      "explanation": "CONNECT BY define a relação hierárquica entre linha pai e linha filha em uma consulta hierárquica (tipicamente usando PRIOR para indicar a direção), sendo normalmente combinada com START WITH para definir o(s) nó(s) raiz da hierarquia. GROUP BY agrupa linhas para agregação, sem relação hierárquica. PARTITION BY divide conjuntos de dados para funções analíticas. ORDER SIBLINGS BY apenas ordena os nós irmãos dentro de uma consulta hierárquica já definida por CONNECT BY, não define a relação pai-filho em si."
-    },
-    {
       "id": 64,
-      "topic": "functions",
+      "topic": "timezone",
       "context": "You want to return the current date and time from the user session, with a data type of TIMESTAMP WITH TIME ZONE.",
       "text": "Which function will do this?",
       "type": "single",
@@ -1938,7 +1790,7 @@
     },
     {
       "id": 65,
-      "topic": "functions",
+      "topic": "timezone",
       "context": "",
       "text": "Which two queries execute successfully? (Choose two.)",
       "type": "multiple",
@@ -2043,7 +1895,7 @@
     },
     {
       "id": 68,
-      "topic": "functions",
+      "topic": "groups",
       "context": "Examine the description of the EMPLOYEES table:\n\nName        Null?     Type\n----------  --------  -------------\nEMP_ID      NOT NULL  NUMBER\nEMP_NAME              VARCHAR2(40)\nDEPT_ID               NUMBER(2)\nSALARY                NUMBER(8,2)\nHIRE_DATE             DATE",
       "text": "Which two queries will execute successfully? (Choose two.)",
       "type": "multiple",
@@ -2108,7 +1960,7 @@
     },
     {
       "id": 70,
-      "topic": "advanced",
+      "topic": "select",
       "context": "You want to write a query that prompts for two column names and the WHERE condition each time it is executed in a session, but only prompts for the table name the first time it is executed. The variables used in your query are never undefined in your session.",
       "text": "Which query can be used?",
       "type": "single",
@@ -2271,7 +2123,7 @@
     },
     {
       "id": 75,
-      "topic": "ddl",
+      "topic": "access",
       "context": "",
       "text": "Which three are true about privileges? (Choose three.)",
       "type": "multiple",
@@ -2385,7 +2237,7 @@
     },
     {
       "id": 78,
-      "topic": "functions",
+      "topic": "timezone",
       "context": "Examine these statements which execute successfully:\n\nALTER SESSION SET NLS_DATE_FORMAT = 'DD-MON-YYYY HH24:MI:SS';\nALTER SESSION SET TIME_ZONE = '-5:00';\nSELECT DBTIMEZONE, SYSDATE FROM dual;\n\nExamine the result:\n\nDBTIMEZONE   SYSDATE\n-----------  -------------------\n+00:00       11-JUL-2019 11:00:00",
       "text": "If LOCALTIMESTAMP was selected at the same time, what would it return?",
       "type": "single",
@@ -2415,7 +2267,7 @@
     },
     {
       "id": 79,
-      "topic": "select",
+      "topic": "groups",
       "context": "",
       "text": "Which two statements are true about the WHERE and HAVING clauses in a SELECT statement? (Choose two.)",
       "type": "multiple",
@@ -2450,7 +2302,7 @@
     },
     {
       "id": 80,
-      "topic": "ddl",
+      "topic": "access",
       "context": "",
       "text": "Which two are true about granting privileges on objects? (Choose two.)",
       "type": "multiple",
@@ -2663,7 +2515,7 @@
     },
     {
       "id": 86,
-      "topic": "select",
+      "topic": "groups",
       "context": "Examine this description of the EMP table:\n\nName        Null?     Type\n----------  --------  -------------\nEMPNO       NOT NULL  NUMBER(4)\nENAME                 VARCHAR2(10)\nSAL                   NUMBER(7,2)\nDEPTNO                NUMBER(2)\n\nYou execute this query:\n\nSELECT deptno AS \"departments\", SUM(sal) AS \"salary\"\n  FROM emp\n GROUP BY 1\nHAVING SUM(sal) > 3000;",
       "text": "What is returned upon execution?",
       "type": "single",
@@ -3124,7 +2976,7 @@
     },
     {
       "id": 99,
-      "topic": "select",
+      "topic": "groups",
       "context": "The SALES table has columns PROD_ID and QUANTITY_SOLD of data type NUMBER.",
       "text": "Which two queries execute successfully? (Choose two.)",
       "type": "multiple",
@@ -3229,7 +3081,7 @@
     },
     {
       "id": 102,
-      "topic": "ddl",
+      "topic": "access",
       "context": "",
       "text": "Which two are true about creating tables in an Oracle database? (Choose two.)",
       "type": "multiple",
@@ -3377,36 +3229,6 @@
       "explanation": "O Oracle garante consistência de leitura (read consistency) em nível de instrução SELECT, garantindo que uma consulta veja um snapshot consistente dos dados como existiam no início da execução da consulta, mesmo que outras transações estejam alterando os dados simultaneamente (C correto). Ao executar um UPDATE, o Oracle automaticamente bloqueia (lock) cada linha afetada para evitar que outras transações a modifiquem concorrentemente até que a transação seja confirmada ou desfeita (E correto). A está errada porque o comando ROLLBACK só pode desfazer alterações da PRÓPRIA sessão/transação atual, nunca de outra sessão/usuário. B está errada porque, com os privilégios adequados, uma consulta pode acessar tabelas de outros schemas usando notação schema.tabela. D está errada porque, no modelo padrão do Oracle, cada usuário possui exatamente um schema correspondente ao seu próprio nome de usuário — não é múltiplos schemas por usuário da forma descrita."
     },
     {
-      "id": 106,
-      "topic": "advanced",
-      "context": "Examine these four candidate statements:\n\nStatement A:\nSELECT deptno, LISTAGG(ename, ',') WITHIN GROUP (ORDER BY ename) AS employee_list\n  FROM emp\n GROUP BY deptno;\n\nStatement B:\nSELECT deptno, LISTAGG(ename, ',') WITHIN GROUP (GROUP BY deptno) AS employee_list\n  FROM emp\n ORDER BY ename;\n\nStatement C:\nSELECT deptno, LISTAGG(ename, ',') WITHIN GROUP AS employee_list\n  FROM emp\n GROUP BY deptno;\n\nStatement D:\nSELECT deptno, LISTAGG(ename, ',') WITHIN GROUP AS employee_list\n  FROM emp\n GROUP BY deptno\n ORDER BY ename;",
-      "text": "Which statement will return a comma-separated list of employee names in alphabetical order for each department in the EMP table?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "Statement A"
-        },
-        {
-          "key": "B",
-          "text": "Statement B"
-        },
-        {
-          "key": "C",
-          "text": "Statement C"
-        },
-        {
-          "key": "D",
-          "text": "Statement D"
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "explanation": "A sintaxe correta da função LISTAGG é `LISTAGG(coluna, separador) WITHIN GROUP (ORDER BY coluna_de_ordenação)`, usada junto com GROUP BY para agregar valores de uma coluna em uma única string por grupo, na ordem especificada — exatamente o padrão da Statement A, que agrupa por deptno e ordena os nomes alfabeticamente dentro de cada grupo. Statement B usa incorretamente 'GROUP BY' dentro da cláusula WITHIN GROUP (que deve conter um ORDER BY, não um GROUP BY) e ainda usa ORDER BY fora do contexto correto. Statement C omite a cláusula ORDER BY obrigatória dentro de WITHIN GROUP, tornando a sintaxe inválida e gerando erro."
-    },
-    {
       "id": 107,
       "topic": "joins",
       "context": "Examine the data:\n\nSELECT deptno, dname FROM dept;\n\nDEPTNO  DNAME\n------  -----------\n10      ACCOUNTING\n20      RESEARCH\n30      SALES\n40      OPERATIONS\n\nSELECT ename, job, deptno FROM emp ORDER BY deptno;\n\nENAME    JOB        DEPTNO\n-------  ---------  ------\nCLARK    MANAGER    10\nKING     PRESIDENT  10\nMILLER   CLERK      10\nJONES    MANAGER    20\nFORD     ANALYST    20\nADAMS    CLERK      20\nSMITH    CLERK      20\nSCOTT    ANALYST    20\nWARD     SALESMAN   30\nTURNER   SALESMAN   30\nALLEN    SALESMAN   30\nJAMES    CLERK      30\nBLAKE    MANAGER    30\nMARTIN   SALESMAN   30\n\nYou execute this query:\n\nSELECT ename, dname\n  FROM emp CROSS JOIN dept\n WHERE job = 'MANAGER'\n   AND dept.deptno IN (10, 20);",
@@ -3503,7 +3325,7 @@
     },
     {
       "id": 110,
-      "topic": "ddl",
+      "topic": "access",
       "context": "",
       "text": "Which two statements are true about views? (Choose two.)",
       "type": "multiple",
@@ -3671,7 +3493,7 @@
     },
     {
       "id": 115,
-      "topic": "functions",
+      "topic": "timezone",
       "context": "You have been tasked to create a table for a banking application. One of the columns must meet three requirements:\n\n1) Be stored in a format supporting date arithmetic without using conversion functions\n2) Store a loan period of up to 10 years\n3) Be used for calculating interest for the number of days the loan remains unpaid",
       "text": "Which data type should you use?",
       "type": "single",
@@ -3745,7 +3567,7 @@
     },
     {
       "id": 117,
-      "topic": "advanced",
+      "topic": "select",
       "context": "",
       "text": "Which is true about the & and && prefixes with substitution variables? (Choose two.)",
       "type": "multiple",
@@ -4204,96 +4026,6 @@
       "explanation": "INTERSECT ALL não é um operador válido no SQL padrão do Oracle (diferente de UNION ALL, que existe). Oracle suporta apenas UNION, UNION ALL, INTERSECT e MINUS como operadores de conjunto — não existe uma variante 'ALL' para INTERSECT ou MINUS, pois esses operadores já lidam com a questão de duplicatas de forma específica baseada em sua semântica de interseção/diferença de conjuntos."
     },
     {
-      "id": 132,
-      "topic": "advanced",
-      "context": "Examine this query:\n\nSELECT department_id, job_id, SUM(salary)\n  FROM employees\n GROUP BY ROLLUP(department_id, job_id);",
-      "text": "In addition to the detail rows for each department_id/job_id combination, which additional summary rows does ROLLUP produce?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "A subtotal for each department_id (across all job_id values) and one grand total row."
-        },
-        {
-          "key": "B",
-          "text": "Only a single grand total row."
-        },
-        {
-          "key": "C",
-          "text": "A subtotal for each job_id (across all department_id values) only."
-        },
-        {
-          "key": "D",
-          "text": "No additional rows; ROLLUP behaves identically to GROUP BY."
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "explanation": "ROLLUP gera subtotais hierárquicos progressivos: primeiro os detalhes por cada combinação department_id/job_id, depois um subtotal para cada department_id agregando todos os job_id daquele departamento, e por fim uma única linha de total geral (grand total) somando tudo — essa é a lógica hierárquica de ROLLUP(coluna1, coluna2), que soma da direita para a esquerda (A correto). B está errada porque ROLLUP gera subtotais intermediários por department_id, não apenas o total geral. C está errada porque ROLLUP, com essa ordem de argumentos, NÃO gera subtotal por job_id isoladamente (isso seria comportamento de CUBE, que gera todas as combinações possíveis). D está errada porque ROLLUP claramente adiciona linhas de subtotal e total que GROUP BY simples não produziria."
-    },
-    {
-      "id": 133,
-      "topic": "advanced",
-      "context": "",
-      "text": "In a hierarchical query using CONNECT BY, which pseudocolumn indicates the depth of a row within the hierarchy, starting at 1 for root rows?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "ROWNUM"
-        },
-        {
-          "key": "B",
-          "text": "LEVEL"
-        },
-        {
-          "key": "C",
-          "text": "CONNECT_BY_ROOT"
-        },
-        {
-          "key": "D",
-          "text": "SYS_CONNECT_BY_PATH"
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "explanation": "LEVEL é a pseudocoluna que retorna a profundidade (nível) de cada linha dentro da hierarquia em uma consulta CONNECT BY, começando em 1 para as linhas raiz (definidas por START WITH) e incrementando a cada nível de descendência. ROWNUM numera sequencialmente as linhas retornadas, sem relação com a hierarquia. CONNECT_BY_ROOT retorna um valor da linha raiz correspondente a cada linha da hierarquia, não a profundidade. SYS_CONNECT_BY_PATH retorna o caminho completo (concatenado) da raiz até a linha atual, não um número de nível."
-    },
-    {
-      "id": 134,
-      "topic": "functions",
-      "context": "Examine this expression:\n\nSELECT REGEXP_INSTR('Phone: 555-1234', '[0-9]') FROM dual;",
-      "text": "What is the result?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "7"
-        },
-        {
-          "key": "B",
-          "text": "8"
-        },
-        {
-          "key": "C",
-          "text": "9"
-        },
-        {
-          "key": "D",
-          "text": "1"
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "explanation": "REGEXP_INSTR busca a primeira ocorrência do padrão '[0-9]' (qualquer dígito) na string 'Phone: 555-1234' e retorna a posição onde ela começa, contando a partir de 1: 'P'(1) 'h'(2) 'o'(3) 'n'(4) 'e'(5) ':'(6) ' '(7) '5'(8) — o primeiro dígito '5' está na posição 8. As demais alternativas contam incorretamente a posição inicial (considerando ou não o espaço após os dois-pontos, ou começando a contagem em 0)."
-    },
-    {
       "id": 135,
       "topic": "functions",
       "context": "Evaluate:\n\nSELECT LPAD(125, 5, '0') FROM dual;",
@@ -4626,7 +4358,7 @@
     },
     {
       "id": 146,
-      "topic": "select",
+      "topic": "groups",
       "context": "",
       "text": "Which query correctly groups employees by the year they were hired?",
       "type": "single",
@@ -4803,66 +4535,6 @@
         "B"
       ],
       "explanation": "MINUS retorna as linhas presentes no resultado da primeira consulta que NÃO aparecem no resultado da segunda, e como qualquer operador de conjunto, elimina automaticamente duplicatas do resultado final (B correto). A está errada porque, como qualquer operador de conjunto, MINUS exige apenas o mesmo número de colunas com tipos compatíveis, não nomes idênticos — os nomes de coluna do resultado vêm da primeira consulta. C está errada porque MINUS, ao contrário de UNION ALL, remove sim as duplicatas do resultado. D está errada porque MINUS é o operador padrão e nativo do Oracle SQL para essa operação — EXCEPT é a palavra usada por outros bancos (como SQL Server), não pelo Oracle."
-    },
-    {
-      "id": 152,
-      "topic": "advanced",
-      "context": "Examine this query:\n\nSELECT employee_id, department_id, salary,\n       SUM(salary) OVER (PARTITION BY department_id ORDER BY salary) AS running_total\n  FROM employees;",
-      "text": "What does the RUNNING_TOTAL column represent for each row?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "The total salary of all employees in the company."
-        },
-        {
-          "key": "B",
-          "text": "The cumulative sum of salary within the same department, up to and including the current row's salary, ordered by salary."
-        },
-        {
-          "key": "C",
-          "text": "The average salary within the department."
-        },
-        {
-          "key": "D",
-          "text": "The total salary of all departments combined, reset for each row."
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "explanation": "SUM(salary) OVER (PARTITION BY department_id ORDER BY salary) calcula uma soma cumulativa (running total): dentro de cada partição (departamento), as linhas são ordenadas por salário, e cada linha recebe a soma de todos os salários DELA e de todas as linhas anteriores na mesma partição segundo essa ordenação — por isso é uma soma acumulada por departamento, não o total da empresa toda. A está errada porque ignora o PARTITION BY, que restringe o cálculo a cada departamento separadamente. C está errada porque a função usada é SUM, não AVG. D está errada porque a soma é cumulativa (acumula ao longo das linhas ordenadas), não reiniciada a cada linha."
-    },
-    {
-      "id": 153,
-      "topic": "advanced",
-      "context": "Evaluate:\n\nSELECT REGEXP_REPLACE('2024-11-05', '(\\d{4})-(\\d{2})-(\\d{2})', '\\3/\\2/\\1')\nFROM dual;",
-      "text": "What is returned?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "'05/11/2024'"
-        },
-        {
-          "key": "B",
-          "text": "'2024-11-05'"
-        },
-        {
-          "key": "C",
-          "text": "'11/05/2024'"
-        },
-        {
-          "key": "D",
-          "text": "an error"
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "explanation": "Os grupos de captura `(\\d{4})`, `(\\d{2})`, `(\\d{2})` capturam respectivamente o ano (2024), o mês (11) e o dia (05) da data original; o padrão de substituição '\\3/\\2/\\1' reorganiza esses grupos na ordem dia/mês/ano, separados por barras, produzindo '05/11/2024'. B estaria correta apenas se nenhuma substituição ocorresse. C inverteria a ordem de forma diferente da especificada pelos índices dos grupos (\\3 \\2 \\1, não \\2 \\3 \\1). D está errada porque a expressão regular e a sintaxe de REGEXP_REPLACE com grupos de captura numerados (\\1, \\2, \\3) são válidas em Oracle."
     },
     {
       "id": 154,
@@ -5525,36 +5197,6 @@
       "explanation": "Em uma consulta composta com operadores de conjunto, o ORDER BY final pode referenciar o alias de coluna definido na PRIMEIRA consulta do conjunto (aqui, 'price', definido como alias de list_price na primeira SELECT) — por isso a consulta é válida (A correto). B está errada porque é exatamente o oposto do comportamento real: aliases da primeira consulta SÃO utilizáveis no ORDER BY final. C está errada porque a validade do ORDER BY com alias não depende de usar UNION em vez de UNION ALL — ambos suportam essa referência da mesma forma. D está errada porque é perfeitamente normal e válido que a segunda consulta de um UNION use uma expressão/coluna com nome diferente (unit_cost), desde que o tipo de dado seja compatível com a coluna correspondente da primeira consulta — o nome final do resultado vem da primeira consulta, então essa diferença de nome entre as consultas não invalida a operação."
     },
     {
-      "id": 176,
-      "topic": "advanced",
-      "context": "Three employees are tied for the highest salary in a department, and a fourth employee has the next-highest distinct salary.",
-      "text": "What rank does RANK() assign to the fourth employee, compared to DENSE_RANK()?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "RANK() gives 4, DENSE_RANK() gives 2."
-        },
-        {
-          "key": "B",
-          "text": "RANK() and DENSE_RANK() both give 4."
-        },
-        {
-          "key": "C",
-          "text": "RANK() gives 2, DENSE_RANK() gives 4."
-        },
-        {
-          "key": "D",
-          "text": "RANK() and DENSE_RANK() both give 2."
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "explanation": "RANK() atribui a mesma posição (1) aos três funcionários empatados no topo, mas PULA os números seguintes proporcionalmente ao número de empates, então o próximo valor distinto de salário recebe a posição 4 (1, 1, 1, 4) — refletindo quantas linhas estão 'acima' dele. DENSE_RANK(), por outro lado, NÃO pula números após empates, atribuindo posições consecutivas sem lacunas (1, 1, 1, 2), então o quarto funcionário recebe rank 2 — por isso a resposta correta é A (RANK dá 4, DENSE_RANK dá 2), refletindo a diferença fundamental entre as duas funções quanto ao tratamento de empates."
-    },
-    {
       "id": 177,
       "topic": "fundamentals",
       "context": "",
@@ -5796,7 +5438,7 @@
     },
     {
       "id": 185,
-      "topic": "ddl",
+      "topic": "access",
       "context": "",
       "text": "Which statement makes the EMPLOYEES table read-only, preventing any DML, while still allowing DDL operations like ALTER?",
       "type": "single",
@@ -5916,7 +5558,7 @@
     },
     {
       "id": 189,
-      "topic": "select",
+      "topic": "groups",
       "context": "Examine this query:\n\nSELECT department_id FROM employees GROUP BY department_id HAVING department_id > 50;",
       "text": "Is this valid, even though HAVING contains no aggregate function?",
       "type": "single",
@@ -6095,66 +5737,6 @@
       "explanation": "UNION (sem ALL) elimina automaticamente todas as linhas duplicadas do resultado combinado final, considerando os VALORES das linhas, não a origem (tabela) de onde vieram — então, embora department_id 10 apareça 5 vezes em EMPLOYEES e 1 vez em DEPARTMENTS (totalizando 6 ocorrências antes da deduplicação), o UNION colapsa todas essas ocorrências idênticas em uma única linha no resultado final (B correto). A está errada porque conta as ocorrências sem considerar a eliminação de duplicatas do UNION. C e D não correspondem à lógica de deduplicação completa que o UNION (sem ALL) aplica a TODAS as repetições do mesmo valor, vindas de qualquer das consultas combinadas."
     },
     {
-      "id": 195,
-      "topic": "advanced",
-      "context": "",
-      "text": "Which function returns the full hierarchical path from the root to the current row, concatenated with a specified separator, in a CONNECT BY query?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "CONNECT_BY_ROOT"
-        },
-        {
-          "key": "B",
-          "text": "SYS_CONNECT_BY_PATH"
-        },
-        {
-          "key": "C",
-          "text": "LEVEL"
-        },
-        {
-          "key": "D",
-          "text": "PRIOR"
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "explanation": "SYS_CONNECT_BY_PATH(coluna, separador) constrói e retorna o caminho hierárquico completo desde a linha raiz até a linha atual, concatenando os valores da coluna especificada com o separador fornecido entre cada nível — muito usado para exibir visualmente a hierarquia completa de cada nó (ex: '/Diretoria/Vendas/Vendedor'). CONNECT_BY_ROOT retorna apenas o valor da linha RAIZ correspondente à linha atual, não o caminho completo. LEVEL retorna apenas a profundidade numérica do nó na hierarquia. PRIOR é um operador usado dentro da cláusula CONNECT BY para definir a relação pai-filho, não uma função que retorna caminhos."
-    },
-    {
-      "id": 196,
-      "topic": "advanced",
-      "context": "",
-      "text": "Which clause transforms rows into columns, commonly used to turn distinct values of one column into separate output columns with aggregated values?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "PIVOT"
-        },
-        {
-          "key": "B",
-          "text": "ROLLUP"
-        },
-        {
-          "key": "C",
-          "text": "CUBE"
-        },
-        {
-          "key": "D",
-          "text": "UNPIVOT"
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "explanation": "PIVOT transforma valores distintos de uma coluna em colunas separadas no resultado, geralmente aplicando uma função de agregação para cada nova coluna gerada — é a operação clássica de transpor linhas em colunas. ROLLUP e CUBE geram subtotais e totais hierárquicos/multidimensionais dentro do mesmo conjunto de colunas, sem transpor dados para novas colunas. UNPIVOT realiza a operação INVERSA do PIVOT, transformando colunas em linhas, não linhas em colunas."
-    },
-    {
       "id": 197,
       "topic": "fundamentals",
       "context": "",
@@ -6276,7 +5858,7 @@
     },
     {
       "id": 201,
-      "topic": "functions",
+      "topic": "timezone",
       "context": "Two DATE values, START_DATE and END_DATE, are subtracted: END_DATE - START_DATE.",
       "text": "What is the data type and meaning of the result?",
       "type": "single",
@@ -6725,36 +6307,6 @@
       "explanation": "Mesmo que a primeira consulta da combinação não retorne nenhuma linha (já que nenhum cliente tem country_id 999), isso não causa erro nem invalida a operação — o UNION ALL simplesmente combina o resultado vazio da primeira consulta com todas as linhas retornadas pela segunda consulta (clientes com country_id 10), resultando apenas nas linhas dessa segunda consulta (B correto). A está errada porque uma subconsulta ou consulta de um UNION retornando zero linhas é perfeitamente normal e não gera erro. C está errada porque a segunda consulta retorna normalmente os clientes do país 10. D está errada porque a consulta filtra explicitamente por country_id em ambas as partes, nunca retornando 'todos os clientes' sem filtro algum."
     },
     {
-      "id": 216,
-      "topic": "advanced",
-      "context": "",
-      "text": "Which analytic function divides the rows in a result set into a specified number of roughly equal-sized groups (buckets), returning the bucket number for each row?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "NTILE"
-        },
-        {
-          "key": "B",
-          "text": "RANK"
-        },
-        {
-          "key": "C",
-          "text": "ROW_NUMBER"
-        },
-        {
-          "key": "D",
-          "text": "LAG"
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "explanation": "NTILE(n) divide o conjunto de linhas ordenado em N grupos (buckets) de tamanho aproximadamente igual, atribuindo a cada linha um número de bucket (de 1 a N) indicando a qual grupo ela pertence — útil para análises como quartis ou decis. RANK e ROW_NUMBER atribuem posições sequenciais individuais a cada linha, sem agrupá-las em buckets de tamanho fixo. LAG retorna o valor de uma coluna de uma linha anterior dentro da mesma partição, não tem relação com divisão em grupos."
-    },
-    {
       "id": 217,
       "topic": "fundamentals",
       "context": "",
@@ -7086,7 +6638,7 @@
     },
     {
       "id": 228,
-      "topic": "ddl",
+      "topic": "access",
       "context": "",
       "text": "Which clause, used when granting a SYSTEM privilege (not an object privilege) to a user, allows that user to also grant the same privilege to others?",
       "type": "single",
@@ -7325,36 +6877,6 @@
       "explanation": "ORDER BY por posição numérica (ORDER BY 2) sempre se refere à posição da coluna na lista de SELECT, funcionando independentemente de haver ou não um alias definido em qualquer uma das consultas combinadas. É a forma mais segura de ordenar resultados de UNION quando os nomes/aliases das colunas diferem entre as consultas, evitando ambiguidade."
     },
     {
-      "id": 236,
-      "topic": "advanced",
-      "context": "Evaluate:\n\nSELECT employee_id, salary, LAG(salary) OVER (ORDER BY employee_id) AS prev_salary\n  FROM employees;",
-      "text": "What offset does LAG use by default when none is specified?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "0 (the current row)"
-        },
-        {
-          "key": "B",
-          "text": "1 (the immediately preceding row)"
-        },
-        {
-          "key": "C",
-          "text": "-1 (the next row)"
-        },
-        {
-          "key": "D",
-          "text": "It requires an explicit offset; this query would raise an error."
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "explanation": "Quando nenhum argumento de deslocamento (offset) é informado, LAG assume o valor padrão 1, retornando o valor da coluna na linha IMEDIATAMENTE ANTERIOR de acordo com o ORDER BY da janela. Para 'olhar' mais linhas para trás, seria preciso informar explicitamente esse segundo argumento, como LAG(salary, 2)."
-    },
-    {
       "id": 237,
       "topic": "fundamentals",
       "context": "",
@@ -7383,36 +6905,6 @@
         "B"
       ],
       "explanation": "Dependência funcional (A determina B, ou A → B) significa que, para cada valor único de A, existe exatamente um valor correspondente de B — conhecendo A, você sempre sabe qual é o B associado, sem ambiguidade. É o conceito central por trás das formas normais (especialmente 2NF e 3NF), que buscam eliminar dependências indesejadas ou parciais."
-    },
-    {
-      "id": 238,
-      "topic": "functions",
-      "context": "Evaluate:\n\nSELECT REGEXP_COUNT('banana', 'an') FROM dual;",
-      "text": "What is returned?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "1"
-        },
-        {
-          "key": "B",
-          "text": "2"
-        },
-        {
-          "key": "C",
-          "text": "3"
-        },
-        {
-          "key": "D",
-          "text": "6"
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "explanation": "REGEXP_COUNT conta quantas vezes o padrão ocorre na string, sem sobreposição. Em 'banana', o padrão 'an' aparece em 'b-AN-ana' (posições 2-3) e depois em 'ban-AN-a' (posições 4-5) — duas ocorrências não sobrepostas, resultando em 2."
     },
     {
       "topic": "fundamentals",
@@ -7506,7 +6998,7 @@
       "id": 241
     },
     {
-      "topic": "select",
+      "topic": "groups",
       "context": "Table SALES(region, amount). Some rows have region = NULL.",
       "text": "Examine this query:\nSELECT region, SUM(amount) FROM sales GROUP BY region;\nHow are rows where region IS NULL treated?",
       "type": "single",
@@ -7536,7 +7028,7 @@
       "id": 242
     },
     {
-      "topic": "select",
+      "topic": "groups",
       "context": "Examine this query:\nSELECT department_id, AVG(salary)\n  FROM employees\n WHERE salary > 3000\n GROUP BY department_id\nHAVING AVG(salary) > 5000\n ORDER BY department_id;",
       "text": "What is the correct logical order in which Oracle evaluates the clauses of this statement?",
       "type": "single",
@@ -7567,36 +7059,6 @@
     },
     {
       "topic": "functions",
-      "context": "Table EMPLOYEES(department_id, last_name).",
-      "text": "Examine this query:\nSELECT department_id, LISTAGG(last_name, ', ') WITHIN GROUP (ORDER BY last_name) AS names\n  FROM employees\n GROUP BY department_id;\nWhat does this query do?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "For each department, concatenates the last names of its employees into a single comma-separated string, sorted alphabetically."
-        },
-        {
-          "key": "B",
-          "text": "Returns one row per employee with a running concatenation of names seen so far."
-        },
-        {
-          "key": "C",
-          "text": "Raises an error because LISTAGG cannot be combined with GROUP BY."
-        },
-        {
-          "key": "D",
-          "text": "Concatenates all last names in the entire table into one string, ignoring department_id."
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "explanation": "LISTAGG é uma função de agregação que concatena os valores de uma coluna de todas as linhas de um grupo em uma única string, usando o separador informado (', ' neste caso), e a cláusula WITHIN GROUP (ORDER BY last_name) define a ordem em que os valores são concatenados dentro de cada grupo — como há GROUP BY department_id, o resultado é uma linha por departamento com os nomes concatenados em ordem alfabética (A correto). B descreve uma função analítica de janela (como uma versão \"running\" com OVER), não o comportamento de agregação de LISTAGG com GROUP BY. C está errada pois LISTAGG é justamente projetada para uso com GROUP BY, sendo uma função de agregação. D está errada porque o GROUP BY department_id garante que a concatenação respeite os grupos por departamento, não a tabela inteira.",
-      "id": 244
-    },
-    {
-      "topic": "functions",
       "context": "Column BONUS in table EMPLOYEES allows NULL. Consider:\nSELECT NVL2(bonus, salary + bonus, salary) AS total_comp FROM employees;",
       "text": "What does NVL2 return for an employee whose BONUS is NULL?",
       "type": "single",
@@ -7624,36 +7086,6 @@
       ],
       "explanation": "NVL2(expr1, expr2, expr3) avalia expr1: se expr1 NÃO for NULL, retorna expr2; se expr1 FOR NULL, retorna expr3. Como bonus é NULL para esse funcionário, a função retorna o terceiro argumento, que é simplesmente salary (C correto). A está errada porque NVL2 nunca retorna NULL apenas por seu primeiro argumento ser NULL — ela retorna explicitamente expr3 nesse caso. B descreve o comportamento de NVL(bonus,0) somado a salary, não o de NVL2 com essa estrutura. D está errada porque NVL2 não exige que expr2 e expr3 tenham o mesmo tipo de dado exato, apenas tipos implicitamente conversíveis/compatíveis.",
       "id": 245
-    },
-    {
-      "topic": "functions",
-      "context": "Table PRODUCTS(product_code). Examine:\nSELECT product_code FROM products\n WHERE REGEXP_LIKE(product_code, '^[A-Z]{2}-[0-9]{3}$');",
-      "text": "Which product_code value matches this condition?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "AB-123"
-        },
-        {
-          "key": "B",
-          "text": "ab-123"
-        },
-        {
-          "key": "C",
-          "text": "ABC-123"
-        },
-        {
-          "key": "D",
-          "text": "AB-12"
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "explanation": "A expressão regular '^[A-Z]{2}-[0-9]{3}$' exige exatamente duas letras maiúsculas no início (^[A-Z]{2}), seguidas de um hífen literal, seguidas de exatamente três dígitos até o fim da string ($) — o valor 'AB-123' atende exatamente a esse padrão (A correto). 'ab-123' usa letras minúsculas, que não correspondem à classe [A-Z], já que REGEXP_LIKE é sensível a maiúsculas/minúsculas por padrão, sem o parâmetro de match 'i'. 'ABC-123' tem três letras antes do hífen, excedendo o {2} exigido. 'AB-12' tem apenas dois dígitos, não os três exigidos por {3}.",
-      "id": 246
     },
     {
       "topic": "joins",
@@ -7956,37 +7388,7 @@
       "id": 256
     },
     {
-      "topic": "advanced",
-      "context": "Table EMPLOYEES(employee_id, department_id, salary). Within department 10, three employees have salary = 5000, and the next highest distinct salary is 4500.",
-      "text": "Using RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) for these employees, what rank value is assigned to the employee earning 4500?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "2"
-        },
-        {
-          "key": "B",
-          "text": "3"
-        },
-        {
-          "key": "C",
-          "text": "4"
-        },
-        {
-          "key": "D",
-          "text": "1"
-        }
-      ],
-      "correct": [
-        "C"
-      ],
-      "explanation": "RANK() atribui a mesma posição a valores empatados, mas PULA os números de posição subsequentes de acordo com a quantidade de linhas empatadas — como três funcionários empatam com salary 5000 e recebem rank 1, 1 e 1, o próximo valor distinto (4500) recebe rank 4 (pulando os ranks 2 e 3, que seriam \"consumidos\" pelos três empates) (C correto). Esse é exatamente o comportamento que diferencia RANK de DENSE_RANK: DENSE_RANK não pularia números e atribuiria rank 2 ao próximo valor distinto, enquanto RANK conta as linhas empatadas como ocupando posições consecutivas que são puladas.",
-      "id": 257
-    },
-    {
-      "topic": "advanced",
+      "topic": "joins",
       "context": "WITH dept_totals AS (\n  SELECT department_id, SUM(salary) AS total_sal\n    FROM employees\n   GROUP BY department_id\n)\nSELECT * FROM dept_totals WHERE total_sal > 50000;",
       "text": "What is the primary purpose of the WITH clause (subquery factoring) used at the start of this statement?",
       "type": "single",
@@ -8042,7 +7444,7 @@
       "correct": [
         "A"
       ],
-      "topic": "fundamentals",
+      "topic": "dictionary",
       "explanation": "USER_TABLES mostra apenas os objetos do esquema do próprio usuário conectado, sem exigir privilégios especiais, pois cada usuário sempre pode ver seus próprios objetos. ALL_TABLES exibe as tabelas do próprio usuário mais aquelas em que ele recebeu privilégios de acesso em outros esquemas, exigindo que esses privilégios existam. DBA_TABLES mostra todas as tabelas do banco, mas exige o privilégio de DBA. V$TABLES não é uma view válida do dicionário de dados (views dinâmicas de performance usam outros nomes, como V$SESSION)."
     },
     {
@@ -8133,68 +7535,8 @@
       "correct": [
         "A"
       ],
-      "topic": "advanced",
+      "topic": "joins",
       "explanation": "A opção A é uma subquery correlacionada: para cada linha de EMPLOYEES (alias e), a subquery recalcula a média de salário apenas do mesmo department_id, comparando cada funcionário com a média do seu próprio departamento. B compara com a média geral da empresa, não a do departamento. C usa GROUP BY na subquery, que retorna uma linha de média por departamento (múltiplas linhas), o que causa erro em tempo de execução ao ser comparado com '>' (subquery de linha única retornando mais de uma linha). D é inválida porque uma função de agregação não pode ser usada diretamente na cláusula WHERE sem uma subquery."
-    },
-    {
-      "id": 263,
-      "context": "EMPLOYEES(employee_id, manager_id, last_name)",
-      "text": "In a hierarchical query using CONNECT BY, which clause identifies the root row(s) where the hierarchy traversal begins (for example, the employee with no manager)?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "CONNECT BY PRIOR employee_id = manager_id"
-        },
-        {
-          "key": "B",
-          "text": "START WITH manager_id IS NULL"
-        },
-        {
-          "key": "C",
-          "text": "ORDER SIBLINGS BY last_name"
-        },
-        {
-          "key": "D",
-          "text": "WHERE LEVEL = 1"
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "topic": "advanced",
-      "explanation": "START WITH define explicitamente a(s) linha(s) raiz a partir das quais a hierarquia é construída — aqui, o funcionário sem gerente. CONNECT BY (A) define apenas a relação pai-filho entre as linhas, mas não indica onde começar. ORDER SIBLINGS BY (C) apenas ordena os irmãos dentro de cada nível da hierarquia, sem afetar o ponto de partida. Usar WHERE LEVEL = 1 (D) filtraria o resultado final para mostrar somente a raiz, mas não estabelece corretamente o ponto de partida da árvore inteira como o START WITH faz."
-    },
-    {
-      "id": 264,
-      "context": "",
-      "text": "Which analytic function assigns a unique sequential integer to every row within a partition, based on the ORDER BY clause, with no gaps and no repeated values — even when the ORDER BY column contains duplicate values?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "RANK"
-        },
-        {
-          "key": "B",
-          "text": "DENSE_RANK"
-        },
-        {
-          "key": "C",
-          "text": "ROW_NUMBER"
-        },
-        {
-          "key": "D",
-          "text": "NTILE"
-        }
-      ],
-      "correct": [
-        "C"
-      ],
-      "topic": "advanced",
-      "explanation": "ROW_NUMBER atribui um número sequencial único a cada linha dentro da partição, sem nunca repetir valores, mesmo quando há empates na coluna do ORDER BY (o desempate é arbitrário, mas os números continuam únicos e sem lacunas). RANK e DENSE_RANK, ao contrário, atribuem o mesmo valor a linhas empatadas: RANK deixa lacunas na sequência após o empate, e DENSE_RANK não deixa lacunas, mas ambos podem repetir valores entre linhas. NTILE distribui as linhas em um número fixo de grupos (buckets), não gera uma numeração sequencial linha a linha."
     },
     {
       "id": 265,
@@ -8403,7 +7745,7 @@
       "correct": [
         "A"
       ],
-      "topic": "select",
+      "topic": "groups",
       "explanation": "A cláusula WHERE é avaliada antes do agrupamento (GROUP BY) ser formado, então as funções de agregação como AVG ainda não existem nesse momento da execução lógica da consulta — por isso não podem ser referenciadas no WHERE. Para filtrar com base em um valor agregado, é necessário usar HAVING, que é avaliado depois do agrupamento (A correta). B é falsa, pois alias não é exigido para isso. C inverte a ordem real de avaliação das cláusulas (WHERE sempre vem antes de GROUP BY na sintaxe e na execução lógica). D é falsa, pois department_id pode coexistir normalmente com AVG(salary) desde que esteja no GROUP BY, como já está."
     },
     {
@@ -8767,66 +8109,6 @@
       "explanation": "Em Oracle, ao ordenar em ordem decrescente (DESC), os valores NULL aparecem por padrão no INÍCIO do resultado (comportamento NULLS FIRST). Ao ordenar em ordem crescente (ASC), os NULLs aparecem por padrão no FINAL (NULLS LAST). Para inverter esse comportamento padrão, use as palavras-chave explícitas NULLS FIRST ou NULLS LAST: por exemplo, ORDER BY commission_pct DESC NULLS LAST coloca os NULLs após todos os valores não-nulos mesmo em ordenação descendente. NULL não é excluído de resultados por ORDER BY — todos os registros aparecem no resultado. Esse padrão difere de outros bancos como PostgreSQL e MySQL."
     },
     {
-      "id": 284,
-      "topic": "functions",
-      "context": "SELECT department_id,\n       LISTAGG(last_name, ', ') WITHIN GROUP (ORDER BY last_name) AS names\nFROM employees\nGROUP BY department_id;",
-      "text": "Which statement best describes the behavior of the LISTAGG function in this query?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "Returns the count of employees per department as a comma-separated number list"
-        },
-        {
-          "key": "B",
-          "text": "Concatenates all LAST_NAME values per department into a single string, in alphabetical order, separated by commas"
-        },
-        {
-          "key": "C",
-          "text": "Returns only DISTINCT last names per department, ordered alphabetically"
-        },
-        {
-          "key": "D",
-          "text": "Creates one row per employee with all department members listed in a comma-separated string"
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "explanation": "A função LISTAGG concatena os valores de uma coluna em uma única string dentro de cada grupo, usando o separador especificado (', ' neste caso). A cláusula WITHIN GROUP (ORDER BY last_name) define a ordem em que os nomes são concatenados — aqui, ordem alfabética. O resultado é uma linha por DEPARTMENT_ID com todos os sobrenomes concatenados. Importante: LISTAGG não elimina duplicatas automaticamente; se dois empregados tiverem o mesmo sobrenome, ambos aparecem. Caso a string resultante exceda 4000 bytes, ocorre o erro ORA-01489. A partir do Oracle 19c, é possível usar LISTAGG(...) ON OVERFLOW TRUNCATE para tratar esse caso graciosamente."
-    },
-    {
-      "id": 285,
-      "topic": "functions",
-      "context": "SELECT first_name FROM employees\nWHERE REGEXP_LIKE(first_name, '^[AEIOUaeiou]');",
-      "text": "What does this query return?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "Employees whose first name contains a vowel anywhere in the string"
-        },
-        {
-          "key": "B",
-          "text": "Employees whose first name starts with a vowel (uppercase or lowercase)"
-        },
-        {
-          "key": "C",
-          "text": "Employees whose first name ends with a vowel"
-        },
-        {
-          "key": "D",
-          "text": "Employees whose first name consists entirely of vowels"
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "explanation": "Em expressões regulares, o símbolo ^ é uma âncora que indica o INÍCIO da string. Portanto, REGEXP_LIKE(first_name, '^[AEIOUaeiou]') retorna linhas onde FIRST_NAME começa com qualquer vogal maiúscula ou minúscula. Para verificar se a string termina com uma vogal, usaria-se o símbolo $ (âncora de fim): '[AEIOUaeiou]$'. Para verificar se contém uma vogal em qualquer posição, bastaria [AEIOUaeiou] sem âncoras. A função REGEXP_LIKE é o equivalente ao LIKE mas com suporte a expressões regulares POSIX — mais poderosa porém mais verbosa. Alternativas: REGEXP_SUBSTR extrai o trecho que casa; REGEXP_REPLACE substitui padrões."
-    },
-    {
       "id": 286,
       "topic": "functions",
       "context": "",
@@ -9127,96 +8409,6 @@
       "explanation": "Em operações de conjunto (UNION, UNION ALL, INTERSECT, MINUS), os nomes das colunas do resultado final são determinados SEMPRE pela PRIMEIRA consulta. Os nomes (ou aliases) das consultas subsequentes são ignorados para fins de nomenclatura. No exemplo, como a primeira query define os aliases \"ID\" e \"Name\", essas serão as colunas do resultado, independentemente do que a segunda query retorna. Por isso, a cláusula ORDER BY em um UNION deve referenciar os aliases da primeira query ou as posições numéricas das colunas (ORDER BY 1 DESC), nunca os nomes das colunas das queries seguintes."
     },
     {
-      "id": 296,
-      "topic": "advanced",
-      "context": "",
-      "text": "Which query generates a result set containing exactly the integers 1, 2, 3, 4, 5 (one per row)?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "SELECT LEVEL FROM dual WHERE LEVEL <= 5"
-        },
-        {
-          "key": "B",
-          "text": "SELECT LEVEL FROM dual CONNECT BY LEVEL <= 5"
-        },
-        {
-          "key": "C",
-          "text": "SELECT ROWNUM FROM dual WHERE ROWNUM <= 5"
-        },
-        {
-          "key": "D",
-          "text": "SELECT LEVEL FROM dual START WITH LEVEL = 1 WHERE LEVEL <= 5"
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "explanation": "SELECT LEVEL FROM dual CONNECT BY LEVEL <= 5 é o idioma padrão do Oracle para gerar sequências numéricas sem uma tabela real. A pseudo-coluna LEVEL começa em 1 e incrementa a cada iteração hierárquica; a condição CONNECT BY controla quando a expansão para. A opção A falha porque LEVEL só existe em contextos hierárquicos (requer CONNECT BY) — usá-la num WHERE simples causa ORA-01788. A opção C não funciona: dual tem apenas 1 linha, portanto ROWNUM nunca passa de 1, retornando apenas uma linha. A opção D mistura incorretamente WHERE onde deveria estar CONNECT BY, resultando em erro de sintaxe ou comportamento incorreto."
-    },
-    {
-      "id": 297,
-      "topic": "advanced",
-      "context": "-- Table SCORES: name VARCHAR2(20), score NUMBER\n-- Data: ('Alice', 95), ('Bob', 87), ('Carol', 87), ('Dave', 82)\nSELECT name, score,\n       RANK()       OVER (ORDER BY score DESC) AS rnk,\n       DENSE_RANK() OVER (ORDER BY score DESC) AS d_rnk\nFROM scores;",
-      "text": "What RANK and DENSE_RANK values will Dave receive in the query result?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "RANK = 3, DENSE_RANK = 3"
-        },
-        {
-          "key": "B",
-          "text": "RANK = 4, DENSE_RANK = 3"
-        },
-        {
-          "key": "C",
-          "text": "RANK = 3, DENSE_RANK = 2"
-        },
-        {
-          "key": "D",
-          "text": "RANK = 4, DENSE_RANK = 4"
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "explanation": "As funções RANK() e DENSE_RANK() diferem no tratamento de empates. Com as pontuações Alice=95, Bob=87, Carol=87, Dave=82: Alice recebe RANK=1 e DENSE_RANK=1. Bob e Carol empatam com 87; ambos recebem RANK=2 e DENSE_RANK=2. A diferença aparece em Dave: RANK() 'pula' a posição 3 (dois concorrentes ocuparam a posição 2), atribuindo a Dave RANK=4. DENSE_RANK() nunca pula posições, atribuindo a Dave DENSE_RANK=3. Use RANK() quando quiser refletir lacunas reais no ranking (como em competições esportivas) e DENSE_RANK() quando quiser numeração contínua sem saltos. ROW_NUMBER() nunca empata — atribui um número único a cada linha, mesmo em caso de pontuações iguais."
-    },
-    {
-      "id": 298,
-      "topic": "advanced",
-      "context": "SELECT * FROM (\n  SELECT department_id, job_id, salary FROM employees\n)\nPIVOT (\n  SUM(salary)\n  FOR job_id IN ('IT_PROG' AS it_prog, 'SA_REP' AS sa_rep, 'HR_REP' AS hr_rep)\n);",
-      "text": "What does the PIVOT clause produce in this query?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "One row per unique JOB_ID, with DEPARTMENT_ID as a column showing salary totals"
-        },
-        {
-          "key": "B",
-          "text": "One row per unique DEPARTMENT_ID, with separate columns for each specified JOB_ID containing SUM(SALARY) for that combination"
-        },
-        {
-          "key": "C",
-          "text": "A dynamic transposition that automatically creates one column for every distinct JOB_ID in the table"
-        },
-        {
-          "key": "D",
-          "text": "An ORA error — PIVOT cannot be combined with aggregate functions like SUM"
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "explanation": "O PIVOT transforma linhas em colunas (rotaciona o resultado). No exemplo, para cada DEPARTMENT_ID distinto, o resultado terá uma linha com três colunas adicionais: IT_PROG, SA_REP e HR_REP, cada uma contendo a soma dos salários dos empregados daquele departamento com aquele job_id. Combinações sem empregados retornam NULL. Importante: a lista de valores no IN do PIVOT deve ser explícita e estática em tempo de compilação — o Oracle SQL puro não suporta PIVOT dinâmico que gere colunas automaticamente (isso exige SQL dinâmico em PL/SQL). O operador inverso UNPIVOT converte colunas de volta em linhas, sendo útil para normalizar dados desnormalizados."
-    },
-    {
       "id": 299,
       "topic": "fundamentals",
       "context": "SELECT 1/0 FROM dual;",
@@ -9338,7 +8530,7 @@
     },
     {
       "id": 303,
-      "topic": "select",
+      "topic": "groups",
       "context": "SELECT department_id, AVG(salary) avg_sal\nFROM employees\nGROUP BY department_id\nHAVING AVG(salary) > 8000\n  AND department_id IS NOT NULL;",
       "text": "In the query above, could the condition 'department_id IS NOT NULL' be moved to the WHERE clause? What is the practical impact of doing so?",
       "type": "single",
@@ -9365,36 +8557,6 @@
         "C"
       ],
       "explanation": "Condições sobre colunas não agregadas podem ser colocadas tanto no WHERE quanto no HAVING, com resultados funcionalmente idênticos, mas com diferença de desempenho. A cláusula WHERE filtra linhas ANTES do agrupamento e da agregação, enquanto HAVING filtra grupos DEPOIS que eles foram calculados. Mover department_id IS NOT NULL para o WHERE evita que o Oracle forme e processe um grupo desnecessário para department_id = NULL. A opção A está errada: IS NOT NULL em coluna simples é perfeitamente válido no WHERE — o que é proibido no WHERE são funções de grupo (COUNT, SUM, AVG, etc.). A restrição verdadeira é: condições que envolvem funções de agregação, como AVG(salary) > 8000, DEVEM estar no HAVING. A boa prática é colocar filtros de coluna simples no WHERE e filtros de agregação no HAVING."
-    },
-    {
-      "id": 304,
-      "topic": "functions",
-      "context": "SELECT REGEXP_SUBSTR('2026-06-15', '\\d{4}') FROM dual;",
-      "text": "What does the query above return?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "'2026' — the first occurrence of exactly 4 consecutive digits"
-        },
-        {
-          "key": "B",
-          "text": "'2026-06-15' — the full string, since it matches the pattern"
-        },
-        {
-          "key": "C",
-          "text": "NULL — REGEXP_SUBSTR requires the entire string to match the pattern to return a result"
-        },
-        {
-          "key": "D",
-          "text": "An error — the backslash needs to be escaped differently in Oracle SQL"
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "explanation": "REGEXP_SUBSTR retorna a primeira substring que corresponde ao padrão de expressão regular dentro da string de entrada. O padrão '\\d{4}' representa exatamente 4 dígitos consecutivos. Na string '2026-06-15', a primeira ocorrência de 4 dígitos é '2026', portanto esse é o valor retornado. A função NÃO exige que a string inteira corresponda ao padrão — ela encontra a primeira correspondência. Para obter a terceira ocorrência de dígitos (o '15'), usaríamos o quinto argumento de ocorrência: REGEXP_SUBSTR('2026-06-15', '\\d+', 1, 3). A assinatura completa é REGEXP_SUBSTR(source, pattern, position, occurrence, flags, subexpr). Em Oracle, o metacaractere \\d equivale a [[:digit:]] no padrão POSIX também suportado."
     },
     {
       "id": 305,
@@ -9455,36 +8617,6 @@
         "B"
       ],
       "explanation": "O CASE de busca (searched CASE) avalia cada condição WHEN como uma expressão booleana independente, permitindo qualquer operador de comparação, funções, IS NULL, BETWEEN, IN, etc.: CASE WHEN salary > 10000 THEN 'High' WHEN salary > 5000 THEN 'Medium' ELSE 'Low' END. Já o CASE simples (simple CASE) compara o valor de referência com uma constante por igualdade implícita — operadores como > não são permitidos na sintaxe WHEN: CASE job_id WHEN 'CLERK' THEN ... END. A opção C está errada: a cláusula ELSE é opcional em ambas as formas; se omitida e nenhum WHEN for satisfeito, o resultado é NULL. A opção D está incorreta: CASE suporta IS NULL perfeitamente com WHEN coluna IS NULL THEN ...; DECODE, por outro lado, trata internamente NULL = NULL como igual, mas CASE é mais expressivo e é o padrão ANSI SQL."
-    },
-    {
-      "id": 307,
-      "topic": "functions",
-      "context": "SELECT department_id,\n       LISTAGG(last_name, ', ') WITHIN GROUP (ORDER BY last_name) AS names\nFROM employees\nGROUP BY department_id;",
-      "text": "What does the query above produce?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "For each department, a comma-separated list of last names in alphabetical order"
-        },
-        {
-          "key": "B",
-          "text": "A single row with all employee last names from all departments combined into one string"
-        },
-        {
-          "key": "C",
-          "text": "An error because LISTAGG requires a PARTITION BY clause to work correctly"
-        },
-        {
-          "key": "D",
-          "text": "The same result as GROUP_CONCAT, Oracle's built-in equivalent function"
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "explanation": "LISTAGG é uma função de grupo que concatena valores de múltiplas linhas em uma única string, com o separador especificado no primeiro argumento. A cláusula WITHIN GROUP (ORDER BY ...) é obrigatória e define a ordem de concatenação — neste caso, ordem alfabética dos sobrenomes dentro de cada departamento. Com GROUP BY department_id, o resultado terá uma linha por departamento com os sobrenomes concatenados em ordem alfabética. LISTAGG NÃO requer PARTITION BY — essa cláusula é opcional e usada quando LISTAGG funciona como função analítica (preservando as linhas originais em vez de colapsá-las). A opção D está errada: GROUP_CONCAT é função do MySQL, não existe em Oracle. Em Oracle 19c+, foi adicionado suporte a ON OVERFLOW TRUNCATE para evitar erros quando a string resultante excede 32767 bytes."
     },
     {
       "id": 308,
@@ -9787,66 +8919,6 @@
       "explanation": "UNION combina os resultados de dois ou mais SELECT e elimina linhas duplicadas do resultado final — comportamento equivalente a aplicar DISTINCT. UNION ALL também combina os resultados, mas PRESERVA todas as linhas, incluindo duplicatas. Por não precisar ordenar e comparar linhas para eliminar duplicatas, UNION ALL é geralmente mais rápido e deve ser preferido quando duplicatas são aceitáveis ou impossíveis. A opção A inverteu as definições incorretamente. A opção B está errada: UNION não garante nenhuma ordem específica no resultado; para ordenar, adicione ORDER BY após a última instrução SELECT do conjunto. A opção D está errada: tanto UNION quanto UNION ALL exigem o mesmo número de colunas E tipos de dados compatíveis em cada SELECT — caso contrário, ORA-01789 (número de colunas incorreto) ou ORA-01790 (tipo de dados incompatível) são lançados."
     },
     {
-      "id": 318,
-      "topic": "advanced",
-      "context": "SELECT employee_id, salary,\n       RANK()       OVER (ORDER BY salary DESC) AS rnk,\n       DENSE_RANK() OVER (ORDER BY salary DESC) AS dense_rnk\nFROM employees\nWHERE department_id = 30;",
-      "text": "Department 30 has 6 employees with salaries: 11000, 11000, 9000, 8000, 7900, 7700 (highest to lowest). What are the RANK and DENSE_RANK values for the employee with salary 9000?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "RANK = 3, DENSE_RANK = 2"
-        },
-        {
-          "key": "B",
-          "text": "RANK = 2, DENSE_RANK = 2"
-        },
-        {
-          "key": "C",
-          "text": "RANK = 3, DENSE_RANK = 3"
-        },
-        {
-          "key": "D",
-          "text": "RANK = 2, DENSE_RANK = 3"
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "explanation": "RANK() e DENSE_RANK() diferem no tratamento de empates. Os dois funcionários com salary 11000 estão empatados na primeira posição. RANK() atribui o mesmo rank a empates mas 'pula' posições subsequentes: ambos com 11000 recebem RANK=1, e o próximo (9000) recebe RANK=3, pulando o número 2. DENSE_RANK() também atribui o mesmo rank a empates, mas NÃO pula posições: os dois com 11000 recebem DENSE_RANK=1, e o próximo (9000) recebe DENSE_RANK=2, sem lacuna. A mnemônica: DENSE_RANK é 'denso' — sem buracos na sequência de ranks. Compare com ROW_NUMBER(), que nunca cria empates e atribui números sequenciais únicos mesmo a valores iguais (a ordem de desempate seria arbitrária ou determinada por um critério adicional no ORDER BY)."
-    },
-    {
-      "id": 319,
-      "topic": "advanced",
-      "context": "SELECT department_id, last_name, salary,\n       LAG(salary, 1, 0) OVER (PARTITION BY department_id\n                               ORDER BY salary) AS prev_sal\nFROM employees;",
-      "text": "For the first employee (lowest salary) within each department partition, what value does the LAG expression return?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "NULL — there is no previous row in the partition, and LAG always returns NULL when no row exists"
-        },
-        {
-          "key": "B",
-          "text": "The salary of the last employee in the previous department's partition"
-        },
-        {
-          "key": "C",
-          "text": "0 (zero) — the third argument to LAG specifies the default value returned when no prior row exists"
-        },
-        {
-          "key": "D",
-          "text": "An error because LAG cannot be combined with PARTITION BY"
-        }
-      ],
-      "correct": [
-        "C"
-      ],
-      "explanation": "A função analítica LAG(value_expr, offset, default) retorna o valor de uma linha anterior dentro da mesma partição. O terceiro argumento define o valor padrão retornado quando a linha anterior não existe — o que acontece para a primeira linha de cada partição (grupo de PARTITION BY). No exemplo, LAG(salary, 1, 0) retorna 0 para a primeira linha de cada departamento, pois o default explícito é 0. Se o terceiro argumento fosse omitido, o valor padrão seria NULL. A função LAG não cruza fronteiras de PARTITION BY — cada partição é tratada de forma completamente independente, sem 'vazamento' de valores de uma partição para outra (opção B está errada). LEAD() é a função análoga que acessa linhas seguintes (à frente) em vez de anteriores, com a mesma sintaxe e comportamento de particionamento."
-    },
-    {
       "topic": "fundamentals",
       "context": "CREATE TABLE products (\n  product_id NUMBER,\n  price      NUMBER CHECK (price > 0)\n);",
       "text": "What happens when the following statement is executed?\n\nINSERT INTO products (product_id, price) VALUES (1, NULL);",
@@ -10055,36 +9127,6 @@
       ],
       "explanation": "NVL2(expr1, expr2, expr3) funciona como um IF/ELSE: se expr1 NÃO for NULL, a função retorna expr2; se expr1 FOR NULL, ela retorna expr3 — e o cálculo de expr2 (que envolveria a multiplicação por commission_pct) simplesmente não é o valor retornado. Como o funcionário 100 tem commission_pct NULL, a função retorna o terceiro argumento, salary, sem nenhuma propagação de NULL pela multiplicação. NVL2 é frequentemente mais conveniente que NVL combinado com CASE, justamente por permitir expressões diferentes para os casos NULL e NOT NULL.",
       "id": 326
-    },
-    {
-      "topic": "functions",
-      "context": "SELECT REGEXP_SUBSTR('2024-06-15', '[^-]+', 1, 2) AS result FROM dual;",
-      "text": "What value does this query return?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "'2024'"
-        },
-        {
-          "key": "B",
-          "text": "'06'"
-        },
-        {
-          "key": "C",
-          "text": "'15'"
-        },
-        {
-          "key": "D",
-          "text": "NULL, because REGEXP_SUBSTR does not support an occurrence parameter"
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "explanation": "REGEXP_SUBSTR(source, pattern, position, occurrence) extrai a N-ésima ocorrência do padrão a partir da posição indicada. O padrão [^-]+ casa com uma ou mais sequências de caracteres que NÃO sejam hífen. Na string '2024-06-15', a primeira ocorrência é '2024', a segunda é '06' e a terceira é '15'. Como o quarto argumento (occurrence) é 2, a função retorna a segunda ocorrência: '06'. Esse padrão é uma forma comum de 'fatiar' strings delimitadas sem usar SUBSTR e INSTR manualmente.",
-      "id": 327
     },
     {
       "topic": "joins",
@@ -10387,66 +9429,6 @@
       "id": 337
     },
     {
-      "topic": "advanced",
-      "context": "SELECT employee_id, last_name, LEVEL,\n       SYS_CONNECT_BY_PATH(last_name, '/') AS path\nFROM employees\nSTART WITH manager_id IS NULL\nCONNECT BY PRIOR employee_id = manager_id\nORDER SIBLINGS BY last_name;",
-      "text": "What is the effect of ORDER SIBLINGS BY last_name in this hierarchical query?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "It sorts the entire result set alphabetically by last_name, completely ignoring the hierarchical tree structure"
-        },
-        {
-          "key": "B",
-          "text": "It sorts employees that share the same parent (siblings within the hierarchy) alphabetically by last_name, while still preserving the overall parent-before-children traversal order of the tree"
-        },
-        {
-          "key": "C",
-          "text": "It is invalid syntax inside a CONNECT BY query and would raise an error"
-        },
-        {
-          "key": "D",
-          "text": "It behaves identically to a plain ORDER BY last_name placed at the end of the query"
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "explanation": "Em uma consulta hierárquica (START WITH ... CONNECT BY), um ORDER BY comum reordenaria todo o resultado de forma plana, destruindo a estrutura de árvore (pais apareceriam misturados com filhos de outros ramos). ORDER SIBLINGS BY resolve isso: ele ordena apenas os nós que são 'irmãos' entre si — ou seja, que compartilham o mesmo nó pai — mantendo intacta a ordem de travessia da hierarquia (cada pai ainda aparece antes de seus próprios filhos). Isso permite, por exemplo, listar os funcionários de cada gerente em ordem alfabética sem quebrar a árvore organizacional representada pelo LEVEL e pelo CONNECT BY.",
-      "id": 338
-    },
-    {
-      "topic": "advanced",
-      "context": "SELECT order_date, amount,\n       SUM(amount) OVER (ORDER BY order_date\n                         ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS moving_sum\nFROM orders;",
-      "text": "What does the moving_sum column compute for each row?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "The sum of all amounts from the very first row of the result set up to the current row (a full running total)"
-        },
-        {
-          "key": "B",
-          "text": "The sum of the current row's amount plus the two physically preceding rows in the ORDER BY order_date sequence — a fixed 3-row moving sum based on row position, regardless of whether order_date values tie"
-        },
-        {
-          "key": "C",
-          "text": "The sum of every row whose order_date falls within 2 calendar days of the current row's order_date"
-        },
-        {
-          "key": "D",
-          "text": "It raises an error, because ROWS BETWEEN cannot be combined with an ORDER BY clause inside an analytic OVER() window"
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "explanation": "A cláusula de janela ROWS BETWEEN n PRECEDING AND CURRENT ROW define uma janela FÍSICA baseada em POSIÇÃO de linha dentro da ordenação especificada — sempre exatamente as 2 linhas anteriores mais a linha atual, totalizando até 3 linhas, independentemente dos valores de order_date se repetirem ou não. Isso contrasta com RANGE BETWEEN, que define uma janela LÓGICA baseada no VALOR da coluna de ordenação: com RANGE, todas as linhas que compartilham o mesmo valor de order_date (um 'grupo de pares') seriam incluídas juntas na mesma janela, podendo abranger mais ou menos de 3 linhas. A opção C descreveria um comportamento de RANGE com um intervalo de valores (por exemplo, RANGE BETWEEN INTERVAL '2' DAY PRECEDING AND CURRENT ROW), não ROWS.",
-      "id": 339
-    },
-    {
       "id": 340,
       "topic": "fundamentals",
       "context": "",
@@ -10508,7 +9490,7 @@
     },
     {
       "id": 342,
-      "topic": "select",
+      "topic": "groups",
       "context": "SELECT department_id, AVG(salary) avg_sal FROM employees GROUP BY department_id HAVING AVG(salary) > 6000 AND department_id <> 90;",
       "text": "Which statement about this query is correct?",
       "type": "single",
@@ -10987,66 +9969,6 @@
       "explanation": "Para fins de comparação em uma cláusula WHERE, NULL nunca é considerado igual a NULL (a comparação resulta em UNKNOWN). Entretanto, os operadores de conjunto como UNION usam uma regra diferente para decidir o que conta como linha duplicada: nesse contexto específico, dois NULLs em posições correspondentes são tratados como equivalentes, e linhas inteiramente idênticas (incluindo os NULLs) são consideradas duplicatas e eliminadas. Por isso a linha com id = NULL e val = 10, presente em ambas as tabelas, aparece apenas uma vez no resultado do UNION, mesmo que uma comparação direta id = NULL nunca fosse verdadeira. Não é necessário nenhum tratamento com NVL() para que isso ocorra, e colunas com NULL são perfeitamente permitidas em operadores de conjunto."
     },
     {
-      "id": 358,
-      "topic": "advanced",
-      "context": "SELECT employee_id, manager_id, LEVEL FROM employees START WITH manager_id IS NULL CONNECT BY PRIOR employee_id = manager_id;",
-      "text": "What does this hierarchical query construct, and what does the LEVEL pseudocolumn represent for each row?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "It builds the hierarchy starting from employees with no manager (the top of the org chart) and walks down to their subordinates; LEVEL indicates the depth of each employee in the hierarchy, with the root row(s) at LEVEL 1."
-        },
-        {
-          "key": "B",
-          "text": "It builds the hierarchy starting from employees with no subordinates (the bottom of the org chart) and walks up to their managers; LEVEL always equals the employee_id value."
-        },
-        {
-          "key": "C",
-          "text": "CONNECT BY PRIOR employee_id = manager_id only returns rows for which manager_id IS NULL; every other row is excluded from the result."
-        },
-        {
-          "key": "D",
-          "text": "LEVEL is only usable in the SELECT list when combined with an explicit ORDER BY LEVEL clause; otherwise it always returns NULL."
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "explanation": "START WITH manager_id IS NULL define o(s) ponto(s) de partida da hierarquia como os funcionários sem gerente (o topo do organograma). CONNECT BY PRIOR employee_id = manager_id define a relação pai-filho: PRIOR refere-se à linha 'pai' já processada, cujo employee_id deve ser igual ao manager_id da linha 'filha' atual — assim a consulta caminha do topo para baixo, encontrando os subordinados de cada gerente recursivamente. A pseudocoluna LEVEL indica a profundidade de cada linha nessa árvore: os funcionários raiz (sem gerente) recebem LEVEL 1, seus subordinados diretos recebem LEVEL 2, e assim por diante. LEVEL pode ser usada livremente no SELECT, ORDER BY, WHERE, etc., sem exigir nenhuma cláusula adicional obrigatória para funcionar."
-    },
-    {
-      "id": 359,
-      "topic": "advanced",
-      "context": "SELECT last_name, salary, RANK() OVER (ORDER BY salary DESC) rnk, DENSE_RANK() OVER (ORDER BY salary DESC) drnk, ROW_NUMBER() OVER (ORDER BY salary DESC) rn FROM employees WHERE department_id = 100;",
-      "text": "Exactly two employees in department 100 are tied for the highest salary. What values do RANK, DENSE_RANK, and ROW_NUMBER assign to the row immediately following those two tied top earners in this ordering (i.e., the employee with the next-lower, second-highest distinct salary)?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "All three functions assign the value 3 to that row, since ties only affect the tied rows themselves and never change the numbering of subsequent rows."
-        },
-        {
-          "key": "B",
-          "text": "RANK assigns 3 to that row (because it skips a rank number for the tie, counting the two tied rows as rank 1 and rank 1, then jumping to 3), DENSE_RANK assigns 2 (because it never leaves gaps after a tie, so the next distinct salary simply gets the next consecutive number), and ROW_NUMBER assigns 3 (a unique sequential value that never repeats or skips, regardless of ties) — RANK and ROW_NUMBER happen to coincide here, while DENSE_RANK differs."
-        },
-        {
-          "key": "C",
-          "text": "RANK, DENSE_RANK, and ROW_NUMBER are simply three different names for the exact same window function, with no behavioral difference among them."
-        },
-        {
-          "key": "D",
-          "text": "DENSE_RANK assigns 3 in this case, the same as RANK, because both functions skip numbers after ties; only ROW_NUMBER never skips."
-        }
-      ],
-      "correct": [
-        "B"
-      ],
-      "explanation": "Os dois funcionários empatados no maior salário recebem RANK = 1 e DENSE_RANK = 1 (ambos empatam na primeira posição). A partir daí, RANK 'pula' tantos números quantas forem as linhas empatadas anteriores, então a próxima linha distinta recebe RANK = 3 (pulando o 2, que ficaria 'reservado' pelas duas linhas empatadas em 1). DENSE_RANK, por outro lado, nunca deixa lacunas: a próxima linha distinta simplesmente recebe o próximo número consecutivo, DENSE_RANK = 2. Já ROW_NUMBER ignora completamente os empates de valor e apenas numera sequencialmente cada linha física do resultado, então essa linha recebe ROW_NUMBER = 3, coincidindo numericamente com RANK neste caso específico, mas por um motivo totalmente diferente (contagem de linhas, não de posições de ranking)."
-    },
-    {
       "id": 360,
       "topic": "fundamentals",
       "context": "",
@@ -11138,7 +10060,7 @@
     },
     {
       "id": 363,
-      "topic": "select",
+      "topic": "groups",
       "context": "Table ORDERS(order_id, customer_id, amount).",
       "text": "Which query correctly returns customers whose total order amount exceeds 1000, without using a subquery?",
       "type": "single",
@@ -11255,66 +10177,6 @@
         "B"
       ],
       "explanation": "NULLIF(expr1, expr2) retorna NULL se expr1 for igual a expr2; caso contrário, retorna expr1. Como col2 vale 'B', NULLIF(col2, 'B') retorna NULL. O COALESCE então avalia (NULL, NULL, 'C') e retorna o primeiro valor não nulo, que é col3 = 'C'. Não há qualquer restrição no Oracle contra aninhar funções de manipulação de NULL umas dentro das outras."
-    },
-    {
-      "id": 367,
-      "topic": "functions",
-      "context": "Table SALES_REPS(dept_id, rep_name): (10,'Ana'), (10,'Bruno'), (10,'Carla'), (20,'Diego').",
-      "text": "Which query returns, for each department, a single comma-separated string with rep_name values sorted alphabetically?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "SELECT dept_id, LISTAGG(rep_name, ',') WITHIN GROUP (ORDER BY rep_name) FROM sales_reps GROUP BY dept_id;"
-        },
-        {
-          "key": "B",
-          "text": "SELECT dept_id, LISTAGG(rep_name, ',' ORDER BY rep_name) FROM sales_reps GROUP BY dept_id;"
-        },
-        {
-          "key": "C",
-          "text": "SELECT dept_id, LISTAGG(rep_name, ',') FROM sales_reps GROUP BY dept_id ORDER BY rep_name;"
-        },
-        {
-          "key": "D",
-          "text": "SELECT dept_id, LISTAGG(ORDER BY rep_name, rep_name, ',') FROM sales_reps GROUP BY dept_id;"
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "explanation": "A sintaxe correta de LISTAGG exige uma cláusula separada WITHIN GROUP (ORDER BY ...) para definir a ordem de concatenação dentro de cada grupo, já que os parênteses da própria função LISTAGG só aceitam a expressão a concatenar e o separador. A opção C usa um ORDER BY no nível da consulta, que apenas ordena as linhas finais do resultado (uma por departamento) e não controla a ordem interna dos nomes concatenados dentro da string."
-    },
-    {
-      "id": 368,
-      "topic": "functions",
-      "context": "Column phone contains values like '11-98765-4321', '1198765432', '(11)987654321'.",
-      "text": "Which REGEXP_LIKE condition matches only values consisting exclusively of digits and hyphens, from start to end (no parentheses allowed)?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "REGEXP_LIKE(phone, '^[0-9-]+$')"
-        },
-        {
-          "key": "B",
-          "text": "REGEXP_LIKE(phone, '[0-9-]')"
-        },
-        {
-          "key": "C",
-          "text": "REGEXP_LIKE(phone, '^[0-9]+-?$')"
-        },
-        {
-          "key": "D",
-          "text": "REGEXP_LIKE(phone, '\\d')"
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "explanation": "Os âncoras ^ e $ forçam o padrão a cobrir a string inteira, do início ao fim; a classe de caracteres [0-9-] (dígitos mais um hífen literal, colocado no fim da classe para não ser interpretado como intervalo) combinada com + exige um ou mais caracteres apenas desse conjunto. A opção B não tem âncoras, então basta existir um dígito ou hífen em qualquer posição para dar match, inclusive em '(11)987654321'. A opção D também não tem âncoras e exige apenas um dígito em algum lugar da string."
     },
     {
       "id": 369,
@@ -11617,36 +10479,6 @@
       "explanation": "Esta é uma exceção à lógica de três valores do NULL: embora NULL = NULL resulte em UNKNOWN em uma comparação de cláusula WHERE, os operadores de conjunto do Oracle (UNION, INTERSECT, MINUS) comparam linhas para fins de casamento/deduplicação tratando dois NULLs como iguais. Por isso o NULL presente tanto em t1 quanto em t2 é considerado uma correspondência e aparece no resultado do INTERSECT, junto com 2 (presente em ambos). O valor 1 (só em t1) e o 3 (só em t2) ficam de fora, pois o INTERSECT retorna apenas o que existe nas duas consultas."
     },
     {
-      "id": 379,
-      "topic": "advanced",
-      "context": "Table EMPLOYEES(employee_id, manager_id, last_name). The CEO row has employee_id = 100 and manager_id = NULL.\n\nSELECT last_name, LEVEL\nFROM employees\nSTART WITH employee_id = 100\nCONNECT BY PRIOR employee_id = manager_id;",
-      "text": "What does the LEVEL pseudo-column represent for the CEO row and its direct reports in this hierarchical query?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "LEVEL is 1 for the CEO (the root defined by START WITH), 2 for the CEO's direct reports, 3 for their reports, and so on"
-        },
-        {
-          "key": "B",
-          "text": "LEVEL always starts at 0 for the root row"
-        },
-        {
-          "key": "C",
-          "text": "LEVEL represents the total number of subordinates under each employee, not the row's depth"
-        },
-        {
-          "key": "D",
-          "text": "LEVEL is only populated when ORDER SIBLINGS BY is also used"
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "explanation": "LEVEL é um pseudo-coluna disponível apenas em consultas hierárquicas (CONNECT BY) que indica a profundidade da linha atual em relação à(s) linha(s) raiz definida(s) por START WITH — a própria raiz recebe LEVEL 1, seus filhos diretos (linhas em que manager_id corresponde ao employee_id da raiz, ligadas via CONNECT BY PRIOR) recebem LEVEL 2, e assim por diante. LEVEL não tem relação com contar subordinados, e é preenchido automaticamente, sem depender de ORDER SIBLINGS BY, que apenas controla a ordem de exibição dos irmãos dentro do mesmo nível."
-    },
-    {
       "id": 380,
       "topic": "fundamentals",
       "context": "",
@@ -11708,7 +10540,7 @@
     },
     {
       "id": 382,
-      "topic": "select",
+      "topic": "groups",
       "context": "Table ORDERS(order_id, customer_id, amount).",
       "text": "You want to list customers whose SUM(amount) exceeds 10000, grouping by customer_id. Which clause must you use to filter on this condition, and why can't WHERE be used instead?",
       "type": "single",
@@ -11855,36 +10687,6 @@
         "A"
       ],
       "explanation": "COALESCE aceita uma lista variável de expressões e as avalia em ordem, retornando a primeira que não for NULL — com curto-circuito, ou seja, expressões posteriores na lista podem nem chegar a ser avaliadas, o que é útil para evitar cálculos custosos ou até erros (como divisão por zero) em ramos que não serão usados. NVL, por sua vez, aceita exatamente dois argumentos e sempre precisa ter ambos avaliados antes de decidir qual retornar, já que sua sintaxe é fixa e não posicional em uma lista. NVL não aceita mais de dois argumentos, o que já é a diferença mais óbvia, mas a pergunta pede a diferença além dessa."
-    },
-    {
-      "id": 387,
-      "topic": "functions",
-      "context": "Table STUDENTS(class_id, student_name).",
-      "text": "What is the purpose of the WITHIN GROUP (ORDER BY student_name) clause in SELECT class_id, LISTAGG(student_name, ', ') WITHIN GROUP (ORDER BY student_name) FROM students GROUP BY class_id;?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "It controls the order in which the concatenated names appear inside the resulting string for each class_id group, independent of any ORDER BY applied to the final result set."
-        },
-        {
-          "key": "B",
-          "text": "It sorts the final result set by class_id, making an outer ORDER BY clause on the query unnecessary."
-        },
-        {
-          "key": "C",
-          "text": "It removes duplicate student_name values before concatenation, similar to what DISTINCT would do."
-        },
-        {
-          "key": "D",
-          "text": "It is optional syntax with no real effect; LISTAGG always concatenates values in the order rows happen to be stored on disk."
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "explanation": "LISTAGG é uma função de agregação que concatena os valores de uma coluna em uma única string por grupo, mas a ordem interna dessa concatenação não é garantida sem uma cláusula de ordenação explícita — é exatamente para isso que serve WITHIN GROUP (ORDER BY ...): ela define em que ordem os valores de student_name serão colocados dentro da string resultante para cada class_id. Isso é completamente independente de um ORDER BY que apareça no final da consulta, que ordenaria apenas as linhas do resultado final (uma por class_id), não os elementos dentro da string concatenada. LISTAGG não remove duplicatas automaticamente."
     },
     {
       "id": 388,
@@ -12187,66 +10989,6 @@
       "explanation": "Diferentemente do comportamento de NULL em condições WHERE (onde NULL nunca é considerado igual a outro NULL), os operadores de conjunto do Oracle — UNION, INTERSECT e MINUS — comparam linhas tratando dois NULLs como equivalentes para determinar duplicidade ou correspondência entre os conjuntos. Como a linha NULL aparece tanto em A quanto em B, MINUS a considera 'presente em B' e, portanto, a remove do resultado de A MINUS B. O resultado final da consulta é apenas (1) e (2). Não há erro nem dependência de ORDER BY para esse comportamento."
     },
     {
-      "id": 398,
-      "topic": "advanced",
-      "context": "Table SCORES(name, points) contains the rows (A,90), (B,90), (C,80).",
-      "text": "SELECT name, RANK() OVER (ORDER BY points DESC) r, DENSE_RANK() OVER (ORDER BY points DESC) dr FROM scores; What are the r and dr values returned for the row where name = 'C'?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "r = 3 and dr = 2 — RANK leaves a gap after a tie, since two rows (A and B) tied for rank 1, causing rank 2 to be skipped entirely, while DENSE_RANK assigns the next consecutive integer with no gaps."
-        },
-        {
-          "key": "B",
-          "text": "r = 2 and dr = 2 — both functions behave identically whenever there is at least one tie earlier in the ordering."
-        },
-        {
-          "key": "C",
-          "text": "r = 3 and dr = 3 — both functions always produce the same output as ROW_NUMBER whenever ties are present in the data."
-        },
-        {
-          "key": "D",
-          "text": "r = 2 and dr = 3 — RANK never skips rank values, while DENSE_RANK always skips over tied ranks."
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "explanation": "A e B empatam com 90 pontos e ambos recebem rank 1 tanto em RANK() quanto em DENSE_RANK(). A diferença aparece na linha seguinte: RANK() considera quantas linhas vieram antes e pula valores de ranking de acordo — como duas linhas já ocuparam o rank 1, a próxima linha (C) recebe rank 3, pulando o 2. DENSE_RANK(), por outro lado, nunca deixa lacunas: ele simplesmente usa o próximo inteiro consecutivo após cada valor distinto de ranking, então C recebe dense_rank 2. Esse é o critério clássico para diferenciar as duas funções analíticas em provas de certificação."
-    },
-    {
-      "id": 399,
-      "topic": "advanced",
-      "context": "Table EMPLOYEES(employee_id, manager_id).",
-      "text": "What happens if you run SELECT employee_id, manager_id, LEVEL FROM employees CONNECT BY PRIOR employee_id = manager_id; without including a START WITH clause?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "Oracle treats every row whose manager_id does not correspond to any employee_id under the CONNECT BY condition as an implicit root, and builds a separate hierarchy tree starting from each such row — the query still executes successfully without requiring START WITH."
-        },
-        {
-          "key": "B",
-          "text": "The statement raises a mandatory syntax error, because START WITH is a required clause whenever CONNECT BY is used in a query."
-        },
-        {
-          "key": "C",
-          "text": "Oracle silently picks the row with the smallest employee_id as the single implicit root for the entire hierarchy, ignoring any other potential root rows."
-        },
-        {
-          "key": "D",
-          "text": "LEVEL is left unpopulated (NULL for every row) whenever START WITH is omitted from a hierarchical query."
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "explanation": "START WITH é uma cláusula opcional em consultas hierárquicas: quando omitida, o Oracle considera como raiz implícita toda linha que não satisfaz o lado PRIOR da condição CONNECT BY para nenhuma outra linha da tabela — ou seja, toda linha cujo manager_id não bate com o employee_id de nenhuma outra linha (tipicamente, mas não exclusivamente, linhas com manager_id NULL). A consulta então constrói uma árvore hierárquica separada a partir de cada uma dessas raízes implícitas, e LEVEL é normalmente calculado a partir de 1 para cada raiz. A cláusula CONNECT BY funciona de forma independente, sem exigir START WITH."
-    },
-    {
       "id": 400,
       "topic": "fundamentals",
       "context": "Table PAYMENTS(payment_id NUMBER, amount NUMBER CHECK (amount > 0));",
@@ -12425,36 +11167,6 @@
         "A"
       ],
       "explanation": "O segundo argumento negativo em ROUND e TRUNC indica quantas posições à esquerda do ponto decimal considerar. ROUND(1587, -2) arredonda para a centena mais próxima: 1587 está mais perto de 1600 do que de 1500, então retorna 1600. TRUNC(1587, -2), por sua vez, apenas descarta os dígitos abaixo da posição das centenas sem nenhum arredondamento, resultando em 1500. Ambas as funções aceitam argumentos negativos normalmente; a diferença de comportamento (arredondar vs. truncar) é exatamente o que as distingue."
-    },
-    {
-      "id": 406,
-      "topic": "functions",
-      "context": "Table REVIEWS(product_id NUMBER, comment_text VARCHAR2(4000)); a product has thousands of long reviews.",
-      "text": "You run SELECT product_id, LISTAGG(comment_text, '; ') WITHIN GROUP (ORDER BY product_id) FROM reviews GROUP BY product_id; on a product whose concatenated comments exceed 4000 bytes. What happens?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "Oracle raises ORA-01489 ('result of string concatenation is too long') at runtime for that group, because LISTAGG's default output is a VARCHAR2 and cannot exceed the maximum VARCHAR2 size."
-        },
-        {
-          "key": "B",
-          "text": "LISTAGG automatically switches to a CLOB return type whenever the concatenated result would exceed 4000 bytes, with no error."
-        },
-        {
-          "key": "C",
-          "text": "LISTAGG silently truncates the result to the first 4000 bytes and returns it without error."
-        },
-        {
-          "key": "D",
-          "text": "The query fails at parse time with a syntax error, because LISTAGG cannot be combined with GROUP BY."
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "explanation": "Por padrão, LISTAGG retorna um VARCHAR2, cujo tamanho máximo é limitado (4000 bytes nas versões tradicionais); se a concatenação de todos os valores de um grupo ultrapassar esse limite, Oracle lança o erro ORA-01489 em tempo de execução para aquele grupo específico, em vez de truncar silenciosamente ou trocar de tipo automaticamente. Para contornar isso, é preciso usar a cláusula ON OVERFLOW TRUNCATE do próprio LISTAGG ou reestruturar a consulta. LISTAGG funciona normalmente junto com GROUP BY."
     },
     {
       "id": 407,
@@ -12785,66 +11497,6 @@
         "A"
       ],
       "explanation": "MINUS é um operador de conjunto que compara linhas inteiras entre os dois resultados, tratando NULL de forma especial nesse contexto (duas linhas são consideradas iguais também quando ambas têm NULL na posição correspondente) — por isso ele consegue simplesmente remover o valor 2 e retornar 1 e 3 sem se afetar pelo NULL isolado de B. Já NOT IN (subquery) é reescrito internamente como uma série de comparações '<> ALL'; se a subquery retornar qualquer linha com NULL, a comparação valor <> NULL avalia para UNKNOWN, e como NOT IN precisa que TODAS as comparações sejam verdadeiras para incluir a linha, a presença de um único NULL na subquery faz com que nenhuma linha externa seja incluída, retornando um conjunto vazio — uma armadilha clássica e um dos motivos pelos quais NOT EXISTS costuma ser preferido a NOT IN quando a subquery pode conter NULLs."
-    },
-    {
-      "id": 418,
-      "topic": "advanced",
-      "context": "Table SCORES(student_id, score) with values: (1,90), (2,90), (3,85), (4,80).",
-      "text": "For SELECT student_id, score, RANK() OVER (ORDER BY score DESC) r, DENSE_RANK() OVER (ORDER BY score DESC) dr, ROW_NUMBER() OVER (ORDER BY score DESC) rn FROM scores;, what values do r, dr, and rn take for the two students tied at score 90?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "Both tied rows get r = 1 and dr = 1 (identical ranks for identical values), but rn assigns them different consecutive values (1 and 2), since ROW_NUMBER never produces ties — it always assigns a unique sequential number even among equal values, with the tie broken arbitrarily by row order."
-        },
-        {
-          "key": "B",
-          "text": "All three functions assign the same value to tied rows, since ties are always resolved identically across RANK, DENSE_RANK, and ROW_NUMBER."
-        },
-        {
-          "key": "C",
-          "text": "RANK gives both rows 1, but DENSE_RANK gives them 1 and 2 respectively, treating the two tied rows as distinct ranks."
-        },
-        {
-          "key": "D",
-          "text": "ROW_NUMBER raises an error when used without a PARTITION BY clause on data containing ties."
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "explanation": "RANK e DENSE_RANK atribuem a mesma posição (1) para valores empatados, já que ambas de fato 'empatam' o ranking; a diferença entre elas aparece na linha seguinte: RANK pula posições (o próximo valor, 85, receberia rank 3, pulando o 2), enquanto DENSE_RANK não deixa buracos (o próximo valor receberia dense_rank 2). ROW_NUMBER, por sua vez, ignora empates: como seu contrato é gerar uma sequência estritamente única de números inteiros consecutivos, ela atribui arbitrariamente 1 e 2 às duas linhas empatadas (a ordem exata entre elas não é garantida sem critério de desempate adicional no ORDER BY). PARTITION BY não é obrigatório para nenhuma dessas funções."
-    },
-    {
-      "id": 419,
-      "topic": "advanced",
-      "context": "Table EMPLOYEES(employee_id, manager_id, last_name). Query: SELECT LEVEL, last_name FROM employees START WITH manager_id IS NULL CONNECT BY PRIOR employee_id = manager_id;",
-      "text": "What do START WITH and CONNECT BY PRIOR each define in this hierarchical query, and what does LEVEL represent?",
-      "type": "single",
-      "correctCount": 1,
-      "options": [
-        {
-          "key": "A",
-          "text": "START WITH identifies the root row(s) of the hierarchy (employees with no manager); CONNECT BY PRIOR employee_id = manager_id defines the parent-child relationship, meaning each row's manager_id must match the employee_id of the row that was its PRIOR (parent) in the traversal; LEVEL is a pseudocolumn returning the depth of each row in the hierarchy, starting at 1 for the root rows."
-        },
-        {
-          "key": "B",
-          "text": "START WITH defines the join condition between parent and child, while CONNECT BY PRIOR identifies the root row(s); LEVEL returns the total count of descendants for each row."
-        },
-        {
-          "key": "C",
-          "text": "CONNECT BY PRIOR is only cosmetic and could be omitted without changing the query's result, since START WITH alone is sufficient to build the hierarchy."
-        },
-        {
-          "key": "D",
-          "text": "LEVEL always starts at 0 for the root and increases by 1 per generation, and CONNECT BY PRIOR employee_id = manager_id means each row is compared to its own children rather than its parent."
-        }
-      ],
-      "correct": [
-        "A"
-      ],
-      "explanation": "START WITH define a condição para as linhas-raiz da árvore (aqui, funcionários sem gerente, ou seja, o topo da hierarquia). CONNECT BY PRIOR estabelece a regra de relacionamento pai-filho usada para expandir a árvore a partir das raízes: PRIOR employee_id = manager_id significa 'o employee_id da linha-pai (PRIOR) deve ser igual ao manager_id da linha atual', conectando cada funcionário ao seu gerente já processado. LEVEL é uma pseudocoluna que retorna a profundidade da linha atual na hierarquia, começando em 1 para as linhas-raiz e incrementando a cada nível descendente. CONNECT BY PRIOR é indispensável — sem ele, a consulta não define nenhuma relação hierárquica e falha ou retorna resultado incorreto."
     }
   ]
 }
