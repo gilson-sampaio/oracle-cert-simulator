@@ -12244,6 +12244,606 @@
         "A"
       ],
       "explanation": "START WITH é uma cláusula opcional em consultas hierárquicas: quando omitida, o Oracle considera como raiz implícita toda linha que não satisfaz o lado PRIOR da condição CONNECT BY para nenhuma outra linha da tabela — ou seja, toda linha cujo manager_id não bate com o employee_id de nenhuma outra linha (tipicamente, mas não exclusivamente, linhas com manager_id NULL). A consulta então constrói uma árvore hierárquica separada a partir de cada uma dessas raízes implícitas, e LEVEL é normalmente calculado a partir de 1 para cada raiz. A cláusula CONNECT BY funciona de forma independente, sem exigir START WITH."
+    },
+    {
+      "id": 400,
+      "topic": "fundamentals",
+      "context": "Table PAYMENTS(payment_id NUMBER, amount NUMBER CHECK (amount > 0));",
+      "text": "What happens when you execute INSERT INTO payments (payment_id, amount) VALUES (1, NULL);?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The insert succeeds, because a CHECK constraint evaluates to UNKNOWN (not FALSE) when the compared column is NULL, and Oracle allows the row unless the condition explicitly evaluates to FALSE."
+        },
+        {
+          "key": "B",
+          "text": "The insert fails with a constraint violation, because CHECK constraints implicitly forbid NULL in the checked column."
+        },
+        {
+          "key": "C",
+          "text": "The insert succeeds only if a DEFAULT value was defined for amount, otherwise it fails."
+        },
+        {
+          "key": "D",
+          "text": "The insert fails because CHECK (amount > 0) is evaluated as amount > 0 = FALSE whenever amount is NULL."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "CHECK constraints só bloqueiam a linha quando a condição avalia explicitamente para FALSE. Quando amount é NULL, a expressão amount > 0 avalia para UNKNOWN (NULL), não para FALSE, e Oracle trata UNKNOWN como aceitável, permitindo a inserção. Se quisesse proibir NULL, seria necessário adicionar explicitamente um NOT NULL. DEFAULT não influencia essa avaliação."
+    },
+    {
+      "id": 401,
+      "topic": "fundamentals",
+      "context": "CREATE TABLE readings (id NUMBER, measure NUMBER(5,2));",
+      "text": "You execute INSERT INTO readings (id, measure) VALUES (1, 1234.567);. What happens?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Oracle raises ORA-01438 because the integer portion of the value (1234) requires 4 digits, but NUMBER(5,2) only allows 3 digits before the decimal point (5 total digits minus 2 for scale)."
+        },
+        {
+          "key": "B",
+          "text": "The value is silently truncated to fit, storing 999.99 as the closest representable value."
+        },
+        {
+          "key": "C",
+          "text": "The value is rounded to 1234.57 and stored successfully, since NUMBER(5,2) allows up to 5 significant digits regardless of position."
+        },
+        {
+          "key": "D",
+          "text": "The insert succeeds and stores exactly 1234.57, because scale only limits digits after the decimal point, not before it."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "NUMBER(p,s) permite no máximo p dígitos significativos, dos quais s ficam à direita do ponto decimal; logo, o número de dígitos permitidos à esquerda do ponto é p - s = 5 - 2 = 3. O valor 1234.567 arredondado para 2 casas decimais seria 1234.57, cuja parte inteira (1234) tem 4 dígitos — excedendo o limite de 3 permitido — por isso Oracle rejeita a inserção com ORA-01438 (value larger than specified precision allowed for this column). Não há truncamento silencioso nem essa flexibilidade."
+    },
+    {
+      "id": 402,
+      "topic": "select",
+      "context": "Table SHIPMENTS(shipment_id NUMBER, tracking_code VARCHAR2(20), backup_code VARCHAR2(20));",
+      "text": "Consider SELECT shipment_id, COALESCE(tracking_code, backup_code, 'UNASSIGNED') AS ref FROM shipments; compared to nesting several NVL calls for the same three-way fallback. What is a key advantage of COALESCE here?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "COALESCE accepts any number of arguments and returns the first non-NULL expression, evaluating arguments only as needed, making it a cleaner way to chain multiple fallbacks than nesting several NVL calls."
+        },
+        {
+          "key": "B",
+          "text": "COALESCE forces all arguments to be converted to VARCHAR2, while NVL preserves the original data type, so COALESCE is only safe for text columns."
+        },
+        {
+          "key": "C",
+          "text": "COALESCE and NVL are entirely interchangeable in every scenario, including with only two arguments; there is no functional difference between them."
+        },
+        {
+          "key": "D",
+          "text": "COALESCE requires exactly three arguments, which is why it is well suited to this three-way fallback but not to two-way fallbacks."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "COALESCE é uma função variádica (aceita N argumentos) que retorna a primeira expressão não nula da lista, avaliando cada argumento apenas até encontrar o primeiro não nulo (short-circuit), o que torna encadear múltiplos fallbacks muito mais legível do que aninhar várias chamadas de NVL. NVL sempre aceita exatamente dois argumentos. Uma diferença real entre eles é que NVL sempre avalia ambos os argumentos e força um tipo de dado comum entre eles, enquanto COALESCE determina o tipo resultante com base no primeiro argumento não nulo — por isso não são sempre 100% intercambiáveis, e COALESCE aceita qualquer quantidade de argumentos, não apenas três."
+    },
+    {
+      "id": 403,
+      "topic": "select",
+      "context": "SELECT product_id, price FROM products ORDER BY price DESC FETCH FIRST 3 ROWS WITH TIES;",
+      "text": "What does the WITH TIES clause do in this query, compared to plain FETCH FIRST 3 ROWS ONLY?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It returns the top 3 rows by price, plus any additional rows that tie with the value of the 3rd row, so the result can contain more than 3 rows; this requires an ORDER BY clause to define what counts as a tie."
+        },
+        {
+          "key": "B",
+          "text": "It returns exactly 3 rows always, but breaks ties randomly using an internal row order."
+        },
+        {
+          "key": "C",
+          "text": "WITH TIES is only valid in analytic functions like RANK, and causes a syntax error when used with FETCH FIRST."
+        },
+        {
+          "key": "D",
+          "text": "It returns the top 3 distinct price values, collapsing any duplicate prices into a single row per price."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "FETCH FIRST n ROWS WITH TIES retorna as n linhas segundo o ORDER BY, mas inclui também todas as linhas adicionais cujo valor da coluna de ordenação empata (tie) com o valor da última linha incluída, podendo assim retornar mais de n linhas no total. Por isso a cláusula exige um ORDER BY explícito, já que é ele que define o que é considerado 'empate'. Não há aleatoriedade envolvida, não se limita a funções analíticas, e não colapsa duplicatas — apenas preserva linhas empatadas na fronteira do corte."
+    },
+    {
+      "id": 404,
+      "topic": "select",
+      "context": "Tables DEPARTMENTS(department_id, department_name) and EMPLOYEES(employee_id, department_id, salary). Query: SELECT d.department_name, (SELECT MAX(e.salary) FROM employees e WHERE e.department_id = d.department_id) AS top_salary FROM departments d;",
+      "text": "What is returned for top_salary for a department that currently has zero employees?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "NULL, because the correlated subquery finds no rows for that department_id, and MAX() over an empty set returns NULL rather than raising an error or returning zero."
+        },
+        {
+          "key": "B",
+          "text": "An error is raised, because a scalar subquery must always return at least one row."
+        },
+        {
+          "key": "C",
+          "text": "0 (zero), because MAX() defaults to 0 when no rows match the correlated condition."
+        },
+        {
+          "key": "D",
+          "text": "The row for that department is silently omitted from the result set entirely."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "A subquery correlacionada é reexecutada para cada linha de d, filtrando por e.department_id = d.department_id; se não existir nenhum funcionário naquele departamento, a subquery simplesmente retorna um conjunto vazio, e uma função de agregação como MAX() aplicada a um conjunto vazio retorna NULL (não zero, nem erro). Como a subquery está na lista SELECT, ela é uma subquery escalar que pode legitimamente retornar NULL sem violar a regra de 'no máximo uma linha' — e a linha do departamento permanece no resultado, apenas com top_salary como NULL."
+    },
+    {
+      "id": 405,
+      "topic": "functions",
+      "context": "Table INVOICES(invoice_id NUMBER, total NUMBER); a row has total = 1587.",
+      "text": "What do ROUND(total, -2) and TRUNC(total, -2) return for this row?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "ROUND(1587, -2) returns 1600 (rounds to the nearest hundred), while TRUNC(1587, -2) returns 1500 (simply cuts off everything below the hundreds place, without rounding)."
+        },
+        {
+          "key": "B",
+          "text": "Both return 1500, since a negative second argument disables rounding for both functions and forces truncation."
+        },
+        {
+          "key": "C",
+          "text": "Both return 1600, since a negative second argument rounds up unconditionally for both functions."
+        },
+        {
+          "key": "D",
+          "text": "ROUND(1587, -2) raises an error, because ROUND does not accept negative values for its second argument."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "O segundo argumento negativo em ROUND e TRUNC indica quantas posições à esquerda do ponto decimal considerar. ROUND(1587, -2) arredonda para a centena mais próxima: 1587 está mais perto de 1600 do que de 1500, então retorna 1600. TRUNC(1587, -2), por sua vez, apenas descarta os dígitos abaixo da posição das centenas sem nenhum arredondamento, resultando em 1500. Ambas as funções aceitam argumentos negativos normalmente; a diferença de comportamento (arredondar vs. truncar) é exatamente o que as distingue."
+    },
+    {
+      "id": 406,
+      "topic": "functions",
+      "context": "Table REVIEWS(product_id NUMBER, comment_text VARCHAR2(4000)); a product has thousands of long reviews.",
+      "text": "You run SELECT product_id, LISTAGG(comment_text, '; ') WITHIN GROUP (ORDER BY product_id) FROM reviews GROUP BY product_id; on a product whose concatenated comments exceed 4000 bytes. What happens?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Oracle raises ORA-01489 ('result of string concatenation is too long') at runtime for that group, because LISTAGG's default output is a VARCHAR2 and cannot exceed the maximum VARCHAR2 size."
+        },
+        {
+          "key": "B",
+          "text": "LISTAGG automatically switches to a CLOB return type whenever the concatenated result would exceed 4000 bytes, with no error."
+        },
+        {
+          "key": "C",
+          "text": "LISTAGG silently truncates the result to the first 4000 bytes and returns it without error."
+        },
+        {
+          "key": "D",
+          "text": "The query fails at parse time with a syntax error, because LISTAGG cannot be combined with GROUP BY."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Por padrão, LISTAGG retorna um VARCHAR2, cujo tamanho máximo é limitado (4000 bytes nas versões tradicionais); se a concatenação de todos os valores de um grupo ultrapassar esse limite, Oracle lança o erro ORA-01489 em tempo de execução para aquele grupo específico, em vez de truncar silenciosamente ou trocar de tipo automaticamente. Para contornar isso, é preciso usar a cláusula ON OVERFLOW TRUNCATE do próprio LISTAGG ou reestruturar a consulta. LISTAGG funciona normalmente junto com GROUP BY."
+    },
+    {
+      "id": 407,
+      "topic": "functions",
+      "context": "Compare MONTHS_BETWEEN(DATE '2024-02-29', DATE '2024-01-31') with MONTHS_BETWEEN(DATE '2024-03-15', DATE '2024-01-15').",
+      "text": "What special rule does MONTHS_BETWEEN apply, and why does the first expression return exactly 1, not a fractional value?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "When both dates are the last calendar day of their respective months (as with Jan 31 and Feb 29 in a leap year), MONTHS_BETWEEN treats them as equivalent 'month-end' points and returns a whole number, even though the days of the month differ."
+        },
+        {
+          "key": "B",
+          "text": "MONTHS_BETWEEN always rounds its result to the nearest whole number by default, hiding the fractional part unless explicitly cast."
+        },
+        {
+          "key": "C",
+          "text": "The result is a coincidence of 2024 being a leap year; in any non-leap year the same calculation between the last days of two consecutive months would return a fractional value."
+        },
+        {
+          "key": "D",
+          "text": "MONTHS_BETWEEN only accepts the first day of each month as valid input; using the last day of a month raises an error."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "MONTHS_BETWEEN tem uma regra especial: quando ambos os argumentos representam o último dia do calendário de seus respectivos meses, o resultado é um número inteiro de meses, mesmo que um mês tenha 28/29 dias e o outro 31 — a função reconhece que ambos são 'fins de mês' equivalentes. Isso não é coincidência do ano bissexto: a mesma regra vale entre 31/01 e 28/02 em anos não bissextos, também retornando 1. Se qualquer uma das datas não for o último dia do seu mês, o resultado normalmente é fracionário, calculado com base em frações de 31 dias (como no segundo exemplo do enunciado, que retorna exatamente 2 por ambas as datas terem o mesmo dia do mês). Não há arredondamento automático fora dessa regra específica, e datas de meio de mês são aceitas normalmente."
+    },
+    {
+      "id": 408,
+      "topic": "joins",
+      "context": "Tables ORDERS(order_id, customer_id, order_date) and CUSTOMERS(customer_id, customer_name).",
+      "text": "In SELECT customer_id, customer_name, order_date FROM orders JOIN customers USING (customer_id);, why would adding a table prefix like orders.customer_id in the SELECT list cause an error?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "When a join uses USING, the joined column (customer_id) becomes a single unqualified column shared by the result; Oracle does not allow it to be qualified with either table's alias in the SELECT list or WHERE clause, since it no longer belongs exclusively to one table."
+        },
+        {
+          "key": "B",
+          "text": "USING can only be used with columns that have different names in each table, so customer_id would never work with USING in the first place."
+        },
+        {
+          "key": "C",
+          "text": "Prefixing a column is always invalid syntax in any join type, not just USING joins."
+        },
+        {
+          "key": "D",
+          "text": "The error occurs because USING joins do not allow any additional columns besides the join column to appear in the SELECT list."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Ao usar JOIN ... USING (coluna), a coluna listada é tratada como uma única coluna 'fundida' do resultado, sem pertencer exclusivamente a nenhuma das tabelas de origem — por isso a sintaxe exige que ela seja referenciada sem qualificador de tabela (apenas customer_id, nunca orders.customer_id ou customers.customer_id) tanto na lista SELECT quanto em outras cláusulas. USING exige justamente que as tabelas compartilhem uma coluna com o mesmo nome (o oposto da opção B). Não há restrição contra outras colunas aparecerem no SELECT, e prefixar colunas é perfeitamente válido em outros tipos de junção (como ON)."
+    },
+    {
+      "id": 409,
+      "topic": "joins",
+      "context": "SELECT c.customer_name, o.order_id, p.payment_status FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id JOIN payments p ON p.order_id = o.order_id;",
+      "text": "A customer has no orders at all. Does this customer appear in the result set?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "No — even though the first join is a LEFT JOIN that would preserve the customer with NULLs for order_id, the second join is an INNER JOIN against payments, which requires a matching order_id; since o.order_id is NULL for that customer, it cannot match any row in payments, eliminating the customer from the final result."
+        },
+        {
+          "key": "B",
+          "text": "Yes, the customer appears with NULL for both order_id and payment_status, because the LEFT JOIN earlier in the FROM clause guarantees the customer is preserved throughout the rest of the query."
+        },
+        {
+          "key": "C",
+          "text": "Yes, but only once, regardless of how many payments would otherwise match, because LEFT JOIN limits the result to one row per customer."
+        },
+        {
+          "key": "D",
+          "text": "It causes a runtime error, because you cannot follow a LEFT JOIN with an INNER JOIN in the same FROM clause."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Junções são avaliadas passo a passo, na ordem em que aparecem no FROM. O LEFT JOIN entre customers e orders preserva o cliente sem pedidos, gerando uma linha com order_id NULL. Porém, a junção seguinte com payments é um INNER JOIN comum, que exige p.order_id = o.order_id; como o.order_id é NULL nessa linha, a condição nunca é satisfeita (NULL nunca é igual a nada), então essa linha é descartada do resultado combinado — efetivamente cancelando o efeito preservador do LEFT JOIN anterior. Misturar LEFT JOIN e INNER JOIN na mesma consulta é sintaticamente válido; o problema é lógico, não de sintaxe."
+    },
+    {
+      "id": 410,
+      "topic": "joins",
+      "context": "Tables A(id, b_id) and B(id).",
+      "text": "Why does SELECT a.id, b.id FROM a, b WHERE a.b_id (+) = b.id (+); fail with an Oracle error?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The Oracle outer join operator (+) cannot be applied to both sides of the same join condition in traditional syntax; only one side of the comparison may carry (+), since it must designate a single 'optional' table for that condition."
+        },
+        {
+          "key": "B",
+          "text": "The (+) operator can only be used with numeric columns, and both id columns here are assumed to be non-numeric."
+        },
+        {
+          "key": "C",
+          "text": "Traditional join syntax with (+) is deprecated in every current Oracle version and will always raise a syntax error regardless of how it's used."
+        },
+        {
+          "key": "D",
+          "text": "It fails only because there is no FROM a, b syntax allowed when using (+); traditional outer joins require the ANSI JOIN keyword instead."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "A sintaxe tradicional do Oracle para outer join usa (+) do lado da tabela 'opcional' (aquela que pode não ter correspondência); colocar (+) nos dois lados da mesma condição tentaria dizer que ambas as tabelas são opcionais simultaneamente para aquela comparação, o que não tem um significado lógico válido de outer join (equivaleria a um full outer join, que essa sintaxe legada não suporta dessa forma) — por isso Oracle rejeita com erro (ORA-01468: a predicate may reference only one outer-joined table). A restrição não tem relação com tipo de dado, a sintaxe (+) continua funcional (embora não recomendada) em versões atuais, e FROM a, b com (+) é uma sintaxe válida por si só."
+    },
+    {
+      "id": 411,
+      "topic": "dml",
+      "context": "MERGE INTO accounts_target t USING accounts_staging s ON (t.account_id = s.account_id) WHEN MATCHED THEN UPDATE SET t.balance = s.balance DELETE WHERE s.balance = 0 WHEN NOT MATCHED THEN INSERT (account_id, balance) VALUES (s.account_id, s.balance);",
+      "text": "For a matched row where s.balance is 0, what actually happens to the corresponding row in accounts_target?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The row is first updated with the UPDATE SET clause, and then the optional DELETE WHERE clause deletes the row — but only the rows just updated (and only those satisfying the DELETE WHERE condition) are removed, not arbitrary rows from the target table."
+        },
+        {
+          "key": "B",
+          "text": "The row is deleted immediately without ever being updated, because DELETE always takes precedence over UPDATE in a MERGE statement."
+        },
+        {
+          "key": "C",
+          "text": "The DELETE WHERE clause is invalid syntax inside a MERGE's WHEN MATCHED branch and causes a compilation error."
+        },
+        {
+          "key": "D",
+          "text": "The row is updated but never deleted, because MERGE statements cannot delete rows under any circumstances — DELETE WHERE is only a filter on which rows get updated."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Dentro da cláusula WHEN MATCHED THEN UPDATE, é possível anexar uma cláusula DELETE WHERE opcional. O comportamento é: primeiro a linha é atualizada pelo UPDATE SET, e só depois a condição do DELETE WHERE é avaliada sobre a linha já atualizada; se ela satisfizer a condição, a linha é excluída da tabela-alvo. Esse DELETE afeta apenas as linhas que acabaram de ser tocadas por aquele UPDATE (não a tabela inteira), sendo uma forma de 'limpar' registros que se tornaram irrelevantes durante a sincronização. Não há erro de sintaxe, e DELETE não tem precedência sobre UPDATE — eles atuam em sequência."
+    },
+    {
+      "id": 412,
+      "topic": "dml",
+      "context": "Session runs: INSERT INTO logs VALUES (1, 'A'); CREATE TABLE audit_temp (id NUMBER); INSERT INTO logs VALUES (2, 'B'); ROLLBACK;",
+      "text": "After the ROLLBACK executes, which row(s), if any, remain in the logs table?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Only the row (1, 'A') remains, because the CREATE TABLE statement is DDL and triggers an implicit COMMIT both before and after it executes, permanently committing the first INSERT; the ROLLBACK can then only undo the second INSERT, which happened after that implicit commit."
+        },
+        {
+          "key": "B",
+          "text": "Neither row remains, because ROLLBACK undoes every DML statement issued in the session regardless of any DDL executed in between."
+        },
+        {
+          "key": "C",
+          "text": "Both rows remain, because DDL statements do not affect the transaction state of unrelated DML on a different table."
+        },
+        {
+          "key": "D",
+          "text": "The CREATE TABLE statement fails and rolls back the whole batch, since DDL cannot be mixed with pending uncommitted DML in the same session."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Comandos DDL como CREATE TABLE realizam um COMMIT implícito automaticamente antes de executar (para garantir consistência do dicionário de dados), e a própria execução da DDL também é efetivada de forma definitiva. Isso significa que o primeiro INSERT, que estava pendente antes da CREATE TABLE, é commitado implicitamente e se torna permanente — o ROLLBACK subsequente só tem efeito sobre o que ocorreu depois do commit implícito, ou seja, apenas o segundo INSERT é desfeito. DDL não falha por haver DML pendente; pelo contrário, ela força a finalização dessa transação."
+    },
+    {
+      "id": 413,
+      "topic": "ddl",
+      "context": "Table CUSTOMERS already has 50,000 rows.",
+      "text": "You run ALTER TABLE customers ADD loyalty_tier VARCHAR2(10) NOT NULL;. What happens?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The statement fails, because adding a NOT NULL column with no DEFAULT to a table that already contains rows would leave existing rows with no way to satisfy the constraint; a DEFAULT value (or adding the column as nullable first, populating it, then adding NOT NULL) is required to succeed."
+        },
+        {
+          "key": "B",
+          "text": "The statement succeeds, and every existing row automatically receives an empty string '' for loyalty_tier to satisfy the NOT NULL constraint."
+        },
+        {
+          "key": "C",
+          "text": "The statement succeeds, and every existing row receives NULL for loyalty_tier, with the NOT NULL constraint only enforced for future inserts."
+        },
+        {
+          "key": "D",
+          "text": "The statement always requires the table to be empty; it is otherwise impossible to add a NOT NULL column to a populated table under any circumstance."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Ao adicionar uma coluna, se ela for NOT NULL sem um DEFAULT, todas as linhas já existentes precisariam automaticamente ter um valor não nulo nessa nova coluna — o que é impossível sem fornecer algum valor. Por isso Oracle rejeita o comando nesse cenário. A forma correta é incluir um DEFAULT (ex: DEFAULT 'BRONZE' NOT NULL), o que faz Oracle preencher instantaneamente todas as linhas existentes com esse valor e aplicar NOT NULL a partir daí; alternativamente, pode-se adicionar a coluna como nullable, popular os valores e só depois aplicar a restrição NOT NULL. Não existe preenchimento automático com string vazia, nem se ignora a validação para linhas existentes."
+    },
+    {
+      "id": 414,
+      "topic": "ddl",
+      "context": "CREATE SEQUENCE order_seq START WITH 1 INCREMENT BY 1 NOCACHE;",
+      "text": "A session executes INSERT INTO orders VALUES (order_seq.NEXTVAL, ...); three times, then issues ROLLBACK for all three inserts. What happens to the sequence's next value?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The sequence does not roll back; the values already consumed by NEXTVAL (e.g., 1, 2, 3) are permanently lost, and the next call to NEXTVAL will return 4, creating a gap in the sequence regardless of the ROLLBACK."
+        },
+        {
+          "key": "B",
+          "text": "The ROLLBACK also reverts the sequence's internal counter, so the next NEXTVAL call returns 1 again, as if the three inserts never happened."
+        },
+        {
+          "key": "C",
+          "text": "Sequences without CACHE (NOCACHE) are transactional and therefore are the only case where ROLLBACK restores the previous value."
+        },
+        {
+          "key": "D",
+          "text": "The sequence becomes locked and raises an error on the next NEXTVAL call, since its value is now out of sync with the table."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Sequences no Oracle são objetos independentes de transações: o incremento causado por NEXTVAL é efetivado imediatamente e não participa do mecanismo de ROLLBACK, seja a sequence CACHE ou NOCACHE. Isso é intencional, para garantir alta concorrência (múltiplas sessões podem pedir valores sem esperar umas pelas outras). Por isso, um ROLLBACK das linhas inseridas não devolve os valores já consumidos da sequence, gerando gaps (buracos) na numeração — comportamento esperado e documentado, não um erro ou bloqueio."
+    },
+    {
+      "id": 415,
+      "topic": "ddl",
+      "context": "CREATE VIEW active_employees AS SELECT employee_id, first_name, department_id, status FROM employees WHERE status = 'ACTIVE' WITH CHECK OPTION;",
+      "text": "You execute UPDATE active_employees SET status = 'INACTIVE' WHERE employee_id = 101; through this view. What happens?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The UPDATE fails, because changing status to 'INACTIVE' would make the row no longer satisfy the view's WHERE clause (status = 'ACTIVE'); WITH CHECK OPTION rejects any INSERT or UPDATE through the view that would produce a row the view itself could no longer select."
+        },
+        {
+          "key": "B",
+          "text": "The UPDATE succeeds and the row disappears from the view on the next query, since WITH CHECK OPTION only restricts INSERT statements, not UPDATE."
+        },
+        {
+          "key": "C",
+          "text": "The UPDATE succeeds silently, and WITH CHECK OPTION has no practical runtime effect — it is purely documentation for developers."
+        },
+        {
+          "key": "D",
+          "text": "The UPDATE fails because WITH CHECK OPTION makes every column of the view read-only, blocking any DML through it entirely."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "WITH CHECK OPTION garante que nenhuma linha inserida ou atualizada através da view possa violar a condição WHERE que define a própria view — ou seja, a linha resultante precisa continuar visível pela view depois da operação. Mudar status para 'INACTIVE' faria a linha deixar de satisfazer status = 'ACTIVE', então Oracle rejeita a UPDATE com um erro (ORA-01402), antes mesmo de a linha 'sumir' da view. Essa cláusula se aplica tanto a INSERT quanto a UPDATE, não é apenas documentação, e não torna toda a view somente leitura — apenas impede mudanças que violariam a condição de filtro."
+    },
+    {
+      "id": 416,
+      "topic": "set",
+      "context": "SELECT customer_id, order_date FROM orders_2023 UNION SELECT customer_id, ship_date FROM orders_2024 ORDER BY order_date;",
+      "text": "Is ORDER BY order_date valid here, and where do the final column names/headers for the combined result come from?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It is valid, because ORDER BY in a set-operator query refers to the column name (or position) as defined by the FIRST query in the combination — column names/headers for the whole result always come from the first SELECT, regardless of the names used in later queries."
+        },
+        {
+          "key": "B",
+          "text": "It is invalid, because ship_date and order_date are different column names, which set operators forbid even if the data types match."
+        },
+        {
+          "key": "C",
+          "text": "It is valid, but the column header shown will be ship_date, since Oracle always takes the header from the last query in the combination."
+        },
+        {
+          "key": "D",
+          "text": "Set operators require ORDER BY to reference a column position number (like ORDER BY 2); referencing a column name after a set operation always raises a syntax error."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Em consultas combinadas com operadores de conjunto (UNION, UNION ALL, INTERSECT, MINUS), apenas a última consulta pode conter uma cláusula ORDER BY, aplicada ao resultado combinado inteiro, e essa cláusula pode referenciar tanto a posição da coluna quanto o nome/alias de coluna definido pela PRIMEIRA consulta da combinação — os nomes das colunas subsequentes (como ship_date) são ignorados para fins de nomeação do resultado. Os operadores de conjunto exigem apenas que o número de colunas e seus tipos de dados sejam compatíveis entre as consultas, não que os nomes das colunas sejam idênticos. Referenciar pelo nome ou pela posição são ambas formas válidas."
+    },
+    {
+      "id": 417,
+      "topic": "set",
+      "context": "Table A(val) contains (1, 2, 3). Table B(val) contains (2, NULL).",
+      "text": "Compare SELECT val FROM a MINUS SELECT val FROM b; with SELECT val FROM a WHERE val NOT IN (SELECT val FROM b);. What do they return?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "MINUS returns 1 and 3 (it compares row-by-row using its own NULL-aware set semantics and simply excludes 2), while NOT IN returns zero rows, because the subquery contains a NULL and the NOT IN comparison against a list containing NULL evaluates to UNKNOWN for every row, so no row satisfies the condition."
+        },
+        {
+          "key": "B",
+          "text": "Both return exactly the same result, 1 and 3, because MINUS and NOT IN are simply two different syntaxes for the identical operation."
+        },
+        {
+          "key": "C",
+          "text": "MINUS returns zero rows due to the NULL in table B, while NOT IN correctly returns 1 and 3 by automatically ignoring NULLs in its subquery."
+        },
+        {
+          "key": "D",
+          "text": "Both return zero rows, because any NULL present in either table used in a comparison anywhere in the query poisons the entire result set."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "MINUS é um operador de conjunto que compara linhas inteiras entre os dois resultados, tratando NULL de forma especial nesse contexto (duas linhas são consideradas iguais também quando ambas têm NULL na posição correspondente) — por isso ele consegue simplesmente remover o valor 2 e retornar 1 e 3 sem se afetar pelo NULL isolado de B. Já NOT IN (subquery) é reescrito internamente como uma série de comparações '<> ALL'; se a subquery retornar qualquer linha com NULL, a comparação valor <> NULL avalia para UNKNOWN, e como NOT IN precisa que TODAS as comparações sejam verdadeiras para incluir a linha, a presença de um único NULL na subquery faz com que nenhuma linha externa seja incluída, retornando um conjunto vazio — uma armadilha clássica e um dos motivos pelos quais NOT EXISTS costuma ser preferido a NOT IN quando a subquery pode conter NULLs."
+    },
+    {
+      "id": 418,
+      "topic": "advanced",
+      "context": "Table SCORES(student_id, score) with values: (1,90), (2,90), (3,85), (4,80).",
+      "text": "For SELECT student_id, score, RANK() OVER (ORDER BY score DESC) r, DENSE_RANK() OVER (ORDER BY score DESC) dr, ROW_NUMBER() OVER (ORDER BY score DESC) rn FROM scores;, what values do r, dr, and rn take for the two students tied at score 90?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Both tied rows get r = 1 and dr = 1 (identical ranks for identical values), but rn assigns them different consecutive values (1 and 2), since ROW_NUMBER never produces ties — it always assigns a unique sequential number even among equal values, with the tie broken arbitrarily by row order."
+        },
+        {
+          "key": "B",
+          "text": "All three functions assign the same value to tied rows, since ties are always resolved identically across RANK, DENSE_RANK, and ROW_NUMBER."
+        },
+        {
+          "key": "C",
+          "text": "RANK gives both rows 1, but DENSE_RANK gives them 1 and 2 respectively, treating the two tied rows as distinct ranks."
+        },
+        {
+          "key": "D",
+          "text": "ROW_NUMBER raises an error when used without a PARTITION BY clause on data containing ties."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "RANK e DENSE_RANK atribuem a mesma posição (1) para valores empatados, já que ambas de fato 'empatam' o ranking; a diferença entre elas aparece na linha seguinte: RANK pula posições (o próximo valor, 85, receberia rank 3, pulando o 2), enquanto DENSE_RANK não deixa buracos (o próximo valor receberia dense_rank 2). ROW_NUMBER, por sua vez, ignora empates: como seu contrato é gerar uma sequência estritamente única de números inteiros consecutivos, ela atribui arbitrariamente 1 e 2 às duas linhas empatadas (a ordem exata entre elas não é garantida sem critério de desempate adicional no ORDER BY). PARTITION BY não é obrigatório para nenhuma dessas funções."
+    },
+    {
+      "id": 419,
+      "topic": "advanced",
+      "context": "Table EMPLOYEES(employee_id, manager_id, last_name). Query: SELECT LEVEL, last_name FROM employees START WITH manager_id IS NULL CONNECT BY PRIOR employee_id = manager_id;",
+      "text": "What do START WITH and CONNECT BY PRIOR each define in this hierarchical query, and what does LEVEL represent?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "START WITH identifies the root row(s) of the hierarchy (employees with no manager); CONNECT BY PRIOR employee_id = manager_id defines the parent-child relationship, meaning each row's manager_id must match the employee_id of the row that was its PRIOR (parent) in the traversal; LEVEL is a pseudocolumn returning the depth of each row in the hierarchy, starting at 1 for the root rows."
+        },
+        {
+          "key": "B",
+          "text": "START WITH defines the join condition between parent and child, while CONNECT BY PRIOR identifies the root row(s); LEVEL returns the total count of descendants for each row."
+        },
+        {
+          "key": "C",
+          "text": "CONNECT BY PRIOR is only cosmetic and could be omitted without changing the query's result, since START WITH alone is sufficient to build the hierarchy."
+        },
+        {
+          "key": "D",
+          "text": "LEVEL always starts at 0 for the root and increases by 1 per generation, and CONNECT BY PRIOR employee_id = manager_id means each row is compared to its own children rather than its parent."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "START WITH define a condição para as linhas-raiz da árvore (aqui, funcionários sem gerente, ou seja, o topo da hierarquia). CONNECT BY PRIOR estabelece a regra de relacionamento pai-filho usada para expandir a árvore a partir das raízes: PRIOR employee_id = manager_id significa 'o employee_id da linha-pai (PRIOR) deve ser igual ao manager_id da linha atual', conectando cada funcionário ao seu gerente já processado. LEVEL é uma pseudocoluna que retorna a profundidade da linha atual na hierarquia, começando em 1 para as linhas-raiz e incrementando a cada nível descendente. CONNECT BY PRIOR é indispensável — sem ele, a consulta não define nenhuma relação hierárquica e falha ou retorna resultado incorreto."
     }
   ]
 }
