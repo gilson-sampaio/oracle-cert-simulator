@@ -684,6 +684,2651 @@
         "B"
       ],
       "explanation": "Uma tabela tem no máximo UMA PRIMARY KEY, mas pode ter várias constraints UNIQUE (A). Uma coluna UNIQUE admite múltiplos NULLs, pois NULL nunca é igual a NULL (B). A PRIMARY KEY implica NOT NULL — não aceita nenhum nulo (C errado). NOT NULL só pode ser definido no nível de COLUNA, não de tabela (D errado). E uma FOREIGN KEY deve referenciar uma coluna com PRIMARY KEY ou UNIQUE, não outra foreign key (E errado)."
+    },
+    {
+      "topic": "architecture",
+      "context": "",
+      "text": "Which two statements are true about Oracle background processes? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "LGWR writes the contents of the redo log buffer to the online redo log files."
+        },
+        {
+          "key": "B",
+          "text": "DBWn writes committed changes directly to the online redo log files."
+        },
+        {
+          "key": "C",
+          "text": "CKPT writes all dirty buffers to disk during every checkpoint."
+        },
+        {
+          "key": "D",
+          "text": "SMON performs instance recovery on startup after an instance failure."
+        },
+        {
+          "key": "E",
+          "text": "PMON writes the redo log buffer to disk at each COMMIT."
+        }
+      ],
+      "correct": [
+        "A",
+        "D"
+      ],
+      "explanation": "LGWR grava o redo log buffer nos online redo log files (A) — inclusive no COMMIT. SMON faz a recuperação de instância no arranque após uma falha (D). DBWn grava blocos sujos nos DATAFILES, não nos redo logs (B errado). CKPT atualiza os cabeçalhos de datafiles/control file e sinaliza o checkpoint, mas quem escreve os blocos sujos é o DBWn (C errado). PMON limpa recursos de processos que falharam, não grava redo (E errado).",
+      "id": 21
+    },
+    {
+      "topic": "instance",
+      "context": "",
+      "text": "Which two statements are true about the USER, ALL, and DBA prefixed data dictionary views? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "USER_ views show objects owned by the current user."
+        },
+        {
+          "key": "B",
+          "text": "ALL_ views show only objects owned by the current user."
+        },
+        {
+          "key": "C",
+          "text": "DBA_ views show all objects in the database, regardless of owner."
+        },
+        {
+          "key": "D",
+          "text": "USER_ views always include an OWNER column."
+        },
+        {
+          "key": "E",
+          "text": "ALL_ views require the DBA role to be queried."
+        }
+      ],
+      "correct": [
+        "A",
+        "C"
+      ],
+      "explanation": "As views USER_ mostram os objetos do próprio usuário (A); as DBA_ mostram todos os objetos do banco, de qualquer dono (C, e exigem privilégio adequado). As ALL_ mostram objetos que o usuário POSSUI OU aos quais tem acesso — não só os próprios (B errado). As USER_ tipicamente NÃO têm coluna OWNER (é sempre o usuário atual) — D errado. Consultar ALL_ não exige o papel DBA (E errado).",
+      "id": 22
+    },
+    {
+      "topic": "instance",
+      "context": "",
+      "text": "Which statement is true about the dynamic performance (V$) views?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "They are populated from data stored permanently in the data dictionary base tables."
+        },
+        {
+          "key": "B",
+          "text": "Much of their data is derived from memory and control files, and some of it is reset when the instance restarts."
+        },
+        {
+          "key": "C",
+          "text": "They can be queried only when the database is in OPEN state."
+        },
+        {
+          "key": "D",
+          "text": "They are owned by the SYSTEM user."
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "As views dinâmicas de desempenho (V$) refletem em grande parte estruturas de MEMÓRIA e do control file, e muitos de seus dados (estatísticas acumuladas) são reiniciados quando a instância reinicia (B). Algumas V$ podem ser consultadas já em NOMOUNT/MOUNT (ex.: V$INSTANCE), não só em OPEN (C errado). Elas são baseadas em tabelas X$ de propriedade de SYS, não SYSTEM (D errado).",
+      "id": 23
+    },
+    {
+      "topic": "users",
+      "context": "",
+      "text": "Which two statements are true about roles in an Oracle database? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A role can be granted to another role."
+        },
+        {
+          "key": "B",
+          "text": "A role can be protected by a password (authentication)."
+        },
+        {
+          "key": "C",
+          "text": "A role can own schema objects such as tables."
+        },
+        {
+          "key": "D",
+          "text": "A role must be enabled with the CREATE ROLE privilege before it can be granted."
+        },
+        {
+          "key": "E",
+          "text": "Object privileges cannot be granted to a role."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Um role pode ser concedido a outro role, formando hierarquias de privilégios (A), e pode ser protegido por senha (B). Roles NÃO possuem objetos de esquema — quem possui objetos é um usuário/esquema (C errado). CREATE ROLE é o privilégio para CRIAR o role, não um pré-requisito de habilitação para concedê-lo (D errado). Tanto privilégios de sistema quanto de objeto podem ser concedidos a roles (E errado).",
+      "id": 24
+    },
+    {
+      "topic": "storage",
+      "context": "",
+      "text": "Which two are valid segment types in an Oracle database? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Undo segment"
+        },
+        {
+          "key": "B",
+          "text": "Temporary segment"
+        },
+        {
+          "key": "C",
+          "text": "Tablespace segment"
+        },
+        {
+          "key": "D",
+          "text": "Instance segment"
+        },
+        {
+          "key": "E",
+          "text": "Listener segment"
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Segmentos são objetos que ocupam espaço num tablespace: table, index, undo (A) e temporary (B) são tipos válidos de segmento. Tablespace é um contêiner LÓGICO de segmentos, não um segmento (C errado). Instância e listener são componentes de memória/rede, sem relação com segmentos de storage (D, E errados).",
+      "id": 25
+    },
+    {
+      "topic": "storage",
+      "context": "A table block is being managed with Automatic Segment Space Management (ASSM).",
+      "text": "What does the PCTFREE setting of a table control?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The percentage of space in each block reserved for future updates that grow existing rows."
+        },
+        {
+          "key": "B",
+          "text": "The percentage of blocks kept empty in the segment at all times."
+        },
+        {
+          "key": "C",
+          "text": "The minimum number of extents allocated to the segment."
+        },
+        {
+          "key": "D",
+          "text": "The percentage of the tablespace reserved for the SYSTEM user."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "PCTFREE reserva uma porcentagem de espaço livre em CADA bloco para acomodar o crescimento de linhas já existentes em futuros UPDATEs, ajudando a evitar migração de linhas. Não reserva blocos inteiros vazios no segmento (B), não define número de extents (C) nem reserva espaço do tablespace para o SYSTEM (D).",
+      "id": 26
+    },
+    {
+      "topic": "movedata",
+      "context": "",
+      "text": "Which two statements are true about the direct path load mode of SQL*Loader? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "It bypasses the database buffer cache, writing formatted blocks directly to the datafiles."
+        },
+        {
+          "key": "B",
+          "text": "It always fires all INSERT triggers on the target table."
+        },
+        {
+          "key": "C",
+          "text": "It can be significantly faster than conventional path for large data volumes."
+        },
+        {
+          "key": "D",
+          "text": "It uses ordinary INSERT statements processed one row at a time."
+        },
+        {
+          "key": "E",
+          "text": "It cannot load data above the table's high-water mark."
+        }
+      ],
+      "correct": [
+        "A",
+        "C"
+      ],
+      "explanation": "O direct path do SQL*Loader escreve blocos formatados diretamente nos datafiles, acima do high-water mark, evitando o buffer cache (A) — por isso é bem mais rápido para grandes volumes (C). Ele NÃO dispara triggers de INSERT comuns (B errado) e NÃO usa INSERTs convencionais linha a linha — isso é o conventional path (D errado). Justamente carrega ACIMA do high-water mark (E errado).",
+      "id": 27
+    },
+    {
+      "topic": "tools",
+      "context": "",
+      "text": "Which two statements are true about Oracle Enterprise Manager Database Express (EM Express)? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "It is a web-based tool built into the database, requiring no separate middleware installation."
+        },
+        {
+          "key": "B",
+          "text": "It requires the database to be at least in MOUNT state but not necessarily OPEN."
+        },
+        {
+          "key": "C",
+          "text": "It is available when the database instance is OPEN."
+        },
+        {
+          "key": "D",
+          "text": "It is a command-line replacement for SQL*Plus."
+        },
+        {
+          "key": "E",
+          "text": "It must be downloaded separately from Oracle Technology Network."
+        }
+      ],
+      "correct": [
+        "A",
+        "C"
+      ],
+      "explanation": "O EM Express é uma ferramenta web embutida no próprio banco, sem middleware separado (A), e fica disponível quando a instância está OPEN (C), pois depende de objetos internos do banco aberto. Não funciona apenas em MOUNT (B errado), não é uma ferramenta de linha de comando (D errado) e não precisa ser baixado à parte (E errado).",
+      "id": 28
+    },
+    {
+      "topic": "network",
+      "context": "",
+      "text": "Which two statements are true when comparing dedicated server and shared server configurations? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "In a dedicated server configuration, each client connection has its own server process."
+        },
+        {
+          "key": "B",
+          "text": "In a shared server configuration, dispatchers route client requests to shared server processes via queues."
+        },
+        {
+          "key": "C",
+          "text": "Shared server requires one server process per client connection."
+        },
+        {
+          "key": "D",
+          "text": "Dedicated server uses dispatchers to share a pool of server processes."
+        },
+        {
+          "key": "E",
+          "text": "Shared server is the only configuration that supports network connections."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "No dedicated server, cada conexão de cliente tem um processo servidor exclusivo (A). No shared server, os dispatchers recebem as requisições dos clientes e as encaminham, via filas, para um pool de shared server processes (B). As opções C e D invertem os conceitos, e ambas as configurações suportam conexões de rede (E errado).",
+      "id": 29
+    },
+    {
+      "topic": "tablespaces",
+      "context": "",
+      "text": "Which two statements are true about the default tablespaces present in a typical Oracle database? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The SYSTEM tablespace stores the data dictionary."
+        },
+        {
+          "key": "B",
+          "text": "A temporary tablespace is used for sort operations that do not fit in memory."
+        },
+        {
+          "key": "C",
+          "text": "The SYSAUX tablespace stores undo data by default."
+        },
+        {
+          "key": "D",
+          "text": "User data must always be stored in the SYSTEM tablespace."
+        },
+        {
+          "key": "E",
+          "text": "The UNDO tablespace stores the data dictionary."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O SYSTEM tablespace contém o data dictionary (A), e o temporary tablespace é usado para operações de sort/hash que excedem a memória (B). O SYSAUX é auxiliar do SYSTEM (repositórios como AWR), não guarda undo (C errado). Dados de usuário devem ficar em tablespaces próprios, não no SYSTEM (D errado). Undo fica no UNDO tablespace, e o dicionário no SYSTEM, não o contrário (E errado).",
+      "id": 30
+    },
+    {
+      "topic": "undo",
+      "context": "",
+      "text": "Which two statements are true about temporary undo in an Oracle database? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "It stores the undo for changes to global temporary tables in the temporary tablespace."
+        },
+        {
+          "key": "B",
+          "text": "It can reduce the amount of undo and redo generated in the regular undo tablespace and redo logs."
+        },
+        {
+          "key": "C",
+          "text": "It permanently stores undo for all tables in memory only."
+        },
+        {
+          "key": "D",
+          "text": "It is enabled by setting UNDO_MANAGEMENT to MANUAL."
+        },
+        {
+          "key": "E",
+          "text": "It eliminates the need for an undo tablespace entirely."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O temporary undo armazena o undo das alterações em global temporary tables no temporary tablespace (A), reduzindo o undo e o redo gerados no undo tablespace e nos redo logs regulares (B) — útil por não precisar de recuperabilidade para dados temporários. Não guarda undo de todas as tabelas só em memória (C), é controlado por TEMP_UNDO_ENABLED e não por UNDO_MANAGEMENT=MANUAL (D), e não elimina a necessidade do undo tablespace para dados permanentes (E).",
+      "id": 31
+    },
+    {
+      "topic": "sql-select",
+      "context": "",
+      "text": "Which two statements are true about column aliases in a SELECT statement? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A column alias can be referenced in the ORDER BY clause."
+        },
+        {
+          "key": "B",
+          "text": "A column alias can be referenced in the WHERE clause of the same query."
+        },
+        {
+          "key": "C",
+          "text": "An alias containing spaces or preserving case must be enclosed in double quotation marks."
+        },
+        {
+          "key": "D",
+          "text": "The AS keyword is mandatory to define a column alias."
+        },
+        {
+          "key": "E",
+          "text": "A column alias replaces the column name permanently in the table."
+        }
+      ],
+      "correct": [
+        "A",
+        "C"
+      ],
+      "explanation": "Um alias de coluna pode ser usado no ORDER BY (A), pois este é avaliado depois da lista do SELECT. Aliases com espaços ou que precisem preservar maiúsculas/minúsculas devem vir entre aspas duplas (C). O alias NÃO pode ser referenciado no WHERE (avaliado antes do SELECT) — B errado. O AS é opcional (D errado), e o alias afeta só a saída da consulta, não altera a tabela (E errado).",
+      "id": 32
+    },
+    {
+      "topic": "sql-select",
+      "context": "The EMPLOYEES table has a MANAGER_ID column that is NULL for employees with no manager.",
+      "text": "Which query correctly returns only employees who have no manager?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "SELECT * FROM employees WHERE manager_id IS NULL;"
+        },
+        {
+          "key": "B",
+          "text": "SELECT * FROM employees WHERE manager_id = NULL;"
+        },
+        {
+          "key": "C",
+          "text": "SELECT * FROM employees WHERE manager_id != NULL;"
+        },
+        {
+          "key": "D",
+          "text": "SELECT * FROM employees WHERE manager_id = '';"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Para testar ausência de valor deve-se usar IS NULL (A). Comparações com = ou != contra NULL sempre resultam em UNKNOWN, nunca TRUE, então B e C não retornam linhas. No Oracle, string vazia '' é tratada como NULL, mas '=' com ela ainda não funciona como teste de nulo (D errado).",
+      "id": 33
+    },
+    {
+      "topic": "sql-functions",
+      "context": "",
+      "text": "Evaluate these two expressions:\n\nROUND(45.678, 2) and TRUNC(45.678, 2)",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "45.68 and 45.67"
+        },
+        {
+          "key": "B",
+          "text": "45.67 and 45.68"
+        },
+        {
+          "key": "C",
+          "text": "45.68 and 45.68"
+        },
+        {
+          "key": "D",
+          "text": "46 and 45"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "ROUND(45.678, 2) arredonda para 2 casas decimais, avaliando o terceiro dígito (8), resultando em 45.68. TRUNC(45.678, 2) simplesmente corta na segunda casa sem arredondar, resultando em 45.67. Por isso a ordem correta é 45.68 e 45.67.",
+      "id": 34
+    },
+    {
+      "topic": "sql-functions",
+      "context": "",
+      "text": "Which statement is true about the difference between the CASE expression and the DECODE function?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "DECODE can evaluate range conditions such as 'greater than', but CASE cannot."
+        },
+        {
+          "key": "B",
+          "text": "The searched CASE expression can evaluate range or comparison conditions, which DECODE cannot do directly."
+        },
+        {
+          "key": "C",
+          "text": "CASE can only be used in PL/SQL, not in SQL statements."
+        },
+        {
+          "key": "D",
+          "text": "DECODE and CASE cannot both appear in the same SELECT statement."
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "O searched CASE (CASE WHEN condição THEN ...) avalia condições de comparação/faixa como salary > 5000, algo que o DECODE — que só compara igualdade com uma lista de valores — não faz diretamente (B). DECODE não avalia ranges (A errado), CASE é plenamente usável em SQL (C errado), e ambos podem coexistir na mesma consulta (D errado).",
+      "id": 35
+    },
+    {
+      "topic": "sql-groups",
+      "context": "The ORDERS table has 100 rows; the CUSTOMER_ID column is NULL in 10 of them.",
+      "text": "What does SELECT COUNT(customer_id) FROM orders; return, and why?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "90, because COUNT(column) ignores NULL values."
+        },
+        {
+          "key": "B",
+          "text": "100, because COUNT always counts every row."
+        },
+        {
+          "key": "C",
+          "text": "10, because it counts only the NULL values."
+        },
+        {
+          "key": "D",
+          "text": "An error, because the column contains NULLs."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "COUNT(coluna) conta apenas as linhas em que a coluna NÃO é nula, ignorando os 10 NULLs — logo retorna 90 (A). Para contar todas as 100 linhas independentemente de nulos, usaria COUNT(*). Não há erro por causa de nulos (D errado).",
+      "id": 36
+    },
+    {
+      "topic": "sql-joins",
+      "context": "Table A has 3 rows; table B has 4 rows. There are no columns with the same name in both tables.",
+      "text": "How many rows does SELECT * FROM a CROSS JOIN b; return?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "12"
+        },
+        {
+          "key": "B",
+          "text": "7"
+        },
+        {
+          "key": "C",
+          "text": "3"
+        },
+        {
+          "key": "D",
+          "text": "0"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Um CROSS JOIN produz o produto cartesiano: cada linha de A combinada com cada linha de B, ou seja 3 × 4 = 12 linhas. Não há condição de junção envolvida — por isso o resultado não depende de colunas em comum.",
+      "id": 37
+    },
+    {
+      "topic": "sql-setops",
+      "context": "",
+      "text": "Which two statements are true about how set operators handle NULLs and duplicates? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "INTERSECT and UNION treat two NULLs in the same position as equal when matching rows."
+        },
+        {
+          "key": "B",
+          "text": "UNION ALL returns all rows including duplicates."
+        },
+        {
+          "key": "C",
+          "text": "UNION ALL eliminates duplicate rows."
+        },
+        {
+          "key": "D",
+          "text": "MINUS returns rows common to both queries."
+        },
+        {
+          "key": "E",
+          "text": "Set operators ignore NULLs entirely when comparing rows."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Ao contrário do operador '=', os operadores de conjunto tratam dois NULLs na mesma posição como IGUAIS ao comparar linhas (A). UNION ALL retorna todas as linhas, inclusive duplicatas (B). UNION ALL não remove duplicatas (C errado), MINUS retorna o que está na primeira e não na segunda consulta — não o comum (D errado), e os operadores não ignoram NULLs (E errado).",
+      "id": 38
+    },
+    {
+      "topic": "sql-dml",
+      "context": "You want to update rows that match a source and insert those that don't, in a single statement.",
+      "text": "Which statement is best suited for this 'upsert' operation?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "MERGE"
+        },
+        {
+          "key": "B",
+          "text": "INSERT ALL"
+        },
+        {
+          "key": "C",
+          "text": "UPDATE with a subquery"
+        },
+        {
+          "key": "D",
+          "text": "UNION"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "O MERGE realiza um 'upsert' num único comando: com WHEN MATCHED THEN UPDATE e WHEN NOT MATCHED THEN INSERT, atualiza as linhas correspondentes e insere as que não existem, baseado numa condição de junção. INSERT ALL só insere, UPDATE só atualiza, e UNION é operador de consulta, não de DML.",
+      "id": 39
+    },
+    {
+      "topic": "sql-ddl",
+      "context": "A sequence SEQ1 was just created. No NEXTVAL has been called yet in the current session.",
+      "text": "What happens if you reference SEQ1.CURRVAL before calling SEQ1.NEXTVAL in the session?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It returns 0."
+        },
+        {
+          "key": "B",
+          "text": "It returns the sequence's START WITH value."
+        },
+        {
+          "key": "C",
+          "text": "It raises an error, because CURRVAL is not defined until NEXTVAL is first called in the session."
+        },
+        {
+          "key": "D",
+          "text": "It returns NULL."
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "CURRVAL só fica disponível numa sessão DEPOIS que NEXTVAL foi chamado ao menos uma vez ali; antes disso, referenciar CURRVAL gera erro (ORA-08002). Não retorna 0, o valor de START WITH nem NULL — a primeira chamada precisa ser NEXTVAL para 'inicializar' o CURRVAL da sessão.",
+      "id": 40
+    },
+    {
+      "topic": "architecture",
+      "context": "",
+      "text": "Which two statements are true about the logical storage structures of an Oracle database? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A segment is made up of one or more extents."
+        },
+        {
+          "key": "B",
+          "text": "An extent is a set of logically contiguous data blocks."
+        },
+        {
+          "key": "C",
+          "text": "A data block is composed of several extents."
+        },
+        {
+          "key": "D",
+          "text": "A tablespace maps to exactly one datafile."
+        },
+        {
+          "key": "E",
+          "text": "An extent can span multiple tablespaces."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "A hierarquia lógica é: bloco → extent → segmento → tablespace. Um segmento é formado por um ou mais extents (A), e um extent é um conjunto de blocos logicamente contíguos (B). Um bloco é a menor unidade, não é composto de extents (C errado). Um tablespace pode ter vários datafiles (D errado), e um extent reside inteiramente dentro de um único tablespace/datafile (E errado).",
+      "id": 41
+    },
+    {
+      "topic": "instance",
+      "context": "",
+      "text": "Which two files or structures are used by the Automatic Diagnostic Repository (ADR)? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The alert log, which records significant database events and errors."
+        },
+        {
+          "key": "B",
+          "text": "Trace files written by background and server processes."
+        },
+        {
+          "key": "C",
+          "text": "The online redo log files."
+        },
+        {
+          "key": "D",
+          "text": "The control file."
+        },
+        {
+          "key": "E",
+          "text": "The password file."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O ADR é um repositório baseado em arquivos (fora do banco) para diagnóstico; ele armazena o alert log (A) e os trace files gerados por processos de fundo e servidores (B), além de dumps e incidentes. Redo logs, control file e password file têm outras finalidades (recuperação, metadados de instância, autenticação) e não fazem parte do ADR.",
+      "id": 42
+    },
+    {
+      "topic": "instance",
+      "context": "The instance was started with a PFILE (text parameter file).",
+      "text": "You execute: ALTER SYSTEM SET open_cursors=500 SCOPE=SPFILE; What happens?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It succeeds and persists the value for the next restart."
+        },
+        {
+          "key": "B",
+          "text": "It fails, because SCOPE=SPFILE cannot be used when the instance was started with a PFILE."
+        },
+        {
+          "key": "C",
+          "text": "It changes the value only in memory."
+        },
+        {
+          "key": "D",
+          "text": "It converts the PFILE into an SPFILE automatically."
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "Se a instância foi iniciada com PFILE, não existe SPFILE ativo, então SCOPE=SPFILE (e SCOPE=BOTH) falham com erro. Com PFILE, o único SCOPE válido em ALTER SYSTEM é MEMORY. O comando não converte automaticamente PFILE em SPFILE (D errado).",
+      "id": 43
+    },
+    {
+      "topic": "users",
+      "context": "",
+      "text": "Which two statements are true about the principle of least privilege? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Users should be granted only the privileges they actually need to perform their tasks."
+        },
+        {
+          "key": "B",
+          "text": "Revoking EXECUTE on powerful packages like UTL_FILE from PUBLIC helps enforce it."
+        },
+        {
+          "key": "C",
+          "text": "Granting the DBA role to all application users simplifies administration and enforces it."
+        },
+        {
+          "key": "D",
+          "text": "Setting O7_DICTIONARY_ACCESSIBILITY to TRUE strengthens it."
+        },
+        {
+          "key": "E",
+          "text": "It requires all users to share a single common account."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Least privilege significa conceder apenas os privilégios estritamente necessários (A); revogar EXECUTE de pacotes poderosos como UTL_FILE do PUBLIC reduz a superfície de ataque, reforçando o princípio (B). Conceder DBA a todos (C) e ativar O7_DICTIONARY_ACCESSIBILITY=TRUE (D) fazem o OPOSTO, aumentando privilégios. Contas compartilhadas (E) violam a rastreabilidade e o princípio.",
+      "id": 44
+    },
+    {
+      "topic": "storage",
+      "context": "",
+      "text": "Which two statements are true about shrinking a segment online (ALTER TABLE ... SHRINK SPACE)? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Row movement must be enabled on the table."
+        },
+        {
+          "key": "B",
+          "text": "The segment must reside in a tablespace using Automatic Segment Space Management (ASSM)."
+        },
+        {
+          "key": "C",
+          "text": "The table must have a PRIMARY KEY constraint."
+        },
+        {
+          "key": "D",
+          "text": "Shrinking always requires the table to be offline."
+        },
+        {
+          "key": "E",
+          "text": "Shrinking is only possible for dictionary-managed tablespaces."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Para o shrink online, é preciso habilitar row movement (ALTER TABLE ... ENABLE ROW MOVEMENT) — A — e o segmento deve estar num tablespace com ASSM (B). Não é exigida PRIMARY KEY (C errado). O shrink é ONLINE, permitindo DML durante a operação (D errado), e depende de ASSM, que é recurso de tablespaces locally managed, não dictionary-managed (E errado).",
+      "id": 45
+    },
+    {
+      "topic": "storage",
+      "context": "",
+      "text": "Which statement is true about how row data is stored within an Oracle data block?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Row data is stored starting from the bottom of the block, while the block header grows from the top."
+        },
+        {
+          "key": "B",
+          "text": "Row data is always stored in the exact middle of the block."
+        },
+        {
+          "key": "C",
+          "text": "Each block can hold at most one row."
+        },
+        {
+          "key": "D",
+          "text": "The block header has a fixed size regardless of the number of rows."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Dentro de um bloco, o cabeçalho (header, com row directory etc.) cresce de cima para baixo, enquanto os dados das linhas são inseridos a partir do fim do bloco em direção ao topo, e o espaço livre fica no meio (A). Um bloco pode conter várias linhas (C errado) e o tamanho do header VARIA conforme o número de linhas/transações (D errado).",
+      "id": 46
+    },
+    {
+      "topic": "movedata",
+      "context": "",
+      "text": "Which two statements are true about external tables in Oracle? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "They allow data in flat files to be queried using SQL without first loading it into the database."
+        },
+        {
+          "key": "B",
+          "text": "The ORACLE_LOADER access driver is used to read text data files, similar to SQL*Loader."
+        },
+        {
+          "key": "C",
+          "text": "You can perform INSERT, UPDATE, and DELETE directly on the underlying file through the external table."
+        },
+        {
+          "key": "D",
+          "text": "External tables always store their data inside the database segments."
+        },
+        {
+          "key": "E",
+          "text": "External tables cannot be joined with regular tables."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "External tables permitem consultar dados de arquivos externos via SQL sem carregá-los antes (A), e o access driver ORACLE_LOADER lê arquivos texto de forma análoga ao SQL*Loader (B). São somente leitura: não aceitam INSERT/UPDATE/DELETE no arquivo (C errado), não armazenam dados em segmentos do banco (D errado) e podem ser normalmente unidas (join) a tabelas comuns (E errado).",
+      "id": 47
+    },
+    {
+      "topic": "tools",
+      "context": "",
+      "text": "Which two tasks can be performed using the Database Configuration Assistant (DBCA)? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Create a new database and configure a non-standard block size for it."
+        },
+        {
+          "key": "B",
+          "text": "Register a new database with an Enterprise Manager management server."
+        },
+        {
+          "key": "C",
+          "text": "Change the standard block size of an existing database in place."
+        },
+        {
+          "key": "D",
+          "text": "Perform a point-in-time recovery of a database."
+        },
+        {
+          "key": "E",
+          "text": "Write and debug PL/SQL packages interactively."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O DBCA cria e configura bancos, incluindo definir block size na criação (A), e pode registrar o novo banco num servidor Enterprise Manager (B). O block size PADRÃO de um banco existente não pode ser alterado depois da criação (C errado). Recuperação point-in-time é feita com RMAN (D errado), e desenvolvimento de PL/SQL é feito em SQL Developer (E errado).",
+      "id": 48
+    },
+    {
+      "topic": "network",
+      "context": "A service shows the status 'UNKNOWN' in the output of 'lsnrctl status'.",
+      "text": "What is the most likely reason a service shows UNKNOWN status?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The service was statically registered in the listener.ora file."
+        },
+        {
+          "key": "B",
+          "text": "The service was dynamically registered by the LREG process."
+        },
+        {
+          "key": "C",
+          "text": "The listener is not running."
+        },
+        {
+          "key": "D",
+          "text": "The database is in NOMOUNT state."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Serviços registrados ESTATICAMENTE no listener.ora aparecem com status UNKNOWN, porque o listener não recebeu confirmação dinâmica da instância de que o serviço está de fato ativo. Serviços registrados dinamicamente pelo LREG aparecem como READY ou BLOCKED (B), não UNKNOWN. Se o listener não estivesse rodando, não haveria saída de status (C).",
+      "id": 49
+    },
+    {
+      "topic": "tablespaces",
+      "context": "You create a smallfile tablespace:\n\nCREATE TABLESPACE sales_data\nDATAFILE '/u01/sales01.dbf' SIZE 100M;",
+      "text": "Which two statements are true about this tablespace? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "It uses the database's default block size unless a BLOCKSIZE clause is specified."
+        },
+        {
+          "key": "B",
+          "text": "Additional datafiles can be added later with ALTER TABLESPACE ... ADD DATAFILE."
+        },
+        {
+          "key": "C",
+          "text": "It can contain only one datafile."
+        },
+        {
+          "key": "D",
+          "text": "It is a dictionary-managed tablespace by default."
+        },
+        {
+          "key": "E",
+          "text": "Its datafile cannot be resized after creation."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Uma smallfile tablespace usa o block size padrão do banco quando BLOCKSIZE não é informado (A) e pode conter MÚLTIPLOS datafiles, adicionados depois com ADD DATAFILE (B) — por isso C está errado (isso valeria para bigfile). Tablespaces são locally managed por padrão (D errado), e datafiles podem ser redimensionados com RESIZE ou AUTOEXTEND (E errado).",
+      "id": 50
+    },
+    {
+      "topic": "undo",
+      "context": "",
+      "text": "Which two statements are true when comparing undo data and redo data? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Undo data is used to roll back uncommitted changes and provide read consistency."
+        },
+        {
+          "key": "B",
+          "text": "Redo data is used to redo (reapply) changes during instance or media recovery."
+        },
+        {
+          "key": "C",
+          "text": "Undo data is stored in the online redo log files."
+        },
+        {
+          "key": "D",
+          "text": "Redo data is used to provide read consistency for long-running queries."
+        },
+        {
+          "key": "E",
+          "text": "Generating undo does not generate any redo."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O undo serve para desfazer alterações não commitadas (ROLLBACK) e fornecer leitura consistente (A); o redo serve para REAPLICAR alterações na recuperação de instância ou de mídia (B). Undo é armazenado no undo tablespace, não nos redo logs (C errado). Read consistency vem do undo, não do redo (D errado), e a geração de undo TAMBÉM gera redo (E errado).",
+      "id": 51
+    },
+    {
+      "topic": "sql-select",
+      "context": "",
+      "text": "Which two statements are true about the DISTINCT keyword? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "SELECT DISTINCT a, b returns unique combinations of columns a and b together."
+        },
+        {
+          "key": "B",
+          "text": "DISTINCT must appear immediately after the SELECT keyword, applying to the whole select list."
+        },
+        {
+          "key": "C",
+          "text": "DISTINCT can be applied to only one column when several columns are selected."
+        },
+        {
+          "key": "D",
+          "text": "DISTINCT counts NULL and non-NULL values as always different."
+        },
+        {
+          "key": "E",
+          "text": "DISTINCT changes the physical order of rows in the table."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "SELECT DISTINCT a, b elimina duplicatas considerando a COMBINAÇÃO das colunas listadas (A), e o DISTINCT deve vir logo após SELECT, aplicando-se a toda a lista de seleção (B). Não é possível aplicar DISTINCT a apenas uma coluna no meio de várias (C errado). Para DISTINCT, múltiplos NULLs são tratados como IGUAIS (aparece só um), não sempre diferentes (D errado), e DISTINCT não altera a tabela física (E errado).",
+      "id": 52
+    },
+    {
+      "topic": "sql-select",
+      "context": "NLS_DATE_FORMAT is set to DD-MON-RR. The HIRE_DATE column is of type DATE.",
+      "text": "Which query requires an EXPLICIT data type conversion to work reliably?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "SELECT * FROM employees WHERE hire_date > TO_DATE('2020-01-15','YYYY-MM-DD');"
+        },
+        {
+          "key": "B",
+          "text": "SELECT * FROM employees WHERE hire_date > '15-JAN-20';"
+        },
+        {
+          "key": "C",
+          "text": "SELECT salary + 100 FROM employees;"
+        },
+        {
+          "key": "D",
+          "text": "SELECT first_name || ' ' || salary FROM employees;"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "A opção A usa TO_DATE explicitamente para converter a string '2020-01-15' com uma máscara própria, independente do NLS — uma conversão EXPLÍCITA. B depende de conversão IMPLÍCITA (a string casa com o NLS_DATE_FORMAT). C e D usam conversões implícitas de número/data para caractere na concatenação/aritmética. A pergunta pede a que usa conversão explícita: A.",
+      "id": 53
+    },
+    {
+      "topic": "sql-functions",
+      "context": "",
+      "text": "Which two statements are true about single-row character functions? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "INSTR returns the position of a substring within a string, or 0 if not found."
+        },
+        {
+          "key": "B",
+          "text": "SUBSTR(str, -3) returns the last 3 characters of str."
+        },
+        {
+          "key": "C",
+          "text": "LENGTH returns the position of the last character in a string plus one."
+        },
+        {
+          "key": "D",
+          "text": "CONCAT can join three or more strings in a single call."
+        },
+        {
+          "key": "E",
+          "text": "INITCAP converts the entire string to uppercase."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "INSTR devolve a posição de uma substring (ou 0 se não encontrada) — A. SUBSTR com posição inicial negativa conta a partir do fim, então SUBSTR(str, -3) retorna os 3 últimos caracteres (B). LENGTH devolve o número de caracteres, não posição+1 (C errado). CONCAT aceita apenas DOIS argumentos (D errado). INITCAP coloca em maiúscula só a primeira letra de cada palavra, não a string toda (E errado).",
+      "id": 54
+    },
+    {
+      "topic": "sql-functions",
+      "context": "SYSDATE is 15-JUL-2024. NLS_TERRITORY makes Sunday the first day of the week.",
+      "text": "Which expression returns the date of the first Monday strictly after SYSDATE?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "NEXT_DAY(SYSDATE, 'MONDAY')"
+        },
+        {
+          "key": "B",
+          "text": "LAST_DAY(SYSDATE)"
+        },
+        {
+          "key": "C",
+          "text": "ADD_MONTHS(SYSDATE, 'MONDAY')"
+        },
+        {
+          "key": "D",
+          "text": "ROUND(SYSDATE, 'MONDAY')"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "NEXT_DAY(data, 'MONDAY') retorna a primeira ocorrência da segunda-feira ESTRITAMENTE após a data informada — exatamente o pedido. LAST_DAY devolve o último dia do mês (B), ADD_MONTHS soma meses e não aceita nome de dia (C), e ROUND arredonda datas por unidade (dia/mês/ano), não por dia da semana (D).",
+      "id": 55
+    },
+    {
+      "topic": "sql-groups",
+      "context": "",
+      "text": "Which two statements are true about the GROUP BY and HAVING clauses? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The WHERE clause filters rows before they are grouped."
+        },
+        {
+          "key": "B",
+          "text": "The HAVING clause filters groups after aggregation, and can reference group functions."
+        },
+        {
+          "key": "C",
+          "text": "A group function can be used in the WHERE clause to filter groups."
+        },
+        {
+          "key": "D",
+          "text": "Columns in the SELECT list that are not aggregated need not appear in GROUP BY."
+        },
+        {
+          "key": "E",
+          "text": "HAVING can only be used together with an ORDER BY clause."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O WHERE filtra linhas ANTES do agrupamento (A); o HAVING filtra GRUPOS depois da agregação e pode usar funções de grupo como HAVING SUM(sal) > 1000 (B). Funções de grupo não podem aparecer no WHERE (C errado). Colunas não agregadas do SELECT DEVEM constar no GROUP BY (D errado), e HAVING não depende de ORDER BY (E errado).",
+      "id": 56
+    },
+    {
+      "topic": "sql-joins",
+      "context": "EMPLOYEES(employee_id, manager_id) — manager_id references employee_id in the same table.",
+      "text": "Which join is required to list each employee together with their manager's name from the same table?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "A self join (the table joined to itself using two aliases)."
+        },
+        {
+          "key": "B",
+          "text": "A cross join."
+        },
+        {
+          "key": "C",
+          "text": "A natural join."
+        },
+        {
+          "key": "D",
+          "text": "A full outer join between two different tables."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Para relacionar linhas da MESMA tabela (empregado ↔ seu gerente), usa-se um self join: a tabela é unida a si mesma com dois aliases (ex.: e e m), ligando e.manager_id = m.employee_id. Cross join geraria produto cartesiano (B), natural join uniria por colunas homônimas de forma indesejada (C), e não há duas tabelas distintas envolvidas (D).",
+      "id": 57
+    },
+    {
+      "topic": "sql-setops",
+      "context": "Query 1 returns product_ids {10, 20, 30}. Query 2 returns {20, 30, 40}.",
+      "text": "What does 'Query1 MINUS Query2' return?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "{10}"
+        },
+        {
+          "key": "B",
+          "text": "{20, 30}"
+        },
+        {
+          "key": "C",
+          "text": "{40}"
+        },
+        {
+          "key": "D",
+          "text": "{10, 40}"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "MINUS retorna as linhas presentes na primeira consulta que NÃO estão na segunda, com duplicatas removidas. De {10, 20, 30} removem-se os que aparecem em {20, 30, 40} — sobram apenas {10}. Os valores comuns (20, 30) e os exclusivos da segunda (40) não entram.",
+      "id": 58
+    },
+    {
+      "topic": "sql-dml",
+      "context": "",
+      "text": "Which two statements are true about the INSERT statement? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "An INSERT ... SELECT can insert multiple rows from a query into a table."
+        },
+        {
+          "key": "B",
+          "text": "Omitting a column in the column list inserts NULL (or its DEFAULT) for that column."
+        },
+        {
+          "key": "C",
+          "text": "A single-row INSERT ... VALUES can populate two tables at once."
+        },
+        {
+          "key": "D",
+          "text": "INSERT automatically commits the transaction."
+        },
+        {
+          "key": "E",
+          "text": "You cannot insert into a table that has a primary key."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "INSERT ... SELECT insere várias linhas oriundas de uma consulta (A), e colunas omitidas na lista recebem NULL ou seu valor DEFAULT (B). Para inserir em várias tabelas de uma vez usa-se multitable INSERT (INSERT ALL/FIRST), não um INSERT ... VALUES simples (C errado). INSERT NÃO faz commit automático (D errado — DDL sim, DML não), e tabelas com PK aceitam inserts normalmente (E errado).",
+      "id": 59
+    },
+    {
+      "topic": "sql-ddl",
+      "context": "",
+      "text": "Which two statements are true about indexes in an Oracle database? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A UNIQUE or PRIMARY KEY constraint automatically creates an index if a suitable one does not already exist."
+        },
+        {
+          "key": "B",
+          "text": "A single table can have both a unique index and a separate non-unique index on different columns."
+        },
+        {
+          "key": "C",
+          "text": "Creating an index guarantees it will be used by every query that filters on that column."
+        },
+        {
+          "key": "D",
+          "text": "An index cannot be created on a column that allows NULLs."
+        },
+        {
+          "key": "E",
+          "text": "Dropping a table leaves its indexes intact."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Uma constraint UNIQUE ou PRIMARY KEY cria automaticamente um índice se não houver um adequado (A), e uma tabela pode ter vários índices em colunas diferentes (B). O otimizador decide se USA um índice — sua existência não garante uso (C errado). Índices podem existir em colunas com NULLs (D errado), e ao dropar a tabela seus índices são removidos junto (E errado).",
+      "id": 60
+    },
+    {
+      "topic": "architecture",
+      "context": "",
+      "text": "Which two statements are true about connecting to an Oracle database instance? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A user session is established between a client process and a server process."
+        },
+        {
+          "key": "B",
+          "text": "In a dedicated server architecture, the server process runs on behalf of a single client session."
+        },
+        {
+          "key": "C",
+          "text": "A connection and a session are always the same thing and can never differ in number."
+        },
+        {
+          "key": "D",
+          "text": "The server process is part of the client application on the user's workstation."
+        },
+        {
+          "key": "E",
+          "text": "A database instance can serve only one session at a time."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Uma sessão de usuário é a ligação lógica entre o processo cliente e um processo servidor (A); no dedicated server, cada processo servidor atende uma única sessão de cliente (B). Conexão e sessão são conceitos distintos — uma conexão pode ter múltiplas sessões (C errado). O processo servidor roda no lado do BANCO, não na estação do cliente (D errado), e uma instância atende muitas sessões simultâneas (E errado).",
+      "id": 61
+    },
+    {
+      "topic": "instance",
+      "context": "",
+      "text": "Which two are true about the initialization parameter files PFILE and SPFILE? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "An SPFILE is a binary, server-side file that should be modified only with ALTER SYSTEM."
+        },
+        {
+          "key": "B",
+          "text": "A PFILE is a text file that can be edited manually with a text editor."
+        },
+        {
+          "key": "C",
+          "text": "A PFILE change made with ALTER SYSTEM ... SCOPE=SPFILE takes effect immediately in the text file."
+        },
+        {
+          "key": "D",
+          "text": "An SPFILE cannot be created from a PFILE."
+        },
+        {
+          "key": "E",
+          "text": "Only one of PFILE or SPFILE can exist on a server at any time."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O SPFILE é um arquivo binário do lado servidor, alterado via ALTER SYSTEM (A), enquanto o PFILE é texto e editável manualmente (B). SCOPE=SPFILE atua sobre o SPFILE binário, não sobre um PFILE texto (C errado). Pode-se criar SPFILE a partir de PFILE com CREATE SPFILE FROM PFILE (D errado), e ambos podem coexistir no servidor (E errado).",
+      "id": 62
+    },
+    {
+      "topic": "instance",
+      "context": "",
+      "text": "Which statement is true about shutting down a database instance with SHUTDOWN IMMEDIATE?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It waits for all currently connected users to disconnect voluntarily before shutting down."
+        },
+        {
+          "key": "B",
+          "text": "It rolls back active uncommitted transactions and disconnects users, without requiring instance recovery on the next startup."
+        },
+        {
+          "key": "C",
+          "text": "It aborts the instance immediately and requires instance recovery on the next startup."
+        },
+        {
+          "key": "D",
+          "text": "It prevents any new connections but lets existing transactions run to completion."
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "SHUTDOWN IMMEDIATE faz rollback das transações ativas não commitadas, desconecta as sessões e fecha o banco de forma consistente — sem exigir recuperação de instância no próximo arranque (B). Esperar todos desconectarem é o NORMAL (A); abortar exigindo recuperação é o ABORT (C); deixar transações concluírem é o TRANSACTIONAL (D).",
+      "id": 63
+    },
+    {
+      "topic": "users",
+      "context": "You execute: GRANT CREATE SESSION TO hr WITH ADMIN OPTION;",
+      "text": "Which two actions can user HR now perform? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Log in to (create a session on) the database instance."
+        },
+        {
+          "key": "B",
+          "text": "Grant CREATE SESSION to other users."
+        },
+        {
+          "key": "C",
+          "text": "Automatically create tables in any schema."
+        },
+        {
+          "key": "D",
+          "text": "Bypass all object privileges on other users' tables."
+        },
+        {
+          "key": "E",
+          "text": "Drop the database."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "CREATE SESSION permite HR conectar-se ao banco (A), e WITH ADMIN OPTION permite HR conceder esse mesmo privilégio de sistema a outros (B). CREATE SESSION não cria tabelas em qualquer esquema (C), não ignora privilégios de objeto (D) nem permite dropar o banco (E).",
+      "id": 64
+    },
+    {
+      "topic": "storage",
+      "context": "",
+      "text": "Which two are space-saving features in an Oracle database? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Deferred segment creation, which avoids allocating space for empty tables."
+        },
+        {
+          "key": "B",
+          "text": "Table compression, which reduces the storage used by row data."
+        },
+        {
+          "key": "C",
+          "text": "Increasing PCTFREE to 90 for all tables."
+        },
+        {
+          "key": "D",
+          "text": "Disabling the undo tablespace."
+        },
+        {
+          "key": "E",
+          "text": "Storing all tables in the SYSTEM tablespace."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Deferred segment creation evita alocar espaço para tabelas vazias até o primeiro INSERT (A), e a compressão reduz o espaço dos dados (B). Aumentar PCTFREE para 90 desperdiça espaço (C); desabilitar undo (D) e concentrar tudo no SYSTEM (E) não economizam espaço.",
+      "id": 65
+    },
+    {
+      "topic": "storage",
+      "context": "A heap table has many rows deleted over time, leaving its high-water mark high and space fragmented below it.",
+      "text": "Which operation reclaims that space and lowers the high-water mark while keeping the table online?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "ALTER TABLE ... SHRINK SPACE (with row movement enabled)"
+        },
+        {
+          "key": "B",
+          "text": "A simple DELETE of the remaining rows"
+        },
+        {
+          "key": "C",
+          "text": "Gathering optimizer statistics"
+        },
+        {
+          "key": "D",
+          "text": "Creating a new index on the table"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "ALTER TABLE ... SHRINK SPACE compacta as linhas e baixa o high-water mark, recuperando o espaço fragmentado com a tabela online (A). DELETE não baixa o high-water mark (B); estatísticas (C) e criar índice (D) não recuperam espaço de segmento.",
+      "id": 66
+    },
+    {
+      "topic": "movedata",
+      "context": "You start a Data Pump export, then press CTRL+C to detach and issue STOP_JOB=IMMEDIATE.",
+      "text": "Which statement is true about the job's state afterward?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The job is stopped and can later be reattached and resumed."
+        },
+        {
+          "key": "B",
+          "text": "The job is permanently terminated and its master table is dropped immediately."
+        },
+        {
+          "key": "C",
+          "text": "The job continues running in the background and cannot be stopped."
+        },
+        {
+          "key": "D",
+          "text": "The dump file is deleted automatically."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "STOP_JOB=IMMEDIATE para o job preservando a master table, permitindo reanexar (ATTACH) e retomar (START_JOB) depois (A). Não é terminado permanentemente (B seria KILL_JOB), não segue rodando (C) e o dump não é apagado (D).",
+      "id": 67
+    },
+    {
+      "topic": "tools",
+      "context": "",
+      "text": "Which two statements are true about SQL Developer? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "It has a graphical interface for browsing schema objects and running queries."
+        },
+        {
+          "key": "B",
+          "text": "It can run SQL*Plus-style commands such as DESCRIBE."
+        },
+        {
+          "key": "C",
+          "text": "It can only connect to databases on the local host."
+        },
+        {
+          "key": "D",
+          "text": "It requires the database to be in MOUNT state."
+        },
+        {
+          "key": "E",
+          "text": "It cannot execute PL/SQL blocks."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "SQL Developer é gráfico, para navegar objetos e rodar consultas (A), e suporta comandos estilo SQL*Plus como DESCRIBE (B). Conecta a bancos locais e remotos (C errado), requer OPEN para uso normal (D errado) e executa PL/SQL (E errado).",
+      "id": 68
+    },
+    {
+      "topic": "network",
+      "context": "",
+      "text": "Which two statements are true about the Oracle Net listener? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The listener receives incoming client connection requests and hands them off to a server process."
+        },
+        {
+          "key": "B",
+          "text": "A single listener can service multiple database instances on the same host."
+        },
+        {
+          "key": "C",
+          "text": "The listener must run inside the database instance's SGA."
+        },
+        {
+          "key": "D",
+          "text": "Once a session is established, all subsequent data flows through the listener."
+        },
+        {
+          "key": "E",
+          "text": "A listener can service only one database instance."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O listener recebe as requisições de conexão e as entrega a um processo servidor (A), e um único listener atende várias instâncias no mesmo host (B). É um processo separado, fora da SGA (C errado); após estabelecida a sessão, o cliente fala direto com o processo servidor (D errado, e por isso E também errado).",
+      "id": 69
+    },
+    {
+      "topic": "tablespaces",
+      "context": "",
+      "text": "Which two operations can be performed on a datafile? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A datafile can be resized with ALTER DATABASE DATAFILE ... RESIZE."
+        },
+        {
+          "key": "B",
+          "text": "A datafile can be moved or renamed online with ALTER DATABASE MOVE DATAFILE."
+        },
+        {
+          "key": "C",
+          "text": "A datafile can belong to two tablespaces at the same time."
+        },
+        {
+          "key": "D",
+          "text": "A datafile can be shared between two different databases simultaneously."
+        },
+        {
+          "key": "E",
+          "text": "A datafile has no relationship to any tablespace."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Um datafile pode ser redimensionado com RESIZE (A) e movido/renomeado ONLINE com ALTER DATABASE MOVE DATAFILE (B). Cada datafile pertence a UM tablespace (C errado) e a UM banco (D errado), e sempre está associado a um tablespace (E errado).",
+      "id": 70
+    },
+    {
+      "topic": "undo",
+      "context": "",
+      "text": "Which two statements are true about how transactions use undo segments? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "An undo segment can be used by multiple transactions at different times."
+        },
+        {
+          "key": "B",
+          "text": "An undo segment can extend when a transaction fills its last extent."
+        },
+        {
+          "key": "C",
+          "text": "A single transaction always uses every undo segment simultaneously."
+        },
+        {
+          "key": "D",
+          "text": "Undo segments are stored in the TEMP tablespace by default."
+        },
+        {
+          "key": "E",
+          "text": "Committed undo is immediately overwritten before the retention period in all cases."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Com Automatic Undo Management, um undo segment atende várias transações ao longo do tempo (A) e estende-se quando a transação enche seu último extent (B). Uma transação usa um, não todos, de cada vez (C errado). Undo fica no UNDO tablespace, não no TEMP (D errado), e o undo expirado só é sobrescrito conforme necessidade e a retenção (E errado).",
+      "id": 71
+    },
+    {
+      "topic": "sql-select",
+      "context": "",
+      "text": "Which two statements are true about arithmetic expressions and NULL in a SELECT list? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Any arithmetic expression containing a NULL evaluates to NULL."
+        },
+        {
+          "key": "B",
+          "text": "NVL can be used to substitute a value for NULL before arithmetic is applied."
+        },
+        {
+          "key": "C",
+          "text": "NULL is treated as zero in arithmetic expressions by default."
+        },
+        {
+          "key": "D",
+          "text": "Arithmetic with NULL always raises an error."
+        },
+        {
+          "key": "E",
+          "text": "The concatenation operator || raises an error if one operand is NULL."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Qualquer expressão aritmética com NULL resulta em NULL (A); por isso usa-se NVL para substituir o NULL antes de calcular (B). NULL não é tratado como zero (C errado) nem gera erro — apenas propaga NULL (D errado). O operador || trata NULL como string vazia, sem erro (E errado).",
+      "id": 72
+    },
+    {
+      "topic": "sql-select",
+      "context": "You need rows 11 through 20 (the second page of 10 rows) ordered by hire_date.",
+      "text": "Which clause returns exactly that page?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "ORDER BY hire_date OFFSET 10 ROWS FETCH NEXT 10 ROWS ONLY"
+        },
+        {
+          "key": "B",
+          "text": "ORDER BY hire_date FETCH FIRST 20 ROWS ONLY"
+        },
+        {
+          "key": "C",
+          "text": "WHERE ROWNUM BETWEEN 11 AND 20 ORDER BY hire_date"
+        },
+        {
+          "key": "D",
+          "text": "ORDER BY hire_date OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "OFFSET 10 ROWS pula as 10 primeiras e FETCH NEXT 10 ROWS ONLY traz as 10 seguintes — linhas 11 a 20 (A). FETCH FIRST 20 traria da 1 à 20 (B). ROWNUM BETWEEN 11 AND 20 nunca retorna linhas (C). OFFSET 20 pularia demais (D).",
+      "id": 73
+    },
+    {
+      "topic": "sql-functions",
+      "context": "",
+      "text": "Which two statements are true about the NVL, NVL2, and COALESCE functions? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "COALESCE returns the first non-null expression in its argument list."
+        },
+        {
+          "key": "B",
+          "text": "NVL2 returns its second argument if the first is not null, and its third argument if the first is null."
+        },
+        {
+          "key": "C",
+          "text": "NVL accepts three arguments."
+        },
+        {
+          "key": "D",
+          "text": "COALESCE accepts only two arguments."
+        },
+        {
+          "key": "E",
+          "text": "NVL2 returns the first argument unchanged when it is null."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "COALESCE devolve a primeira expressão não nula (A). NVL2(expr, v1, v2) devolve v1 se expr não é nulo e v2 se é nulo (B). NVL aceita dois argumentos (C errado). COALESCE aceita dois ou mais (D errado). NVL2 com primeiro nulo devolve o terceiro, não o primeiro (E errado).",
+      "id": 74
+    },
+    {
+      "topic": "sql-functions",
+      "context": "A NUMBER column PRICE holds the value 1234.5.",
+      "text": "What does TO_CHAR(price, '$9,999.99') return for this value?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "'$1,234.50'"
+        },
+        {
+          "key": "B",
+          "text": "'$1234.5'"
+        },
+        {
+          "key": "C",
+          "text": "'#######'"
+        },
+        {
+          "key": "D",
+          "text": "'1,234.50'"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "A máscara '$9,999.99' aplica cifrão, separador de milhar e duas casas decimais: 1234.5 vira '$1,234.50' (A). O 9 suprime zeros à esquerda, mas .99 completa as casas decimais com zero. O valor cabe na máscara, então não há '#' (C errado); cifrão e vírgula vêm da máscara (B, D errados).",
+      "id": 75
+    },
+    {
+      "topic": "sql-groups",
+      "context": "The EMPLOYEES table has DEPARTMENT_ID and SALARY.",
+      "text": "Which query returns only departments whose total salary exceeds 50000?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "SELECT department_id, SUM(salary) FROM employees GROUP BY department_id HAVING SUM(salary) > 50000;"
+        },
+        {
+          "key": "B",
+          "text": "SELECT department_id, SUM(salary) FROM employees WHERE SUM(salary) > 50000 GROUP BY department_id;"
+        },
+        {
+          "key": "C",
+          "text": "SELECT department_id, SUM(salary) FROM employees HAVING SUM(salary) > 50000;"
+        },
+        {
+          "key": "D",
+          "text": "SELECT department_id, SUM(salary) FROM employees GROUP BY department_id WHERE SUM(salary) > 50000;"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Filtrar grupos por um agregado exige HAVING após o GROUP BY (A). Função de grupo não pode ir no WHERE (B). Sem GROUP BY, department_id com SUM dá erro (C). E WHERE não pode vir depois do GROUP BY (D).",
+      "id": 76
+    },
+    {
+      "topic": "sql-joins",
+      "context": "You need employees and their department names, including employees whose department_id is NULL (unassigned).",
+      "text": "Which join type keeps those unassigned employees in the result?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "EMPLOYEES LEFT OUTER JOIN DEPARTMENTS"
+        },
+        {
+          "key": "B",
+          "text": "EMPLOYEES INNER JOIN DEPARTMENTS"
+        },
+        {
+          "key": "C",
+          "text": "EMPLOYEES NATURAL JOIN DEPARTMENTS"
+        },
+        {
+          "key": "D",
+          "text": "EMPLOYEES CROSS JOIN DEPARTMENTS"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "O LEFT OUTER JOIN a partir de EMPLOYEES preserva todos os empregados, inclusive os sem departamento (department_id nulo), com NULL nas colunas de DEPARTMENTS (A). INNER (B) e NATURAL (C) descartam os sem correspondência; CROSS (D) gera produto cartesiano.",
+      "id": 77
+    },
+    {
+      "topic": "sql-setops",
+      "context": "",
+      "text": "Which two statements are true about the ORDER BY clause used with set operators? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The ORDER BY can appear only once, as the last clause of the compound query."
+        },
+        {
+          "key": "B",
+          "text": "The ORDER BY can reference the column position or a column name/alias from the first SELECT."
+        },
+        {
+          "key": "C",
+          "text": "Each SELECT in the compound query may have its own ORDER BY."
+        },
+        {
+          "key": "D",
+          "text": "Column aliases from the second SELECT can be used in the final ORDER BY."
+        },
+        {
+          "key": "E",
+          "text": "The final ORDER BY is optional but, when omitted, results are always sorted ascending."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O ORDER BY só pode aparecer uma vez, no fim do compound query (A), e pode usar posição de coluna ou nome/alias da PRIMEIRA consulta (B). Consultas individuais não têm ORDER BY próprio (C errado); aliases da segunda não valem (D errado); omitir ORDER BY não garante ordem ascendente (E errado).",
+      "id": 78
+    },
+    {
+      "topic": "sql-dml",
+      "context": "",
+      "text": "Which two statements are true about transaction control in Oracle? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A COMMIT makes all changes of the current transaction permanent and releases row locks."
+        },
+        {
+          "key": "B",
+          "text": "Executing a DDL statement such as CREATE TABLE causes an implicit COMMIT of the current transaction."
+        },
+        {
+          "key": "C",
+          "text": "A ROLLBACK after a COMMIT undoes the committed changes."
+        },
+        {
+          "key": "D",
+          "text": "A SELECT statement starts a transaction that must be committed."
+        },
+        {
+          "key": "E",
+          "text": "ROLLBACK TO SAVEPOINT ends the entire transaction."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "COMMIT torna permanentes as alterações e libera locks de linha (A). Qualquer DDL dispara COMMIT implícito da transação corrente (B). Não se desfaz com ROLLBACK o que já foi commitado (C errado). SELECT puro não abre transação a commitar (D errado), e ROLLBACK TO SAVEPOINT não encerra toda a transação (E errado).",
+      "id": 79
+    },
+    {
+      "topic": "sql-ddl",
+      "context": "",
+      "text": "Which two statements are true about views in an Oracle database? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A view stores the defining query, not a physical copy of the data."
+        },
+        {
+          "key": "B",
+          "text": "A simple view based on a single table without aggregation can generally be used for DML."
+        },
+        {
+          "key": "C",
+          "text": "A view always physically duplicates the rows of its base table."
+        },
+        {
+          "key": "D",
+          "text": "DML through a view whose defining query contains GROUP BY always succeeds."
+        },
+        {
+          "key": "E",
+          "text": "Dropping a view also drops the base table."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Uma view armazena a consulta que a define, não uma cópia física (A); uma view simples (uma tabela, sem agregação) geralmente aceita DML (B). Não duplica linhas fisicamente (C errado); DML por views com GROUP BY não é permitido (D errado); dropar a view não afeta a tabela base (E errado).",
+      "id": 80
+    },
+    {
+      "topic": "architecture",
+      "context": "",
+      "text": "Which two statements are true about the physical database structures? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Control files store the physical structure of the database, such as datafile and redo log locations."
+        },
+        {
+          "key": "B",
+          "text": "Online redo log files record all changes made to the database for recovery purposes."
+        },
+        {
+          "key": "C",
+          "text": "Datafiles belong to the instance and are re-created at each startup."
+        },
+        {
+          "key": "D",
+          "text": "The parameter file is a physical structure that stores table data."
+        },
+        {
+          "key": "E",
+          "text": "Redo log files store the data dictionary."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O control file registra a estrutura física do banco (localização de datafiles e redo logs, SCN, etc.) — A. Os online redo log files gravam todas as alterações para recuperação (B). Datafiles pertencem ao BANCO (não à instância) e persistem entre reinícios (C errado). O parameter file guarda parâmetros, não dados de tabela (D errado), e o dicionário fica no SYSTEM, não nos redo logs (E errado).",
+      "id": 81
+    },
+    {
+      "topic": "instance",
+      "context": "",
+      "text": "Which two statements are true about the alert log? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "It records significant events such as startup, shutdown, and certain errors (e.g. ORA-00600)."
+        },
+        {
+          "key": "B",
+          "text": "It is part of the Automatic Diagnostic Repository (ADR)."
+        },
+        {
+          "key": "C",
+          "text": "It is stored inside a database table that requires SQL to read."
+        },
+        {
+          "key": "D",
+          "text": "It only records successful user logins."
+        },
+        {
+          "key": "E",
+          "text": "It is overwritten completely each time the instance restarts."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O alert log registra eventos importantes: startup, shutdown, mudanças de parâmetros e certos erros graves (A), e faz parte do ADR (B). É um arquivo (texto/XML), não uma tabela (C errado); não registra logins (D errado) e é acrescentado, não sobrescrito a cada reinício (E errado).",
+      "id": 82
+    },
+    {
+      "topic": "instance",
+      "context": "",
+      "text": "Which statement is true about the STARTUP command with no options (STARTUP)?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It takes the instance through NOMOUNT, then MOUNT, then OPEN."
+        },
+        {
+          "key": "B",
+          "text": "It leaves the instance in NOMOUNT state."
+        },
+        {
+          "key": "C",
+          "text": "It opens the database in read-only mode by default."
+        },
+        {
+          "key": "D",
+          "text": "It requires the database to already be mounted."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "STARTUP sem opções percorre a sequência completa: NOMOUNT (aloca SGA, inicia processos, lê o parameter file), MOUNT (lê o control file) e OPEN (abre datafiles e redo logs) — A. NOMOUNT/MOUNT param antes; read-only exige STARTUP OPEN READ ONLY (C errado).",
+      "id": 83
+    },
+    {
+      "topic": "users",
+      "context": "",
+      "text": "Which two statements are true about quotas on tablespaces? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A user needs a quota on a tablespace (or the UNLIMITED TABLESPACE privilege) to create objects that consume space there."
+        },
+        {
+          "key": "B",
+          "text": "Granting UNLIMITED TABLESPACE lets a user allocate space in any tablespace without an explicit quota."
+        },
+        {
+          "key": "C",
+          "text": "A quota controls which SQL statements a user can execute."
+        },
+        {
+          "key": "D",
+          "text": "Quotas can only be set on the SYSTEM tablespace."
+        },
+        {
+          "key": "E",
+          "text": "A user with no quota can still create an unlimited number of tables with data."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Para consumir espaço num tablespace, o usuário precisa de quota nele ou do privilégio UNLIMITED TABLESPACE (A); esse privilégio dispensa quotas explícitas (B). Quota controla ESPAÇO, não quais comandos SQL o usuário roda (C errado); pode ser definida em qualquer tablespace (D errado). Sem quota, não há como alocar espaço para dados (E errado).",
+      "id": 84
+    },
+    {
+      "topic": "storage",
+      "context": "",
+      "text": "Which statement is true about Basic table compression (ROW STORE COMPRESS BASIC)?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Rows are compressed only during direct-path inserts and bulk loads, not during conventional DML."
+        },
+        {
+          "key": "B",
+          "text": "Rows are compressed during every conventional INSERT and UPDATE."
+        },
+        {
+          "key": "C",
+          "text": "It requires the Advanced Compression option to be licensed."
+        },
+        {
+          "key": "D",
+          "text": "It compresses only index blocks."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "O Basic compression comprime linhas apenas em direct-path e bulk loads; INSERT/UPDATE convencionais não são comprimidos (A). Compressão em toda DML convencional é o ADVANCED (B). O Basic não exige a opção Advanced Compression (C errado) e atua sobre dados de tabela, não índices (D errado).",
+      "id": 85
+    },
+    {
+      "topic": "storage",
+      "context": "",
+      "text": "Which two statements are true about resumable space allocation? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A suspended operation can be resumed automatically once the space problem is resolved, within the timeout."
+        },
+        {
+          "key": "B",
+          "text": "An AFTER SUSPEND trigger can be used to react to a suspended operation."
+        },
+        {
+          "key": "C",
+          "text": "Resumable space allocation prevents any statement from ever failing due to space."
+        },
+        {
+          "key": "D",
+          "text": "It requires the database to be in ARCHIVELOG mode."
+        },
+        {
+          "key": "E",
+          "text": "A suspended session immediately rolls back its transaction."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Uma operação suspensa por falta de espaço pode ser retomada automaticamente quando o espaço é liberado, dentro do timeout (A), e um trigger AFTER SUSPEND pode reagir à suspensão (B). Não garante que nada falhe — após o timeout, falha (C errado). Não depende de ARCHIVELOG (D errado), e a sessão AGUARDA, não faz rollback imediato (E errado).",
+      "id": 86
+    },
+    {
+      "topic": "movedata",
+      "context": "",
+      "text": "Which two statements are true about Oracle Data Pump (expdp/impdp)? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "It uses server-side processes and reads/writes dump files via database directory objects."
+        },
+        {
+          "key": "B",
+          "text": "The PARALLEL parameter can be used to speed up export and import with multiple worker processes."
+        },
+        {
+          "key": "C",
+          "text": "Dump files are plain text and can be edited with a text editor."
+        },
+        {
+          "key": "D",
+          "text": "It runs entirely on the client and cannot be detached."
+        },
+        {
+          "key": "E",
+          "text": "It can only export an entire database, never a single schema."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O Data Pump usa processos do lado servidor e acessa dump files por directory objects (A), e o PARALLEL acelera export/import com vários workers (B). Dump files são binários, não texto editável (C errado); jobs podem ser desanexados/reanexados (D errado); e exporta em vários níveis: FULL, SCHEMAS, TABLES (E errado).",
+      "id": 87
+    },
+    {
+      "topic": "tools",
+      "context": "",
+      "text": "Which statement is true about SQL*Plus?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It can run scripts passed on the command line and interactively, and has formatting commands like COLUMN and SET."
+        },
+        {
+          "key": "B",
+          "text": "It is a graphical tool with a point-and-click interface."
+        },
+        {
+          "key": "C",
+          "text": "It can only execute SQL, never PL/SQL blocks."
+        },
+        {
+          "key": "D",
+          "text": "It must be licensed separately from the database."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "SQL*Plus é uma ferramenta de linha de comando que roda scripts (com @arquivo e interativamente) e tem comandos de formatação como COLUMN e SET (A). Não é gráfico (B), executa blocos PL/SQL (C errado) e vem com o banco, sem licença separada (D errado).",
+      "id": 88
+    },
+    {
+      "topic": "network",
+      "context": "",
+      "text": "Which statement is true about the LOCAL_LISTENER initialization parameter?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It tells the instance which listener(s) to register its services with, useful when the listener is not on the default port 1521."
+        },
+        {
+          "key": "B",
+          "text": "It defines the password for the listener."
+        },
+        {
+          "key": "C",
+          "text": "It disables dynamic service registration."
+        },
+        {
+          "key": "D",
+          "text": "It specifies the tablespace used by the listener."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "LOCAL_LISTENER indica ao instance com qual(is) listener(s) registrar seus serviços dinamicamente — necessário quando o listener não está na porta 1521 ou host padrão (A). Não define senha (B), não desabilita o registro dinâmico — o direciona (C errado) — e não tem relação com tablespaces (D errado).",
+      "id": 89
+    },
+    {
+      "topic": "tablespaces",
+      "context": "",
+      "text": "Which two statements are true about temporary tablespaces? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "They are used for sort and hash operations that do not fit in memory."
+        },
+        {
+          "key": "B",
+          "text": "They use tempfiles rather than permanent datafiles."
+        },
+        {
+          "key": "C",
+          "text": "They store permanent user tables by default."
+        },
+        {
+          "key": "D",
+          "text": "Undo data is stored in the temporary tablespace."
+        },
+        {
+          "key": "E",
+          "text": "Tempfiles are included in a normal full backup like datafiles."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Temporary tablespaces suportam sort/hash que excedem a memória (A) e usam TEMPFILES em vez de datafiles permanentes (B). Não armazenam tabelas permanentes (C errado) nem undo (que fica no UNDO tablespace) — D errado. Tempfiles não são incluídos no backup como datafiles, por serem transitórios/recriáveis (E errado).",
+      "id": 90
+    },
+    {
+      "topic": "undo",
+      "context": "",
+      "text": "Which statement is true about undo data and read consistency?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Undo data lets a long-running query see a consistent view of data as of the query's start time, even if other sessions modify rows."
+        },
+        {
+          "key": "B",
+          "text": "Read consistency is provided by locking all rows a query reads."
+        },
+        {
+          "key": "C",
+          "text": "Undo data is discarded the instant a transaction issues a DML statement."
+        },
+        {
+          "key": "D",
+          "text": "Read consistency requires setting the database to READ ONLY."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "O undo fornece leitura consistente: uma consulta longa vê os dados como estavam no seu início, reconstruindo versões anteriores dos blocos via undo, mesmo que outras sessões alterem linhas (A). O Oracle não trava linhas para leitura — leitores não bloqueiam escritores (B). O undo é mantido, não descartado ao emitir DML (C errado), e read consistency é automática, sem READ ONLY (D errado).",
+      "id": 91
+    },
+    {
+      "topic": "sql-select",
+      "context": "",
+      "text": "Which two statements are true about substitution variables in SQL*Plus / SQL Developer? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A single ampersand (&) prompts for a value each time the variable is referenced (unless already defined)."
+        },
+        {
+          "key": "B",
+          "text": "A double ampersand (&&) defines the variable for the session after the first prompt, avoiding repeated prompts."
+        },
+        {
+          "key": "C",
+          "text": "Substitution variables can be used only in the WHERE clause."
+        },
+        {
+          "key": "D",
+          "text": "The VERIFY OFF command causes an error when a substitution variable is used."
+        },
+        {
+          "key": "E",
+          "text": "Substitution variables are a database server feature, not a client tool feature."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Um & simples solicita o valor a cada referência (se não definido) — A; o && define a variável para a sessão após o primeiro prompt (B). Podem ser usadas em várias cláusulas, não só no WHERE (C errado). SET VERIFY OFF só suprime as linhas old/new, sem erro (D errado), e é recurso das ferramentas CLIENTE, não do servidor (E errado).",
+      "id": 92
+    },
+    {
+      "topic": "sql-select",
+      "context": "",
+      "text": "Which two statements are true about the alternative quote (q) operator? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "It lets you include single quotes in a literal without doubling them, e.g. q'[it's here]'."
+        },
+        {
+          "key": "B",
+          "text": "You can choose your own delimiter, such as [ ], { }, or ( )."
+        },
+        {
+          "key": "C",
+          "text": "It converts a string to a number automatically."
+        },
+        {
+          "key": "D",
+          "text": "It can only be used inside a WHERE clause."
+        },
+        {
+          "key": "E",
+          "text": "It removes all spaces from the literal."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O operador q'...' permite incluir apóstrofos num literal sem duplicá-los, como q'[it's here]' (A), e você escolhe o delimitador — [ ], { }, ( ), < > (B). Não converte string em número (C errado), pode aparecer em qualquer expressão de string, não só no WHERE (D errado), e não remove espaços (E errado).",
+      "id": 93
+    },
+    {
+      "topic": "sql-functions",
+      "context": "",
+      "text": "Which two statements are true about working with dates and time zones? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "CURRENT_DATE returns the current date and time in the session's time zone."
+        },
+        {
+          "key": "B",
+          "text": "SYSDATE returns the date and time of the operating system where the database instance resides."
+        },
+        {
+          "key": "C",
+          "text": "CURRENT_TIMESTAMP returns a value of DATE data type with no time zone."
+        },
+        {
+          "key": "D",
+          "text": "SYSDATE always returns a TIMESTAMP WITH TIME ZONE value."
+        },
+        {
+          "key": "E",
+          "text": "LOCALTIMESTAMP includes an explicit time zone offset in its output."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "CURRENT_DATE devolve data/hora no fuso da SESSÃO (A); SYSDATE devolve a data/hora do SO onde está a instância (B). CURRENT_TIMESTAMP retorna TIMESTAMP WITH TIME ZONE, não DATE (C errado). SYSDATE retorna DATE, não timestamp com fuso (D errado), e LOCALTIMESTAMP retorna TIMESTAMP SEM offset explícito (E errado).",
+      "id": 94
+    },
+    {
+      "topic": "sql-functions",
+      "context": "",
+      "text": "What does MOD(17, 5) return, and what does the MOD function compute?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "2 — the remainder of dividing 17 by 5."
+        },
+        {
+          "key": "B",
+          "text": "3 — the integer quotient of 17 divided by 5."
+        },
+        {
+          "key": "C",
+          "text": "3.4 — the exact division of 17 by 5."
+        },
+        {
+          "key": "D",
+          "text": "5 — the divisor."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "MOD(m, n) retorna o RESTO da divisão de m por n. 17 dividido por 5 dá quociente 3 e resto 2, portanto MOD(17, 5) = 2 (A). O quociente inteiro (3) seria obtido por TRUNC(17/5), a divisão exata (3.4) por 17/5, e 5 é apenas o divisor.",
+      "id": 95
+    },
+    {
+      "topic": "sql-groups",
+      "context": "",
+      "text": "Which two statements are true about group functions? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Group functions such as SUM and AVG ignore NULL values."
+        },
+        {
+          "key": "B",
+          "text": "COUNT(*) counts all rows, including those with NULLs in some columns."
+        },
+        {
+          "key": "C",
+          "text": "AVG(column) treats NULLs as zero when computing the average."
+        },
+        {
+          "key": "D",
+          "text": "MAX and MIN can only be used with numeric data types."
+        },
+        {
+          "key": "E",
+          "text": "Group functions can be used in the WHERE clause."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "SUM e AVG ignoram NULLs (A), e COUNT(*) conta TODAS as linhas, independentemente de nulos (B). AVG ignora os NULLs (divide pela contagem de não nulos), não os trata como zero (C errado). MAX e MIN funcionam com datas e caracteres também (D errado), e funções de grupo não vão no WHERE, só no HAVING (E errado).",
+      "id": 96
+    },
+    {
+      "topic": "sql-joins",
+      "context": "",
+      "text": "Which statement is true about a non-equijoin?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It joins tables using a condition other than equality, such as a value falling within a range (BETWEEN)."
+        },
+        {
+          "key": "B",
+          "text": "It always produces a Cartesian product."
+        },
+        {
+          "key": "C",
+          "text": "It can only be written using the NATURAL JOIN keyword."
+        },
+        {
+          "key": "D",
+          "text": "It requires the joined columns to have the same name."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Um non-equijoin une tabelas por uma condição que NÃO é de igualdade — por exemplo, um valor caindo dentro de uma faixa com BETWEEN (típico ao classificar salários por grade) — A. Não é produto cartesiano (B), não depende de NATURAL JOIN (C) nem exige colunas de mesmo nome (D).",
+      "id": 97
+    },
+    {
+      "topic": "sql-setops",
+      "context": "",
+      "text": "Which statement is true about the UNION operator compared to UNION ALL?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "UNION removes duplicate rows and typically sorts the result to do so, while UNION ALL keeps duplicates and is usually faster."
+        },
+        {
+          "key": "B",
+          "text": "UNION keeps duplicates while UNION ALL removes them."
+        },
+        {
+          "key": "C",
+          "text": "UNION ALL requires the queries to have different numbers of columns."
+        },
+        {
+          "key": "D",
+          "text": "UNION and UNION ALL always return the same number of rows."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "UNION elimina duplicatas (o que normalmente exige ordenação/hash para detectá-las), enquanto UNION ALL mantém todas e costuma ser mais rápido por não fazer esse trabalho (A). B inverte os conceitos; ambos exigem o mesmo número de colunas (C errado), e como UNION remove duplicatas, os totais geralmente diferem (D errado).",
+      "id": 98
+    },
+    {
+      "topic": "sql-dml",
+      "context": "An UPDATE statement modifies 50 rows. No COMMIT has been issued yet.",
+      "text": "Which two statements are true about this uncommitted transaction? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Other sessions do not see the changes until the transaction is committed."
+        },
+        {
+          "key": "B",
+          "text": "The 50 modified rows are locked against modification by other sessions until commit or rollback."
+        },
+        {
+          "key": "C",
+          "text": "Other sessions immediately see the uncommitted new values."
+        },
+        {
+          "key": "D",
+          "text": "The changes are automatically committed after a few seconds."
+        },
+        {
+          "key": "E",
+          "text": "A ROLLBACK cannot undo the changes because rows are already modified."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Antes do commit, outras sessões NÃO enxergam as alterações — leem a versão consistente antiga via undo (A), e as 50 linhas ficam bloqueadas contra modificação por outras sessões até commit/rollback (B). Não há leitura suja (C errado), não há autocommit por tempo (D errado), e ROLLBACK desfaz perfeitamente as alterações não commitadas (E errado).",
+      "id": 99
+    },
+    {
+      "topic": "sql-ddl",
+      "context": "",
+      "text": "Which two statements are true about sequences? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A sequence can generate gaps in its numbers, for example after a rollback or instance crash with cached values."
+        },
+        {
+          "key": "B",
+          "text": "NEXTVAL must be referenced at least once in a session before CURRVAL can be used in that session."
+        },
+        {
+          "key": "C",
+          "text": "A sequence guarantees strictly gap-free numbering under all conditions."
+        },
+        {
+          "key": "D",
+          "text": "A sequence physically stores every number it has generated in a table."
+        },
+        {
+          "key": "E",
+          "text": "A sequence can be used only by the user who created it."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Sequences podem ter lacunas: valores 'cacheados' se perdem num rollback/crash, e um NEXTVAL de transação desfeita não volta (A). Numa sessão, CURRVAL só funciona após NEXTVAL ser chamado ao menos uma vez ali (B). Não garantem numeração sem lacunas (C errado), não armazenam fisicamente cada número (D errado) e podem ser concedidas a outros via GRANT SELECT (E errado).",
+      "id": 100
     }
   ]
 }
