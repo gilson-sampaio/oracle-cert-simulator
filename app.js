@@ -136,7 +136,7 @@ document.getElementById('btn-generate').addEventListener('click', () => generate
 document.getElementById('btn-start').addEventListener('click', startQuiz);
 document.getElementById('btn-prev').addEventListener('click', () => navigate(-1));
 document.getElementById('btn-next').addEventListener('click', () => navigate(1));
-document.getElementById('btn-finish').addEventListener('click', finishQuiz);
+document.getElementById('btn-finish').addEventListener('click', attemptFinish);
 document.getElementById('btn-restart').addEventListener('click', () => location.reload());
 
 function startQuiz() {
@@ -223,7 +223,7 @@ function renderQuestion() {
   document.getElementById('btn-prev').disabled = currentIndex === 0;
   const isLast = currentIndex === total - 1;
   document.getElementById('btn-next').classList.toggle('hidden', isLast);
-  document.getElementById('btn-finish').classList.toggle('hidden', !isLast);
+  // O botão "finalizar agora" fica sempre visível, permitindo encerrar a qualquer momento.
 }
 
 function handleOptionChange(q, key, isMultiple) {
@@ -251,16 +251,39 @@ function navigate(direction) {
   renderQuestion();
 }
 
+function attemptFinish() {
+  const answeredCount = questions.filter(q => (answers[q.id] || []).length > 0).length;
+  const total = questions.length;
+
+  if (answeredCount === 0) {
+    alert('Você ainda não respondeu nenhuma questão. Responda pelo menos uma antes de finalizar.');
+    return;
+  }
+
+  if (answeredCount < total) {
+    const ok = confirm(
+      `Você respondeu ${answeredCount} de ${total} questões.\n\n` +
+      `Deseja finalizar agora e conferir o resultado apenas das questões que você respondeu?`
+    );
+    if (!ok) return;
+  }
+
+  finishQuiz();
+}
+
 function finishQuiz() {
   clearInterval(timerInterval);
   showScreen(screenResult);
-  markQuestionsAsUsed(questions);
+
+  // Considera apenas as questões efetivamente respondidas (finalização parcial permitida).
+  const answeredQuestions = questions.filter(q => (answers[q.id] || []).length > 0);
+  markQuestionsAsUsed(answeredQuestions);
 
   let correctCount = 0;
   const reviewEl = document.getElementById('result-review');
   reviewEl.innerHTML = '';
 
-  questions.forEach((q, idx) => {
+  answeredQuestions.forEach((q, idx) => {
     const given = (answers[q.id] || []).slice().sort();
     const correct = q.correct.slice().sort();
     const isCorrect = given.length === correct.length && given.every((v, i) => v === correct[i]);
@@ -301,16 +324,20 @@ function finishQuiz() {
     reviewEl.appendChild(item);
   });
 
-  const total = questions.length;
-  const pct = total ? Math.round((correctCount / total) * 100) : 0;
+  const answered = answeredQuestions.length;
+  const totalSelected = questions.length;
+  const pct = answered ? Math.round((correctCount / answered) * 100) : 0;
   document.getElementById('result-score').textContent =
-    `${correctCount} / ${total} corretas (${pct}%)`;
+    `${correctCount} / ${answered} corretas (${pct}%)`;
 
   const usedSeconds = timeMinutes * 60 - secondsLeft;
   const m = Math.floor(usedSeconds / 60);
   const s = usedSeconds % 60;
+  const partialInfo = answered < totalSelected
+    ? ` · Finalizado após ${answered} de ${totalSelected} questões selecionadas`
+    : '';
   document.getElementById('result-time').textContent =
-    `Tempo utilizado: ${m}min ${s}s`;
+    `Tempo utilizado: ${m}min ${s}s${partialInfo}`;
 }
 
 function escapeHtml(str) {
