@@ -1,0 +1,20 @@
+{
+  "exams": [
+    {
+      "code": "1Z0-071",
+      "name": "Oracle Database SQL",
+      "description": "SQL: SELECT, DML, DDL, joins, subqueries, funções, operadores de conjunto e consultas avançadas.",
+      "bank": "bank-1z0-071.json",
+      "defaultQuantity": 63,
+      "defaultMinutes": 120
+    },
+    {
+      "code": "1Z0-082",
+      "name": "Oracle Database Administration I",
+      "description": "Administração: arquitetura da instância, storage, usuários e privilégios, backup básico, rede e mais.",
+      "bank": "bank-1z0-082.json",
+      "defaultQuantity": 80,
+      "defaultMinutes": 150
+    }
+  ]
+}

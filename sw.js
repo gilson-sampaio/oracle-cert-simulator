@@ -1,10 +1,12 @@
-const CACHE_NAME = 'simulado-1z0-071-v1';
+const CACHE_NAME = 'oracle-cert-simulator-v2';
 const ASSETS = [
   './',
   './index.html',
   './style.css',
   './app.js',
-  './question-bank.json',
+  './exams.json',
+  './bank-1z0-071.json',
+  './bank-1z0-082.json',
   './manifest.json',
   './icon-192.png',
   './icon-512.png'

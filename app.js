@@ -1,3 +1,5 @@
+let exams = [];
+let currentExam = null;
 let bank = null;
 let allQuestions = [];
 let questions = [];
@@ -7,35 +9,95 @@ let secondsLeft = 0;
 let timerInterval = null;
 let timeMinutes = 120;
 
-const STORAGE_KEY = 'simulado_used_question_ids';
+// Chave do localStorage para "questões já vistas" — definida por exame ao selecioná-lo.
+let usedStorageKey = 'simulado_used_1Z0-071';
 
+const screenExam = document.getElementById('screen-exam');
 const screenStart = document.getElementById('screen-start');
 const screenQuiz = document.getElementById('screen-quiz');
 const screenResult = document.getElementById('screen-result');
 
 function showScreen(el) {
-  [screenStart, screenQuiz, screenResult].forEach(s => s.classList.add('hidden'));
+  [screenExam, screenStart, screenQuiz, screenResult].forEach(s => s.classList.add('hidden'));
   el.classList.remove('hidden');
 }
 
-fetch('question-bank.json')
+// Carrega o índice de exames e, em paralelo, o banco de cada um (para exibir a contagem nos cards).
+fetch('exams.json')
   .then(r => r.json())
-  .then(data => {
-    bank = data;
-    allQuestions = data.questions;
-    document.getElementById('start-title').textContent = `Simulado - ${data.examTitle}`;
-    document.getElementById('bank-info').textContent =
-      `Banco de questões disponível: ${allQuestions.length} questões.`;
-    document.getElementById('input-quantity').max = allQuestions.length;
-    if (Number(document.getElementById('input-quantity').value) > allQuestions.length) {
-      document.getElementById('input-quantity').value = allQuestions.length;
-    }
-    generateQuiz(false);
+  .then(async data => {
+    exams = data.exams || [];
+    await Promise.all(exams.map(async ex => {
+      try {
+        const r = await fetch(ex.bank);
+        ex.bankData = await r.json();
+      } catch {
+        ex.bankData = { examTitle: ex.name, examCode: ex.code, topicLabels: {}, questions: [] };
+      }
+    }));
+    renderExamList();
+    showScreen(screenExam);
   })
   .catch(err => {
-    document.getElementById('start-title').textContent = 'Erro ao carregar question-bank.json';
+    document.getElementById('exam-list').innerHTML =
+      '<p class="bank-info">Erro ao carregar a lista de exames (exams.json).</p>';
     console.error(err);
   });
+
+function renderExamList() {
+  const listEl = document.getElementById('exam-list');
+  listEl.innerHTML = '';
+  exams.forEach(ex => {
+    const count = (ex.bankData && ex.bankData.questions) ? ex.bankData.questions.length : 0;
+    const card = document.createElement('button');
+    card.className = 'exam-card' + (count === 0 ? ' exam-card-empty' : '');
+    card.innerHTML = `
+      <span class="exam-code">${ex.code}</span>
+      <span class="exam-name">${escapeHtml(ex.name)}</span>
+      <span class="exam-desc">${escapeHtml(ex.description || '')}</span>
+      <span class="exam-count">${count > 0 ? count + ' questões disponíveis' : 'em breve — sem questões ainda'}</span>
+    `;
+    card.addEventListener('click', () => selectExam(ex));
+    listEl.appendChild(card);
+  });
+}
+
+function selectExam(ex) {
+  currentExam = ex;
+  bank = ex.bankData;
+  allQuestions = (bank && bank.questions) ? bank.questions : [];
+  usedStorageKey = `simulado_used_${ex.code}`;
+
+  document.getElementById('start-title').textContent = `-- ${ex.code} · ${ex.name}`;
+
+  const quantityInput = document.getElementById('input-quantity');
+  const minutesInput = document.getElementById('input-minutes');
+  const startBtn = document.getElementById('btn-start');
+  const generateBtn = document.getElementById('btn-generate');
+  const bankInfo = document.getElementById('bank-info');
+
+  minutesInput.value = ex.defaultMinutes || 120;
+
+  if (allQuestions.length === 0) {
+    // Exame ainda sem questões: interface pronta, mas sem simulado disponível.
+    quantityInput.value = 0;
+    quantityInput.disabled = true;
+    startBtn.disabled = true;
+    generateBtn.disabled = true;
+    bankInfo.textContent = `O exame ${ex.code} ainda não possui questões cadastradas. Em breve!`;
+    questions = [];
+  } else {
+    quantityInput.disabled = false;
+    startBtn.disabled = false;
+    generateBtn.disabled = false;
+    quantityInput.max = allQuestions.length;
+    const desired = Math.min(ex.defaultQuantity || 60, allQuestions.length);
+    quantityInput.value = desired;
+    generateQuiz(false);
+  }
+
+  showScreen(screenStart);
+}
 
 function shuffle(arr) {
   const copy = [...arr];
@@ -48,14 +110,14 @@ function shuffle(arr) {
 
 function getUsedIds() {
   try {
-    return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+    return new Set(JSON.parse(localStorage.getItem(usedStorageKey) || '[]'));
   } catch {
     return new Set();
   }
 }
 
 function saveUsedIds(ids) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify([...ids]));
+  localStorage.setItem(usedStorageKey, JSON.stringify([...ids]));
 }
 
 // Seleciona N questões, proporcionalmente distribuídas pelos tópicos do banco,
@@ -116,8 +178,9 @@ function generateQuiz(isManual) {
   timeMinutes = Math.max(1, Number(document.getElementById('input-minutes').value) || 120);
 
   questions = shuffle(pickQuestions(quantity));
+  const examCode = currentExam ? currentExam.code : (bank.examCode || '');
   document.getElementById('start-title').textContent =
-    `Simulado - ${bank.examTitle} - Quantidade: ${questions.length} questões`;
+    `-- ${examCode} · ${questions.length} questões`;
 
   const bankInfo = document.getElementById('bank-info');
   if (isManual) {
@@ -134,10 +197,19 @@ function generateQuiz(isManual) {
 
 document.getElementById('btn-generate').addEventListener('click', () => generateQuiz(true));
 document.getElementById('btn-start').addEventListener('click', startQuiz);
+document.getElementById('btn-change-exam').addEventListener('click', () => showScreen(screenExam));
 document.getElementById('btn-prev').addEventListener('click', () => navigate(-1));
 document.getElementById('btn-next').addEventListener('click', () => navigate(1));
 document.getElementById('btn-finish').addEventListener('click', attemptFinish);
-document.getElementById('btn-restart').addEventListener('click', () => location.reload());
+document.getElementById('btn-restart').addEventListener('click', () => {
+  // Volta para a configuração do MESMO exame, já sorteando um novo simulado.
+  if (currentExam && allQuestions.length) {
+    generateQuiz(false);
+    showScreen(screenStart);
+  } else {
+    showScreen(screenExam);
+  }
+});
 
 function startQuiz() {
   if (!questions.length) generateQuiz();

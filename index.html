@@ -22,10 +22,22 @@
 
 <div id="app">
 
-  <!-- TELA INICIAL -->
-  <section id="screen-start" class="screen">
+  <!-- TELA DE SELEÇÃO DE EXAME -->
+  <section id="screen-exam" class="screen">
     <div class="panel">
-      <div class="panel-title" id="start-title">-- Simulado 1Z0-071</div>
+      <div class="panel-title">-- escolha o exame</div>
+      <div class="panel-body">
+        <p class="lead">Selecione a certificação Oracle que deseja treinar:</p>
+        <div id="exam-list" class="exam-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TELA INICIAL -->
+  <section id="screen-start" class="screen hidden">
+    <div class="panel">
+      <button id="btn-change-exam" class="btn-link">&#8592; trocar exame</button>
+      <div class="panel-title" id="start-title">-- Simulado</div>
       <div class="panel-body">
         <div class="setup-row">
           <label for="input-quantity">quantidade de questões</label>
@@ -86,7 +98,7 @@
   </section>
 
   <footer class="app-disclaimer">
-    Projeto independente, sem afiliação com a Oracle Corporation. Questões de autoria própria, não são reproduções de provas reais. "Oracle" e "1Z0-071" são marcas da Oracle Corporation, citadas apenas para referência ao exame.
+    Projeto independente, sem afiliação com a Oracle Corporation. Questões de autoria própria, não são reproduções de provas reais. "Oracle" e os códigos de exame (1Z0-071, 1Z0-082 e afins) são marcas da Oracle Corporation, citados apenas para referência aos exames.
   </footer>
 
 </div>

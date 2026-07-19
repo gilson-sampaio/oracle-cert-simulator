@@ -1,5 +1,6 @@
 {
   "examTitle": "1Z0-071 Oracle Database SQL",
+  "examCode": "1Z0-071",
   "topicLabels": {
     "fundamentals": "Conceitos Fundamentais",
     "select": "Recuperação e Agrupamento de Dados (SELECT)",

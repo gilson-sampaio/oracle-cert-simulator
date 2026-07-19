@@ -1,7 +1,7 @@
 {
-  "name": "Simulado 1Z0-071",
-  "short_name": "Simulado SQL",
-  "description": "Simulado para o exame de certificação Oracle 1Z0-071",
+  "name": "Oracle Cert Simulator",
+  "short_name": "Oracle Certs",
+  "description": "Simulados para certificações Oracle (1Z0-071, 1Z0-082 e mais)",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
