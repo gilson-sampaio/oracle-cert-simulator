@@ -49,151 +49,176 @@
       "id": 2,
       "topic": "functions",
       "context": "",
-      "text": "What does INSTR('database administrator', 'a', -1) return?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about the INSTR and SUBSTR character functions? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "It searches for 'a' starting from the end of the string and moving backward, returning the position (counted from the start of the string) of the first occurrence found in that backward search."
+          "text": "INSTR can search for a substring from the end of a string by using a negative start position."
         },
         {
           "key": "B",
-          "text": "It raises an error, because INSTR does not accept negative values for the start position argument."
+          "text": "SUBSTR with a negative start position counts from the end of the string."
         },
         {
           "key": "C",
-          "text": "It always returns -1 to indicate the search direction, regardless of whether 'a' is found."
+          "text": "INSTR returns NULL when the substring is not found."
         },
         {
           "key": "D",
-          "text": "It behaves identically to INSTR('database administrator', 'a', 1), since negative values are treated as 1 by default."
+          "text": "SUBSTR always requires a third argument for the length."
+        },
+        {
+          "key": "E",
+          "text": "INSTR can only search from position 1."
         }
       ],
       "correct": [
-        "A"
+        "A",
+        "B"
       ],
-      "explanation": "Quando o argumento de posição inicial do INSTR é negativo, o Oracle inicia a busca a partir do final da string e caminha para trás, mas a posição retornada continua sendo contada normalmente a partir do início da string (posição 1 = primeiro caractere). Ou seja, -1 muda apenas a direção da busca, não a forma como a posição é reportada no resultado. Não há erro nem comportamento idêntico ao valor positivo, já que a ordem em que as ocorrências são encontradas é invertida."
+      "explanation": "INSTR aceita posição inicial NEGATIVA para procurar do fim para o início (A), e SUBSTR com posição inicial negativa conta a partir do fim da string (B). INSTR devolve 0 (não NULL) quando não encontra (C errado); SUBSTR pode ser chamado sem o terceiro argumento, indo até o fim (D errado); e INSTR pode iniciar em qualquer posição (E errado)."
     },
     {
       "id": 3,
       "topic": "functions",
       "context": "",
-      "text": "What does SUBSTR('CERTIFICATION', -6) return?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about the SUBSTR function? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "'ATION' — the last 5 characters, ignoring the sign of the start position."
+          "text": "SUBSTR('CERTIFICATION', -6) returns the last 6 characters."
         },
         {
           "key": "B",
-          "text": "'CATION' — starting 6 characters counted from the end of the string, extracting to the end since no length was given."
+          "text": "SUBSTR('CERTIFICATION', 1, 4) returns 'CERT'."
         },
         {
           "key": "C",
-          "text": "An empty string, since negative positions are invalid in SUBSTR."
+          "text": "SUBSTR returns a NUMBER."
         },
         {
           "key": "D",
-          "text": "'CERTIF' — the first 6 characters, treating the negative sign as ignorable."
+          "text": "A negative length argument returns the whole string."
+        },
+        {
+          "key": "E",
+          "text": "SUBSTR(str, 0) raises an error."
         }
       ],
       "correct": [
+        "A",
         "B"
       ],
-      "explanation": "Quando a posição inicial do SUBSTR é negativa, o Oracle conta essa posição a partir do final da string (-1 é o último caractere, -6 é o sexto caractere contando de trás para frente) e, como nenhum comprimento foi especificado, extrai tudo a partir dali até o fim da string. Em 'CERTIFICATION' (13 caracteres), a posição -6 corresponde à letra 'C' de 'CATION', então o resultado é 'CATION'. SUBSTR aceita normalmente posições negativas — não há erro nem necessidade de ignorar o sinal."
+      "explanation": "SUBSTR com início -6 devolve os 6 últimos caracteres (A); SUBSTR(str, 1, 4) devolve os 4 primeiros, 'CERT' (B). SUBSTR devolve VARCHAR2, não NUMBER (C errado); comprimento negativo devolve NULL, não a string toda (D errado); e SUBSTR(str, 0) é tratado como posição 1, sem erro (E errado)."
     },
     {
       "id": 4,
       "topic": "functions",
       "context": "",
-      "text": "Which statement about the difference between a searched CASE expression and DECODE is correct?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about the difference between a searched CASE expression and the DECODE function? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "DECODE can only test for equality between a single expression and a list of values, while a searched CASE expression can evaluate independent conditions (e.g., different columns, ranges, comparisons like >, <, BETWEEN) in each branch."
+          "text": "A searched CASE can test range conditions such as salary > 5000."
         },
         {
           "key": "B",
-          "text": "CASE and DECODE are fully equivalent in every respect, including the ability to use relational operators like > and < directly."
+          "text": "DECODE compares an expression to a list of values for equality only."
         },
         {
           "key": "C",
-          "text": "DECODE supports range comparisons like salary > 5000, while CASE only supports equality checks."
+          "text": "DECODE can directly test range conditions."
         },
         {
           "key": "D",
-          "text": "CASE expressions cannot be used inside a SELECT list, only DECODE can."
+          "text": "CASE can only be used inside PL/SQL."
+        },
+        {
+          "key": "E",
+          "text": "DECODE returns a Boolean value."
         }
       ],
       "correct": [
-        "A"
+        "A",
+        "B"
       ],
-      "explanation": "DECODE funciona comparando uma única expressão contra uma lista de valores por igualdade (com um NVL implícito para NULL), sem suporte nativo a operadores relacionais como > ou <. Já uma expressão CASE 'searched' (no formato CASE WHEN condição THEN ...) permite testar condições totalmente independentes em cada cláusula WHEN — incluindo comparações de intervalo, colunas diferentes a cada branch, BETWEEN, etc. — o que a torna mais flexível. Ambos podem ser usados dentro do SELECT list normalmente."
+      "explanation": "O searched CASE avalia condições de faixa/comparação como salary > 5000 (A), enquanto DECODE só compara igualdade contra uma lista de valores (B). DECODE não avalia ranges diretamente (C errado); CASE é plenamente usável em SQL puro (D errado); e DECODE devolve um valor de dado, não Boolean (E errado)."
     },
     {
       "id": 5,
       "topic": "functions",
       "context": "",
-      "text": "What does GREATEST(45, 20, NULL, 90) return?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about the GREATEST and LEAST functions? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "90, because GREATEST ignores NULL arguments and returns the largest of the remaining values."
+          "text": "If any argument is NULL, GREATEST returns NULL."
         },
         {
           "key": "B",
-          "text": "NULL, because if any argument passed to GREATEST (or LEAST) is NULL, the function returns NULL."
+          "text": "LEAST returns the smallest value among its arguments."
         },
         {
           "key": "C",
-          "text": "45, because GREATEST returns the first non-NULL argument encountered."
+          "text": "GREATEST ignores NULL arguments."
         },
         {
           "key": "D",
-          "text": "It raises an error, since GREATEST does not accept NULL as an argument."
+          "text": "GREATEST can accept only two arguments."
+        },
+        {
+          "key": "E",
+          "text": "LEAST always returns a NUMBER regardless of argument types."
         }
       ],
       "correct": [
+        "A",
         "B"
       ],
-      "explanation": "As funções GREATEST e LEAST comparam todos os argumentos entre si, e assim como a maioria das expressões que envolvem NULL, se qualquer um dos argumentos for NULL, o resultado da função inteira é NULL — não há um comportamento de 'ignorar' o NULL e considerar só os demais valores. Isso é diferente de funções de agregação como MAX, que de fato ignoram NULL entre linhas. Não há erro de sintaxe em passar NULL como argumento."
+      "explanation": "Se qualquer argumento for NULL, GREATEST devolve NULL (A) — ele NÃO ignora nulos (C errado). LEAST devolve o menor valor entre os argumentos (B). GREATEST/LEAST aceitam vários argumentos (D errado), e o tipo de retorno depende dos argumentos, não é sempre NUMBER (E errado)."
     },
     {
       "id": 6,
       "topic": "functions",
       "context": "",
-      "text": "What does TRIM(LEADING '0' FROM '00045100') return?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about the TRIM, LTRIM, and RTRIM functions? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "'45100' — only the leading zero characters are removed, trailing/internal zeros are untouched."
+          "text": "TRIM(LEADING '0' FROM '00045100') returns '45100'."
         },
         {
           "key": "B",
-          "text": "'451' — all zero characters anywhere in the string are removed."
+          "text": "LTRIM removes specified characters from the left side of a string."
         },
         {
           "key": "C",
-          "text": "'0004510' — only the very last character is removed, since TRIM removes exactly one character by default."
+          "text": "RTRIM removes characters from the left side of a string."
         },
         {
           "key": "D",
-          "text": "An error, because TRIM requires a single character, and '0' combined with LEADING is invalid syntax."
+          "text": "TRIM can remove characters from both ends only if BOTH is omitted and never otherwise."
+        },
+        {
+          "key": "E",
+          "text": "TRIM requires a numeric argument."
         }
       ],
       "correct": [
-        "A"
+        "A",
+        "B"
       ],
-      "explanation": "TRIM com a cláusula LEADING remove apenas as ocorrências do caractere especificado ('0') que aparecem no início da string, parando assim que encontra um caractere diferente — por isso '00045100' vira '45100' (os zeros à esquerda somem, mas os zeros no meio e no fim permanecem intactos). Para remover de ambos os lados usaria BOTH, e para remover só do final, TRAILING. A sintaxe TRIM(LEADING 'char' FROM string) é válida e aceita qualquer caractere único, não só espaço."
+      "explanation": "TRIM(LEADING '0' FROM '00045100') remove os zeros à esquerda, resultando em '45100' (A). LTRIM remove caracteres da ESQUERDA (B); RTRIM remove da DIREITA, não da esquerda (C errado). TRIM remove de ambos os lados por padrão (ou conforme LEADING/TRAILING/BOTH) — D é uma afirmação incorreta; e TRIM opera sobre strings, não exige argumento numérico (E errado)."
     },
     {
       "id": 7,
@@ -229,31 +254,36 @@
       "id": 8,
       "topic": "functions",
       "context": "",
-      "text": "What does LPAD('7', 5, '0') return, and what is it commonly used for?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about the LPAD and RPAD functions? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "'00007' — it pads the string on the left with '0' up to a total length of 5, commonly used to format numeric codes with leading zeros."
+          "text": "LPAD('7', 5, '0') returns '00007'."
         },
         {
           "key": "B",
-          "text": "'70000' — it pads the string on the right, since LPAD always appends the pad characters after the original string."
+          "text": "RPAD pads a string on the right up to a target length."
         },
         {
           "key": "C",
-          "text": "'7' — LPAD does nothing when the pad character is a single digit."
+          "text": "LPAD pads a string on the right side."
         },
         {
           "key": "D",
-          "text": "'00000' — LPAD replaces the entire original string with the pad character repeated to the target length."
+          "text": "LPAD truncates the string if it is longer than the target length only when a third argument is omitted."
+        },
+        {
+          "key": "E",
+          "text": "RPAD can only pad with spaces."
         }
       ],
       "correct": [
-        "A"
+        "A",
+        "B"
       ],
-      "explanation": "LPAD (left-pad) adiciona caracteres de preenchimento à esquerda da string original até que ela atinja o comprimento total especificado — nesse caso, preenche '7' com zeros à esquerda até chegar a 5 caracteres, resultando em '00007'. É comumente usado para formatar códigos numéricos com zeros à esquerda (como códigos de produto). RPAD faria o preenchimento à direita, e nenhuma das alternativas que descrevem substituição total ou preenchimento à direita está correta aqui."
+      "explanation": "LPAD('7', 5, '0') preenche à ESQUERDA com zeros até 5 caracteres: '00007' (A). RPAD preenche à DIREITA até o comprimento alvo (B). LPAD preenche à esquerda, não à direita (C errado); LPAD/RPAD truncam quando a string já excede o comprimento alvo, independentemente do 3º argumento (D é impreciso); e RPAD pode preencher com qualquer caractere, não só espaços (E errado)."
     },
     {
       "id": 9,
@@ -289,31 +319,36 @@
       "id": 10,
       "topic": "functions",
       "context": "",
-      "text": "What do CEIL(-4.2) and FLOOR(-4.2) return, respectively?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about the CEIL and FLOOR functions? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "-4 and -5 — CEIL rounds toward the nearest integer greater than or equal to the value, and FLOOR rounds toward the nearest integer less than or equal to the value."
+          "text": "CEIL(-4.2) returns -4."
         },
         {
           "key": "B",
-          "text": "-5 and -4 — CEIL always rounds down and FLOOR always rounds up, regardless of the sign of the number."
+          "text": "FLOOR(-4.2) returns -5."
         },
         {
           "key": "C",
-          "text": "-4 and -4 — both functions simply truncate the decimal part, ignoring the sign."
+          "text": "CEIL(-4.2) returns -5."
         },
         {
           "key": "D",
-          "text": "-5 and -5 — both functions round away from zero for negative numbers."
+          "text": "FLOOR(-4.2) returns -4."
+        },
+        {
+          "key": "E",
+          "text": "CEIL and FLOOR round to the nearest even integer."
         }
       ],
       "correct": [
-        "A"
+        "A",
+        "B"
       ],
-      "explanation": "CEIL retorna o menor inteiro maior ou igual ao valor informado — para -4.2, isso é -4 (não -5, pois -4 é maior que -4.2). FLOOR retorna o maior inteiro menor ou igual ao valor — para -4.2, isso é -5. Com números negativos, é comum confundir 'para cima' e 'para baixo' com a magnitude do número, mas CEIL/FLOOR sempre se referem à posição na reta numérica (maior/menor), não ao valor absoluto."
+      "explanation": "CEIL devolve o menor inteiro MAIOR ou igual ao número: CEIL(-4.2) = -4 (A). FLOOR devolve o maior inteiro MENOR ou igual: FLOOR(-4.2) = -5 (B). Por isso C e D estão invertidos, e nenhum dos dois arredonda 'para o par mais próximo' (E errado)."
     },
     {
       "id": 11,
@@ -829,31 +864,36 @@
       "id": 29,
       "topic": "select",
       "context": "",
-      "text": "What is the result of SELECT 'Salary: ' || 5000 * 1.1 FROM dual;, and why?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about arithmetic and concatenation in a SELECT list? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "It raises an error, because the concatenation operator || has lower precedence than *, so Oracle attempts to evaluate 'Salary: ' || 5000 first (producing a string) and then tries to multiply that string by 1.1, which fails for a non-numeric string."
+          "text": "In 'Salary: ' || 5000 * 1.1, multiplication is evaluated before concatenation."
         },
         {
           "key": "B",
-          "text": "It returns 'Salary: 5500', because Oracle first computes 5000 * 1.1 and then concatenates the result with the string, since arithmetic operators have higher precedence than concatenation."
+          "text": "The number 5500 is implicitly converted to a string when concatenated."
         },
         {
           "key": "C",
-          "text": "It returns 'Salary: 50001.1', treating the * as if it were another concatenation operator."
+          "text": "The concatenation operator || has higher precedence than multiplication."
         },
         {
           "key": "D",
-          "text": "It returns 5500 as a pure number, silently discarding the string literal."
+          "text": "Concatenating a NULL raises an error."
+        },
+        {
+          "key": "E",
+          "text": "Arithmetic operators cannot be mixed with concatenation in one expression."
         }
       ],
       "correct": [
+        "A",
         "B"
       ],
-      "explanation": "O operador de multiplicação (*) tem precedência maior que o operador de concatenação (||) — isso segue a mesma lógica de precedência aritmética usual, então o Oracle calcula primeiro 5000 * 1.1 = 5500, e só depois concatena o resultado numérico (implicitamente convertido para string) com 'Salary: ', produzindo 'Salary: 5500'. Não há erro, e o * não se comporta como concatenação — operadores aritméticos sempre são avaliados antes de ||."
+      "explanation": "A multiplicação (5000 * 1.1) é avaliada ANTES da concatenação, pois operadores aritméticos têm precedência maior que || (A) — logo C está errado. O resultado numérico 5500 é convertido implicitamente para string ao ser concatenado (B). Concatenar NULL não gera erro (trata como vazio) — D errado; e é perfeitamente possível misturar aritmética e concatenação (E errado)."
     },
     {
       "id": 30,
@@ -1369,31 +1409,36 @@
       "id": 47,
       "topic": "fundamentals",
       "context": "",
-      "text": "Which statement best describes what NULL represents in Oracle SQL?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about NULL in Oracle SQL? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "NULL represents the absence of a known value — it is not the same as zero, an empty string, or a blank space; it means 'unknown' or 'not applicable'."
+          "text": "NULL represents an unknown or inapplicable value, not zero or a blank string."
         },
         {
           "key": "B",
-          "text": "NULL is exactly equivalent to the number zero when used in a NUMBER column, and equivalent to an empty string '' when used in a VARCHAR2 column."
+          "text": "Any arithmetic expression involving NULL evaluates to NULL."
         },
         {
           "key": "C",
-          "text": "NULL always means the column was never included in the table's definition."
+          "text": "NULL equals NULL when compared with the = operator."
         },
         {
           "key": "D",
-          "text": "NULL is a special string value that can be compared using the standard equality operator (=) just like any other value."
+          "text": "COUNT(*) ignores rows that contain NULLs."
+        },
+        {
+          "key": "E",
+          "text": "A NOT NULL column can still store an empty string as a distinct value."
         }
       ],
       "correct": [
-        "A"
+        "A",
+        "B"
       ],
-      "explanation": "NULL representa a ausência de um valor conhecido — conceitualmente 'desconhecido' ou 'não aplicável' — e é fundamentalmente diferente de zero (que é um valor numérico concreto) ou de uma string vazia (que é um valor de string concreto, ainda que vazio; aliás, em Oracle, string vazia '' é tratada como NULL para VARCHAR2, o que já é uma peculiaridade à parte). Por não representar um valor concreto, NULL não pode ser comparado com = ou <> de forma significativa (sempre resulta em UNKNOWN) — é necessário usar IS NULL / IS NOT NULL."
+      "explanation": "NULL representa um valor desconhecido/inaplicável — não zero nem string vazia (A) — e qualquer aritmética com NULL resulta em NULL (B). NULL não é igual a NULL via = (resulta em UNKNOWN) — C errado; COUNT(*) conta TODAS as linhas, inclusive com nulos (D errado); e no Oracle string vazia '' é tratada como NULL, então não é um valor distinto (E errado)."
     },
     {
       "id": 48,
@@ -1519,32 +1564,37 @@
     {
       "id": 52,
       "context": "",
-      "text": "Which statement about sequences is true?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about sequences in Oracle? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "A sequence guarantees gap-free, strictly sequential numbers even after a rollback"
+          "text": "NEXTVAL generates the next number and makes it available via CURRVAL in the same session."
         },
         {
           "key": "B",
-          "text": "CURRVAL can be used before NEXTVAL has been called at least once in the session"
+          "text": "A sequence can produce gaps, for example after a rollback."
         },
         {
           "key": "C",
-          "text": "NEXTVAL generates the next number in the sequence and makes it available via CURRVAL in the same session"
+          "text": "CURRVAL can be referenced in a session before NEXTVAL is ever used."
         },
         {
           "key": "D",
-          "text": "Sequences are automatically dropped when the table that uses them is dropped"
+          "text": "A sequence is automatically dropped when a table that uses it is dropped."
+        },
+        {
+          "key": "E",
+          "text": "A sequence guarantees strictly gap-free values."
         }
       ],
       "correct": [
-        "C"
+        "A",
+        "B"
       ],
       "topic": "ddl",
-      "explanation": "NEXTVAL gera o próximo número da sequência e, a partir desse momento na sessão atual, esse valor fica disponível através de CURRVAL (sem incrementar novamente) — por isso C está correta. A está errada porque, embora sequências sejam geralmente sequenciais, um ROLLBACK não devolve o número já consumido por NEXTVAL, podendo causar gaps (lacunas) na numeração. B está errada porque CURRVAL só pode ser usado depois que NEXTVAL foi chamado pelo menos uma vez na sessão atual — caso contrário, gera erro. D está errada porque sequences são objetos independentes do schema, não amarrados a uma tabela específica, e não são dropadas automaticamente junto com ela."
+      "explanation": "NEXTVAL gera o próximo valor e o disponibiliza via CURRVAL na mesma sessão (A); sequences podem ter lacunas, por exemplo após rollback (B). CURRVAL só funciona depois de NEXTVAL ter sido chamado ao menos uma vez na sessão (C errado); sequences são independentes das tabelas — não são dropadas junto (D errado); e não garantem numeração sem lacunas (E errado)."
     },
     {
       "id": 53,
@@ -2443,31 +2493,36 @@
       "id": 84,
       "topic": "functions",
       "context": "",
-      "text": "Which is true about the ROUND, TRUNC and MOD functions?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about the ROUND, TRUNC, and MOD functions? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "TRUNC(MOD(25,3),-1) is invalid."
+          "text": "MOD(25, 3) returns 1."
         },
         {
           "key": "B",
-          "text": "ROUND(MOD(25,3),-1) is invalid."
+          "text": "ROUND and TRUNC accept a second argument specifying the number of decimal places."
         },
         {
           "key": "C",
-          "text": "ROUND(MOD(25,3),-1) and TRUNC(MOD(25,3),-1) are both valid and give the same result."
+          "text": "MOD returns the integer quotient of a division."
         },
         {
           "key": "D",
-          "text": "ROUND(MOD(25,3),-1) and TRUNC(MOD(25,3),-1) are both valid but give different results."
+          "text": "TRUNC always rounds to the nearest integer."
+        },
+        {
+          "key": "E",
+          "text": "ROUND(25.5) returns 25."
         }
       ],
       "correct": [
-        "C"
+        "A",
+        "B"
       ],
-      "explanation": "MOD(25,3) calcula o resto da divisão de 25 por 3, que é 1. Tanto ROUND(1,-1) quanto TRUNC(1,-1) são operações válidas (arredondar/truncar para a casa das dezenas), e como 1 está mais próximo de 0 que de 10, ambas as funções retornam 0 — por isso C está correta (ambas válidas e com o mesmo resultado). As alternativas A e B estão erradas porque tanto ROUND quanto TRUNC aceitam um segundo argumento negativo normalmente (para arredondar/truncar à esquerda do ponto decimal), não há nada inválido nessas chamadas. D está errada porque, apesar de ambas serem válidas, elas produzem o MESMO resultado nesse caso específico (0), não resultados diferentes."
+      "explanation": "MOD(25, 3) devolve o RESTO da divisão: 1 (A). ROUND e TRUNC aceitam um segundo argumento com o número de casas decimais (positivo ou negativo) — B. MOD devolve o resto, não o quociente (C errado); TRUNC CORTA, não arredonda (D errado); e ROUND(25.5) = 26, não 25 (E errado)."
     },
     {
       "id": 85,
@@ -3327,7 +3382,7 @@
       "id": 110,
       "topic": "access",
       "context": "",
-      "text": "Which two statements are true about views? (Choose two.)",
+      "text": "Which two statements are true about views and the WITH CHECK option? (Choose two.)",
       "type": "multiple",
       "correctCount": 2,
       "options": [
@@ -3362,7 +3417,7 @@
       "id": 111,
       "topic": "functions",
       "context": "",
-      "text": "Which two are true? (Choose two.)",
+      "text": "Which two statements are true about the CONCAT, FLOOR, and INSTR functions? (Choose two.)",
       "type": "multiple",
       "correctCount": 2,
       "options": [
@@ -3969,61 +4024,71 @@
       "id": 130,
       "topic": "ddl",
       "context": "",
-      "text": "Which restriction applies to a CHECK constraint defined on a table?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about a CHECK constraint? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "It can reference a SYSDATE or USER pseudo column for validation."
-        },
-        {
-          "key": "B",
           "text": "It cannot reference columns of other tables."
         },
         {
+          "key": "B",
+          "text": "It can reference other columns of the same row in its condition."
+        },
+        {
           "key": "C",
-          "text": "It can use a subquery to validate values against another table."
+          "text": "It can call the SYSDATE or USER pseudo-columns."
         },
         {
           "key": "D",
-          "text": "It can call a user-defined PL/SQL function freely without restriction."
+          "text": "It can contain a subquery against another table."
+        },
+        {
+          "key": "E",
+          "text": "A row is rejected when its CHECK condition evaluates to UNKNOWN (NULL)."
         }
       ],
       "correct": [
+        "A",
         "B"
       ],
-      "explanation": "Uma CHECK constraint não pode referenciar colunas de OUTRAS tabelas — ela só pode validar valores com base em colunas da MESMA linha/tabela onde está definida, usando expressões, literais e certas funções determinísticas (B correto, sendo a restrição central). A está errada porque, embora SYSDATE e USER sejam pseudo-colunas não determinísticas, na prática CHECK constraints NÃO podem referenciá-las (essa é uma restrição adicional real, mas a pergunta busca a restrição mais fundamental, que é sobre tabelas). C está errada porque CHECK constraints não podem usar subqueries de forma alguma — isso é uma proibição explícita do Oracle. D está errada porque o uso de funções definidas pelo usuário em CHECK constraints tem restrições (a função deve ser determinística), não é uso livre sem restrição."
+      "explanation": "Um CHECK não pode referenciar colunas de OUTRAS tabelas (A), mas pode referenciar outras colunas da MESMA linha (B). Ele NÃO pode usar SYSDATE/USER nem funções não determinísticas (C errado), nem conter subqueries (D errado). Uma linha só é REJEITADA quando a condição é FALSE — se avaliar UNKNOWN (por causa de NULL), a linha é ACEITA (E errado)."
     },
     {
       "id": 131,
       "topic": "set",
       "context": "",
-      "text": "Which of these is NOT a valid Oracle SQL set operator?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two of the following are valid Oracle SQL set operators? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "UNION"
+          "text": "INTERSECT"
         },
         {
           "key": "B",
-          "text": "UNION ALL"
+          "text": "MINUS"
         },
         {
           "key": "C",
-          "text": "INTERSECT ALL"
+          "text": "EXCEPT"
         },
         {
           "key": "D",
-          "text": "MINUS"
+          "text": "INTERSECT ALL"
+        },
+        {
+          "key": "E",
+          "text": "SUBTRACT"
         }
       ],
       "correct": [
-        "C"
+        "A",
+        "B"
       ],
-      "explanation": "INTERSECT ALL não é um operador válido no SQL padrão do Oracle (diferente de UNION ALL, que existe). Oracle suporta apenas UNION, UNION ALL, INTERSECT e MINUS como operadores de conjunto — não existe uma variante 'ALL' para INTERSECT ou MINUS, pois esses operadores já lidam com a questão de duplicatas de forma específica baseada em sua semântica de interseção/diferença de conjuntos."
+      "explanation": "INTERSECT (interseção) e MINUS (diferença) são operadores de conjunto válidos no Oracle (A, B). EXCEPT é o equivalente de MINUS em outros bancos (SQL Server/PostgreSQL), mas o Oracle usa MINUS (C errado); INTERSECT ALL e SUBTRACT não existem no Oracle (D, E errados)."
     },
     {
       "id": 135,
@@ -4210,31 +4275,36 @@
       "id": 141,
       "topic": "ddl",
       "context": "",
-      "text": "Which statement adds a descriptive comment to the EMPLOYEES table itself (not a column)?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about adding descriptive comments to schema objects? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "COMMENT ON TABLE employees IS 'Employee master data';"
+          "text": "COMMENT ON TABLE employees IS '...' adds a comment to the table."
         },
         {
           "key": "B",
-          "text": "ALTER TABLE employees COMMENT = 'Employee master data';"
+          "text": "COMMENT ON COLUMN employees.salary IS '...' adds a comment to a column."
         },
         {
           "key": "C",
-          "text": "COMMENT employees IS 'Employee master data';"
+          "text": "Comments are added with ALTER TABLE ... COMMENT = '...'."
         },
         {
           "key": "D",
-          "text": "CREATE COMMENT ON employees AS 'Employee master data';"
+          "text": "Comments can be queried from USER_TAB_COLUMNS only."
+        },
+        {
+          "key": "E",
+          "text": "A table can have at most one comment per database, shared by all tables."
         }
       ],
       "correct": [
-        "A"
+        "A",
+        "B"
       ],
-      "explanation": "A sintaxe `COMMENT ON TABLE nome_tabela IS 'texto'` é o comando padrão do Oracle para adicionar um comentário descritivo a uma tabela inteira (armazenado no dicionário de dados, visível em USER_TAB_COMMENTS). B usa uma sintaxe inválida — ALTER TABLE não tem uma cláusula COMMENT = dessa forma no Oracle. C omite a palavra-chave obrigatória TABLE entre COMMENT e o nome do objeto. D usa uma sintaxe inexistente (CREATE COMMENT ON não é um comando Oracle válido)."
+      "explanation": "COMMENT ON TABLE adiciona comentário à tabela (A) e COMMENT ON COLUMN, a uma coluna (B). A sintaxe ALTER TABLE ... COMMENT = não existe no Oracle (C errado); comentários são consultados em views como USER_TAB_COMMENTS e USER_COL_COMMENTS (D errado); e cada tabela/coluna tem seu próprio comentário (E errado)."
     },
     {
       "id": 142,
@@ -4359,32 +4429,37 @@
     {
       "id": 146,
       "topic": "groups",
-      "context": "",
-      "text": "Which query correctly groups employees by the year they were hired?",
-      "type": "single",
-      "correctCount": 1,
+      "context": "The EMPLOYEES table has a HIRE_DATE column of type DATE.",
+      "text": "Which two statements are true about grouping employees by the year they were hired? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "SELECT EXTRACT(YEAR FROM hire_date), COUNT(*) FROM employees GROUP BY hire_date;"
+          "text": "GROUP BY EXTRACT(YEAR FROM hire_date) groups rows by hire year."
         },
         {
           "key": "B",
-          "text": "SELECT EXTRACT(YEAR FROM hire_date), COUNT(*) FROM employees GROUP BY EXTRACT(YEAR FROM hire_date);"
+          "text": "The SELECT list may include EXTRACT(YEAR FROM hire_date) together with COUNT(*)."
         },
         {
           "key": "C",
-          "text": "SELECT EXTRACT(YEAR FROM hire_date), COUNT(*) FROM employees;"
+          "text": "GROUP BY hire_date groups correctly by year."
         },
         {
           "key": "D",
-          "text": "SELECT hire_date, COUNT(*) FROM employees GROUP BY EXTRACT(YEAR FROM hire_date);"
+          "text": "You can place COUNT(*) > 10 in the WHERE clause to filter groups."
+        },
+        {
+          "key": "E",
+          "text": "A column alias defined in SELECT can be used in the GROUP BY clause."
         }
       ],
       "correct": [
+        "A",
         "B"
       ],
-      "explanation": "Quando se usa uma expressão como EXTRACT(YEAR FROM hire_date) no SELECT junto com uma função de agregação (COUNT), a mesma expressão EXATA deve aparecer no GROUP BY para que o agrupamento seja consistente com o que está sendo exibido — por isso B está correta, usando GROUP BY EXTRACT(YEAR FROM hire_date). A está errada porque agrupa por hire_date (a data completa, incluindo dia/mês), o que criaria um grupo para cada data distinta, não para cada ano, tornando a expressão EXTRACT(YEAR...) no SELECT inconsistente com o agrupamento (gerando erro ORA-00937, pois não é uma função de grupo nem está no GROUP BY exatamente). C está errada porque usa COUNT(*) sem nenhum GROUP BY, o que tentaria agregar todas as linhas em um único grupo, conflitando com a coluna não agregada EXTRACT(YEAR...) no SELECT, causando erro. D está errada pela mesma incompatibilidade: seleciona hire_date (não agregado) mas agrupa por EXTRACT(YEAR FROM hire_date), uma expressão diferente, causando erro de coluna não pertencente ao GROUP BY."
+      "explanation": "GROUP BY EXTRACT(YEAR FROM hire_date) agrupa por ano de contratação (A), e o SELECT pode trazer essa expressão junto com COUNT(*) (B). GROUP BY hire_date agruparia por data exata, não por ano (C errado); COUNT(*) > 10 filtra GRUPOS e vai no HAVING, não no WHERE (D errado); e aliases do SELECT não podem ser usados no GROUP BY (E errado)."
     },
     {
       "id": 147,
@@ -4509,32 +4584,37 @@
     {
       "id": 151,
       "topic": "set",
-      "context": "",
-      "text": "Which statement is true about the MINUS operator?",
-      "type": "single",
-      "correctCount": 1,
+      "context": "Query A returns {10, 20, 30}; Query B returns {20, 30, 40}.",
+      "text": "Which two statements are true about the MINUS operator? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "MINUS requires both queries to return columns with identical names."
+          "text": "A MINUS B returns rows in A that are not in B, here {10}."
         },
         {
           "key": "B",
-          "text": "MINUS returns rows from the first query that do not appear in the result of the second query, with duplicates removed."
+          "text": "MINUS removes duplicate rows from its result."
         },
         {
           "key": "C",
-          "text": "MINUS preserves duplicate rows in its result."
+          "text": "MINUS returns rows common to both queries."
         },
         {
           "key": "D",
-          "text": "MINUS is not supported in Oracle SQL; EXCEPT must be used instead."
+          "text": "Reversing the operands (B MINUS A) returns the same result."
+        },
+        {
+          "key": "E",
+          "text": "MINUS keeps duplicate rows."
         }
       ],
       "correct": [
+        "A",
         "B"
       ],
-      "explanation": "MINUS retorna as linhas presentes no resultado da primeira consulta que NÃO aparecem no resultado da segunda, e como qualquer operador de conjunto, elimina automaticamente duplicatas do resultado final (B correto). A está errada porque, como qualquer operador de conjunto, MINUS exige apenas o mesmo número de colunas com tipos compatíveis, não nomes idênticos — os nomes de coluna do resultado vêm da primeira consulta. C está errada porque MINUS, ao contrário de UNION ALL, remove sim as duplicatas do resultado. D está errada porque MINUS é o operador padrão e nativo do Oracle SQL para essa operação — EXCEPT é a palavra usada por outros bancos (como SQL Server), não pelo Oracle."
+      "explanation": "MINUS devolve as linhas da primeira consulta que NÃO estão na segunda: A MINUS B = {10} (A), e remove duplicatas do resultado (B). Não devolve o comum — isso é INTERSECT (C errado); B MINUS A daria {40}, resultado diferente (D errado); e MINUS elimina duplicatas, não as mantém (E errado)."
     },
     {
       "id": 154,
@@ -4990,31 +5070,36 @@
       "id": 169,
       "topic": "select",
       "context": "",
-      "text": "Which statement is true about FETCH FIRST n ROWS ONLY when used WITHOUT an ORDER BY clause?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about the row-limiting clause FETCH FIRST n ROWS ONLY? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "It raises a syntax error, since ORDER BY is mandatory with FETCH FIRST."
+          "text": "Without an ORDER BY, the n rows returned are in an unspecified order."
         },
         {
           "key": "B",
-          "text": "It returns n rows in an arbitrary, unspecified order."
+          "text": "WITH TIES can be used to also return rows that tie with the last row's ordering value."
         },
         {
           "key": "C",
-          "text": "It always returns the first n rows in primary key order."
+          "text": "FETCH FIRST requires an ORDER BY or it raises a syntax error."
         },
         {
           "key": "D",
-          "text": "It returns n rows ordered by ROWID."
+          "text": "FETCH FIRST 3 ROWS ONLY always returns the 3 rows with the lowest primary key."
+        },
+        {
+          "key": "E",
+          "text": "OFFSET cannot be combined with FETCH."
         }
       ],
       "correct": [
+        "A",
         "B"
       ],
-      "explanation": "Sem uma cláusula ORDER BY, o Oracle não garante nenhuma ordem específica de retorno das linhas — a ordem física de armazenamento, índices usados ou o plano de execução do otimizador podem influenciar a sequência, mas isso não é uma garantia da linguagem, apenas um efeito colateral da implementação que pode mudar entre execuções (B correto). A está errada porque FETCH FIRST não exige obrigatoriamente um ORDER BY — funciona sem ele, apenas sem garantia de ordem. C e D descrevem garantias de ordenação que o Oracle não oferece sem ORDER BY explícito."
+      "explanation": "Sem ORDER BY, as n linhas do FETCH vêm em ordem indefinida (A). WITH TIES traz também as linhas empatadas no valor de ordenação da última linha (B). ORDER BY não é obrigatório — sem ele não há erro, só ordem indefinida (C errado); não há garantia de menor PK (D errado); e OFFSET pode sim ser combinado com FETCH (E errado)."
     },
     {
       "id": 170,
@@ -5380,61 +5465,71 @@
       "id": 183,
       "topic": "ddl",
       "context": "",
-      "text": "Which statement correctly renames the SAL column to SALARY in the EMP table?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about renaming columns and tables in Oracle? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "ALTER TABLE emp RENAME COLUMN sal TO salary;"
+          "text": "ALTER TABLE emp RENAME COLUMN sal TO salary; renames a column."
         },
         {
           "key": "B",
-          "text": "ALTER TABLE emp RENAME sal TO salary;"
+          "text": "ALTER TABLE emp RENAME TO staff; renames the table."
         },
         {
           "key": "C",
-          "text": "ALTER TABLE emp MODIFY COLUMN sal TO salary;"
+          "text": "ALTER TABLE emp MODIFY COLUMN sal TO salary; renames a column."
         },
         {
           "key": "D",
-          "text": "RENAME COLUMN emp.sal TO emp.salary;"
+          "text": "RENAME COLUMN emp.sal TO emp.salary; is the correct syntax."
+        },
+        {
+          "key": "E",
+          "text": "Renaming a column drops and recreates its data."
         }
       ],
       "correct": [
-        "A"
+        "A",
+        "B"
       ],
-      "explanation": "A sintaxe correta para renomear uma coluna é `ALTER TABLE tabela RENAME COLUMN nome_antigo TO nome_novo`, exigindo explicitamente a palavra-chave COLUMN entre RENAME e o nome da coluna (A correto). B está errada por omitir a palavra-chave obrigatória COLUMN, tornando a sintaxe inválida (poderia ser confundida com renomear a TABELA, que usa RENAME TO sem COLUMN, mas para colunas o COLUMN é obrigatório). C está errada porque MODIFY COLUMN é usado para alterar o TIPO/propriedades de uma coluna, não seu nome, e a sintaxe '... TO ...' não é válida com MODIFY. D usa uma sintaxe inexistente no Oracle SQL para renomear colunas."
+      "explanation": "ALTER TABLE ... RENAME COLUMN old TO new renomeia uma coluna (A), e ALTER TABLE ... RENAME TO renomeia a tabela (B). MODIFY altera atributos (tipo, default, nullability), não renomeia (C errado); a sintaxe qualificada com esquema/tabela em RENAME COLUMN está errada (D errado); e renomear NÃO afeta os dados existentes (E errado)."
     },
     {
       "id": 184,
       "topic": "ddl",
       "context": "",
-      "text": "Which statement disables a constraint named EMP_DEPT_FK without dropping it?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about enabling and disabling constraints? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "ALTER TABLE employees DISABLE CONSTRAINT emp_dept_fk;"
+          "text": "ALTER TABLE emp DISABLE CONSTRAINT emp_dept_fk; disables the constraint without dropping it."
         },
         {
           "key": "B",
-          "text": "DROP CONSTRAINT emp_dept_fk;"
+          "text": "A disabled constraint definition remains in the data dictionary and can be re-enabled later."
         },
         {
           "key": "C",
-          "text": "ALTER TABLE employees SET CONSTRAINT emp_dept_fk DISABLE;"
+          "text": "Disabling a constraint automatically drops it."
         },
         {
           "key": "D",
-          "text": "DISABLE emp_dept_fk ON employees;"
+          "text": "A NOT NULL constraint cannot be disabled."
+        },
+        {
+          "key": "E",
+          "text": "Enabling a constraint never checks the existing data."
         }
       ],
       "correct": [
-        "A"
+        "A",
+        "B"
       ],
-      "explanation": "A sintaxe correta para desabilitar uma constraint sem removê-la é `ALTER TABLE tabela DISABLE CONSTRAINT nome_constraint`, que mantém a definição da constraint no dicionário de dados mas para de aplicá-la nas novas operações DML (A correto). B está errada porque DROP CONSTRAINT remove permanentemente a constraint, não apenas a desabilita. C usa uma sintaxe inválida (a cláusula correta não é 'SET CONSTRAINT ... DISABLE' dessa forma para desabilitar permanentemente — SET CONSTRAINT tem uso diferente, relacionado a constraints deferráveis dentro de uma transação). D usa uma sintaxe completamente inválida no Oracle SQL."
+      "explanation": "ALTER TABLE ... DISABLE CONSTRAINT desabilita a constraint sem removê-la (A), e a definição permanece no dicionário, podendo ser reabilitada com ENABLE (B). Desabilitar NÃO dropa a constraint (C errado); um NOT NULL pode ser desabilitado (D errado); e ENABLE (VALIDATE, o padrão) verifica os dados existentes (E errado)."
     },
     {
       "id": 185,
@@ -5740,31 +5835,36 @@
       "id": 197,
       "topic": "fundamentals",
       "context": "",
-      "text": "What does \"referential integrity\" ensure in a relational database?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about primary keys and referential integrity? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "That every column has a unique value."
+          "text": "Referential integrity ensures a foreign key value matches an existing parent key or is NULL."
         },
         {
           "key": "B",
-          "text": "That a foreign key value either matches an existing primary/unique key value in the referenced table, or is NULL."
+          "text": "A primary key enforces both uniqueness and NOT NULL on its column(s)."
         },
         {
           "key": "C",
-          "text": "That all tables are normalized to at least 3NF."
+          "text": "A foreign key column must have the same name as the referenced column."
         },
         {
           "key": "D",
-          "text": "That every table has exactly one primary key."
+          "text": "A primary key column may contain NULLs."
+        },
+        {
+          "key": "E",
+          "text": "Referential integrity requires the child and parent tables to be in the same schema."
         }
       ],
       "correct": [
+        "A",
         "B"
       ],
-      "explanation": "Integridade referencial garante que o valor de uma coluna de chave estrangeira (foreign key) em uma tabela filha corresponda a um valor existente na chave primária/única da tabela pai referenciada, ou então seja NULL (indicando ausência de relacionamento) — isso impede 'órfãos' referenciais, onde uma FK aponta para um registro inexistente (B correto). A está errada porque descreve unicidade de coluna, não integridade referencial. C está errada porque normalização é um conceito de design relacionado mas distinto de integridade referencial. D está errada porque ter exatamente uma primary key por tabela é uma boa prática, mas não é o que a integridade referencial define ou garante."
+      "explanation": "A integridade referencial garante que um valor de foreign key case com um valor existente da chave pai OU seja NULL (A). Uma primary key impõe unicidade E NOT NULL (B). A FK não precisa ter o mesmo NOME da coluna referenciada (C errado); primary key não aceita NULL (D errado); e as tabelas pai/filha podem estar em esquemas diferentes (E errado)."
     },
     {
       "id": 198,
@@ -6220,17 +6320,17 @@
       "id": 213,
       "topic": "dml",
       "context": "",
-      "text": "Which statement is true about ROWID?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about ROWID and how Oracle identifies rows? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "ROWID changes every time a row is updated."
+          "text": "ROWID identifies the physical storage location of a row."
         },
         {
           "key": "B",
-          "text": "ROWID uniquely identifies the physical location of a row and is generally stable unless the row is moved (e.g., via ALTER TABLE MOVE)."
+          "text": "A row's ROWID can change if the table is reorganized (e.g., ALTER TABLE ... MOVE)."
         },
         {
           "key": "C",
@@ -6238,13 +6338,18 @@
         },
         {
           "key": "D",
-          "text": "ROWID is only available for tables with a PRIMARY KEY."
+          "text": "ROWID changes on every UPDATE of a non-key column."
+        },
+        {
+          "key": "E",
+          "text": "ROWID is only available for tables that have a primary key."
         }
       ],
       "correct": [
+        "A",
         "B"
       ],
-      "explanation": "ROWID identifica a localização física exata de uma linha no banco de dados (arquivo, bloco, linha dentro do bloco) e permanece estável enquanto a linha não for fisicamente movida — operações como ALTER TABLE MOVE, particionamento ou certas reorganizações podem alterar o ROWID de uma linha, mas um UPDATE comum normalmente não altera o ROWID (B correto). A está errada porque um UPDATE típico não move fisicamente a linha, preservando o mesmo ROWID na maioria dos casos. C está errada porque cada linha tem um ROWID único, correspondente à sua localização física específica. D está errada porque toda tabela do Oracle tem ROWID para suas linhas, independentemente de possuir ou não uma PRIMARY KEY definida."
+      "explanation": "O ROWID identifica a localização FÍSICA da linha (A), e pode mudar se a tabela for reorganizada, como em ALTER TABLE ... MOVE (B). Ele é ÚNICO por linha, não igual para todas (C errado); um UPDATE comum não move a linha nem muda o ROWID (D errado); e o ROWID existe para qualquer linha, independentemente de haver primary key (E errado)."
     },
     {
       "id": 214,
@@ -6310,31 +6415,36 @@
       "id": 217,
       "topic": "fundamentals",
       "context": "",
-      "text": "What is a \"surrogate key\" in database design?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about keys in relational database design? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "A key composed of multiple natural columns combined together."
+          "text": "A surrogate key is an artificial identifier (often sequence-generated) with no business meaning."
         },
         {
           "key": "B",
-          "text": "An artificially generated identifier (such as a sequence-based number) used as a primary key, with no business meaning of its own."
+          "text": "A candidate key is any column or set of columns that could uniquely identify a row."
         },
         {
           "key": "C",
-          "text": "A foreign key that references more than one table."
+          "text": "A surrogate key must be composed of business data."
         },
         {
           "key": "D",
-          "text": "A key that is automatically generated only for junction tables."
+          "text": "A table can have only one candidate key."
+        },
+        {
+          "key": "E",
+          "text": "A foreign key must always be a surrogate key."
         }
       ],
       "correct": [
+        "A",
         "B"
       ],
-      "explanation": "Uma chave substituta (surrogate key) é um identificador artificial, tipicamente gerado por uma sequência ou mecanismo automático do banco de dados, sem nenhum significado de negócio próprio — usada como PRIMARY KEY em vez de depender de atributos naturais (como CPF, email) que poderiam mudar ou ter problemas de unicidade/formato (B correto). A está errada porque descreve uma chave COMPOSTA, não uma chave substituta. C está errada porque uma foreign key referenciando múltiplas tabelas não é o conceito de surrogate key. D está errada porque chaves substitutas podem ser usadas em qualquer tabela, não exclusivamente em tabelas de junção."
+      "explanation": "Uma surrogate key é um identificador artificial (tipicamente gerado por sequence) sem significado de negócio (A); uma candidate key é qualquer coluna/conjunto que poderia identificar unicamente uma linha (B). Surrogate NÃO usa dados de negócio (C errado); uma tabela pode ter várias candidate keys (D errado); e uma FK não precisa ser surrogate (E errado)."
     },
     {
       "id": 218,
@@ -7901,32 +8011,37 @@
     {
       "id": 277,
       "context": "",
-      "text": "What is the result of evaluating both ROUND(1556, -2) and TRUNC(1556, -2)?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about the MOD, ABS, and SIGN number functions? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "ROUND(1556, -2) = 1600 and TRUNC(1556, -2) = 1500"
+          "text": "MOD(17, 5) returns 2."
         },
         {
           "key": "B",
-          "text": "ROUND(1556, -2) = 1500 and TRUNC(1556, -2) = 1600"
+          "text": "ABS(-15) returns 15."
         },
         {
           "key": "C",
-          "text": "Both expressions return 1556, since a negative second argument is invalid"
+          "text": "SIGN(-8) returns -8."
         },
         {
           "key": "D",
-          "text": "Both expressions return 1500"
+          "text": "MOD returns the integer quotient of the division."
+        },
+        {
+          "key": "E",
+          "text": "ABS can only be applied to integers."
         }
       ],
       "correct": [
-        "A"
+        "A",
+        "B"
       ],
       "topic": "functions",
-      "explanation": "Um segundo argumento negativo em ROUND e TRUNC indica posições à esquerda do ponto decimal — aqui, -2 significa a casa das centenas. ROUND(1556, -2) arredonda para a centena mais próxima: como 1556 está mais perto de 1600 do que de 1500, o resultado é 1600. TRUNC(1556, -2) apenas descarta os dígitos à direita da centena sem arredondar, mantendo somente a parte já completa, resultando em 1500 (A correta). C está errada porque argumentos negativos são totalmente válidos nessas funções. D está errada porque ROUND realiza arredondamento, não truncamento, então seu resultado não pode ser igual ao de TRUNC neste caso."
+      "explanation": "MOD(17, 5) devolve o resto da divisão: 2 (A). ABS(-15) devolve o valor absoluto: 15 (B). SIGN(-8) devolve -1 (o sinal), não -8 (C errado); MOD devolve o RESTO, não o quociente (D errado); e ABS funciona com qualquer número, não só inteiros (E errado)."
     },
     {
       "id": 278,
@@ -7992,31 +8107,36 @@
       "id": 280,
       "topic": "fundamentals",
       "context": "",
-      "text": "Which of the following events causes an IMPLICIT COMMIT of the current transaction in Oracle?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two events cause an implicit COMMIT of the current transaction in Oracle? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "Executing a ROLLBACK TO SAVEPOINT statement"
+          "text": "Executing a DDL statement such as CREATE TABLE."
         },
         {
           "key": "B",
-          "text": "Executing a SELECT ... FOR UPDATE statement"
+          "text": "Exiting SQL*Plus normally."
         },
         {
           "key": "C",
-          "text": "Executing an ALTER TABLE ... ADD COLUMN statement"
+          "text": "Executing a SELECT statement."
         },
         {
           "key": "D",
-          "text": "Executing a SAVEPOINT command"
+          "text": "Issuing a SAVEPOINT."
+        },
+        {
+          "key": "E",
+          "text": "A ROLLBACK TO SAVEPOINT."
         }
       ],
       "correct": [
-        "C"
+        "A",
+        "B"
       ],
-      "explanation": "Em Oracle, qualquer comando DDL (como CREATE, ALTER, DROP, TRUNCATE, RENAME) emite um COMMIT implícito antes de ser executado e outro depois de concluído com sucesso. Isso significa que alterações de DML pendentes na transação atual são confirmadas automaticamente antes do DDL ser processado. ROLLBACK TO SAVEPOINT desfaz parte da transação mas não a encerra. SELECT FOR UPDATE e SAVEPOINT fazem parte de uma transação em andamento e não a confirmam. Por isso, executar um ALTER TABLE sempre confirma qualquer INSERT, UPDATE ou DELETE pendente — comportamento que pode surpreender quem vem de outros bancos de dados."
+      "explanation": "Qualquer DDL (CREATE, ALTER, DROP, TRUNCATE) dispara COMMIT implícito da transação corrente (A), e sair normalmente do SQL*Plus também confirma a transação pendente (B). Um SELECT não faz commit (C errado); SAVEPOINT apenas marca um ponto, sem commitar (D errado); e ROLLBACK TO SAVEPOINT desfaz parte da transação, não confirma (E errado)."
     },
     {
       "id": 281,
@@ -8112,31 +8232,36 @@
       "id": 286,
       "topic": "functions",
       "context": "",
-      "text": "What are the results of the following Oracle expressions?\nROUND(175, -2)  and  TRUNC(175, -2)",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about the ADD_MONTHS and LAST_DAY date functions? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "ROUND returns 200, TRUNC returns 100"
+          "text": "ADD_MONTHS(DATE '2024-01-31', 1) returns 29-FEB-2024, adjusting to the last valid day."
         },
         {
           "key": "B",
-          "text": "ROUND returns 100, TRUNC returns 100"
+          "text": "LAST_DAY returns the last day of the month for the date passed to it."
         },
         {
           "key": "C",
-          "text": "ROUND returns 200, TRUNC returns 200"
+          "text": "ADD_MONTHS raises an error when the target month has fewer days."
         },
         {
           "key": "D",
-          "text": "Both return 175 because the value has no decimal part and a negative second argument is invalid"
+          "text": "LAST_DAY always returns the last day of the current month, ignoring the argument."
+        },
+        {
+          "key": "E",
+          "text": "ADD_MONTHS returns a NUMBER."
         }
       ],
       "correct": [
-        "A"
+        "A",
+        "B"
       ],
-      "explanation": "Com segundo argumento negativo, ROUND e TRUNC operam nos dígitos à esquerda do ponto decimal. ROUND(175, -2) arredonda ao múltiplo de 100 mais próximo: como o dígito na posição das dezenas é 7 (≥ 5), arredonda para cima, retornando 200. TRUNC(175, -2) simplesmente zera os dois últimos dígitos inteiros, retornando 100. O fato de 175 ser inteiro não impede o uso de precisão negativa. Compare: ROUND(149, -2) retorna 100 (dígito 4 < 5), enquanto ROUND(150, -2) retorna 200. Esse comportamento é frequentemente testado em provas de certificação Oracle."
+      "explanation": "ADD_MONTHS ajusta para o último dia válido quando o dia original não existe no mês destino: 31-JAN + 1 mês = 29-FEB-2024 (bissexto) — A. LAST_DAY devolve o último dia do mês da data passada como argumento (B). ADD_MONTHS não gera erro nesse caso (C errado); LAST_DAY usa o argumento, não o mês atual (D errado); e ADD_MONTHS devolve uma DATE, não NUMBER (E errado)."
     },
     {
       "id": 287,
@@ -8441,32 +8566,37 @@
     {
       "id": 300,
       "topic": "fundamentals",
-      "context": "",
-      "text": "Which of the following statements about SAVEPOINT in Oracle transactions is TRUE?",
-      "type": "single",
-      "correctCount": 1,
+      "context": "Examine:\n\nINSERT INTO t VALUES (1);\nSAVEPOINT a;\nINSERT INTO t VALUES (2);\nROLLBACK TO a;\nCOMMIT;",
+      "text": "Which two statements are true about SAVEPOINT and this transaction? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "ROLLBACK TO SAVEPOINT sp1 also destroys sp1 itself, so it cannot be reused after the rollback"
+          "text": "ROLLBACK TO a undoes only the changes made after the savepoint."
         },
         {
           "key": "B",
-          "text": "A SAVEPOINT defined within a transaction can be referenced after a COMMIT has been issued"
+          "text": "After COMMIT, only the row with value 1 is stored."
         },
         {
           "key": "C",
-          "text": "ROLLBACK TO SAVEPOINT sp1 undoes DML performed after sp1 was set but keeps all changes made before sp1, keeping the transaction open"
+          "text": "ROLLBACK TO a ends the entire transaction."
         },
         {
           "key": "D",
-          "text": "SAVEPOINT names must be unique globally across all active sessions in the database"
+          "text": "The row with value 2 is committed."
+        },
+        {
+          "key": "E",
+          "text": "A SAVEPOINT permanently commits the changes made before it."
         }
       ],
       "correct": [
-        "C"
+        "A",
+        "B"
       ],
-      "explanation": "SAVEPOINT marca um ponto intermediário dentro de uma transação ativa. ROLLBACK TO SAVEPOINT sp1 desfaz apenas as mudanças realizadas APÓS o savepoint ser criado, preservando todas as alterações anteriores — e a transação continua aberta (não é encerrada). Um COMMIT encerra a transação e invalida todos os savepoints criados nela; portanto, um savepoint não pode ser referenciado após um COMMIT (opção B incorreta). A opção A está errada: após ROLLBACK TO SAVEPOINT sp1, o ponto sp1 ainda existe e pode ser referenciado novamente. Savepoints são locais à transação do usuário — não há escopo global entre sessões. Em transações longas com múltiplas etapas, SAVEPOINT é uma ferramenta valiosa para desfazer parcialmente o trabalho sem perder todo o progresso."
+      "explanation": "ROLLBACK TO SAVEPOINT a desfaz apenas o que ocorreu APÓS o savepoint (A), então o INSERT do 2 é revertido e, após o COMMIT, só a linha 1 permanece (B). ROLLBACK TO SAVEPOINT NÃO encerra a transação inteira (C errado); a linha 2 não é commitada (D errado); e um SAVEPOINT não confirma nada — só marca um ponto de retorno (E errado)."
     },
     {
       "id": 301,
@@ -8592,31 +8722,36 @@
       "id": 306,
       "topic": "functions",
       "context": "",
-      "text": "Which statement about CASE expressions in Oracle SQL is TRUE?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about the CASE expression in Oracle SQL? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "In a simple CASE expression, comparison operators such as > and < can be used: CASE salary WHEN > 10000 THEN 'High' END"
+          "text": "A CASE expression can be used in the SELECT list to return different values based on conditions."
         },
         {
           "key": "B",
-          "text": "A searched CASE expression evaluates each WHEN as an independent boolean condition, supporting range checks, IS NULL, BETWEEN, and IN"
+          "text": "A searched CASE can evaluate comparison conditions such as salary > 5000."
         },
         {
           "key": "C",
-          "text": "Both simple and searched CASE must include an ELSE clause; omitting ELSE causes a syntax error"
+          "text": "A CASE expression cannot include an ELSE branch."
         },
         {
           "key": "D",
-          "text": "DECODE is more flexible than CASE because it supports IS NULL checks, which CASE cannot handle"
+          "text": "CASE can only compare a column to literal values, never to expressions."
+        },
+        {
+          "key": "E",
+          "text": "CASE always returns a Boolean."
         }
       ],
       "correct": [
+        "A",
         "B"
       ],
-      "explanation": "O CASE de busca (searched CASE) avalia cada condição WHEN como uma expressão booleana independente, permitindo qualquer operador de comparação, funções, IS NULL, BETWEEN, IN, etc.: CASE WHEN salary > 10000 THEN 'High' WHEN salary > 5000 THEN 'Medium' ELSE 'Low' END. Já o CASE simples (simple CASE) compara o valor de referência com uma constante por igualdade implícita — operadores como > não são permitidos na sintaxe WHEN: CASE job_id WHEN 'CLERK' THEN ... END. A opção C está errada: a cláusula ELSE é opcional em ambas as formas; se omitida e nenhum WHEN for satisfeito, o resultado é NULL. A opção D está incorreta: CASE suporta IS NULL perfeitamente com WHEN coluna IS NULL THEN ...; DECODE, por outro lado, trata internamente NULL = NULL como igual, mas CASE é mais expressivo e é o padrão ANSI SQL."
+      "explanation": "Um CASE pode ser usado na lista do SELECT para devolver valores conforme condições (A), e o searched CASE avalia comparações como salary > 5000 (B). CASE PODE ter ramo ELSE (C errado); pode comparar com expressões, não só literais (D errado); e devolve um VALOR de dado, não um Boolean (E errado)."
     },
     {
       "id": 308,
@@ -8681,32 +8816,37 @@
     {
       "id": 310,
       "topic": "joins",
-      "context": "",
-      "text": "Which of the following statements about the USING clause in Oracle SQL JOINs is TRUE?",
-      "type": "single",
-      "correctCount": 1,
+      "context": "EMPLOYEES and DEPARTMENTS both have a DEPARTMENT_ID column.",
+      "text": "Which two statements are true about the USING clause in a join? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "Columns listed in the USING clause must be qualified with their table alias in all SELECT and WHERE clause references"
+          "text": "USING (department_id) joins the tables on that common column."
         },
         {
           "key": "B",
-          "text": "USING(department_id) joins on the named column and, unlike ON, prevents NULL = NULL matches"
+          "text": "The joined column cannot be qualified with a table alias in the SELECT or WHERE."
         },
         {
           "key": "C",
-          "text": "Columns listed in the USING clause cannot be prefixed with a table alias anywhere in the query; doing so causes ORA-25154"
+          "text": "USING lets you join columns that have different names."
         },
         {
           "key": "D",
-          "text": "USING and ON are fully interchangeable when joining on a single column with the same name in both tables"
+          "text": "USING is a synonym for CROSS JOIN."
+        },
+        {
+          "key": "E",
+          "text": "USING requires an ON clause as well."
         }
       ],
       "correct": [
-        "C"
+        "A",
+        "B"
       ],
-      "explanation": "Quando se usa a cláusula USING(column_name), o Oracle trata a coluna de junção como uma coluna neutra — não pertencente exclusivamente a nenhuma das duas tabelas. Por isso, referenciar essa coluna com um qualificador de tabela (como e.department_id ou d.department_id) em qualquer parte da consulta — SELECT, WHERE, ORDER BY — causa o erro ORA-25154: 'column part of USING clause cannot have qualifier'. A coluna deve ser referenciada apenas pelo nome simples (department_id), sem prefixo. Isso contrasta com a cláusula ON, onde as colunas pertencem às suas respectivas tabelas e devem (ou podem) ser qualificadas para evitar ambiguidade. A opção D está parcialmente errada: embora o resultado seja o mesmo, ON e USING têm regras de referência de coluna diferentes, tornando-os não 'totalmente intercambiáveis' no código."
+      "explanation": "USING (department_id) une as tabelas pela coluna comum (A), e essa coluna coalescida NÃO pode ser prefixada por alias em nenhum lugar da consulta (B). USING exige colunas de MESMO nome (C errado); não é sinônimo de CROSS JOIN (D errado); e não se combina com ON — usa-se um OU outro (E errado)."
     },
     {
       "id": 311,
@@ -8832,31 +8972,36 @@
       "id": 315,
       "topic": "ddl",
       "context": "",
-      "text": "Which statement about DEFERRABLE constraints in Oracle is TRUE?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about DEFERRABLE constraints? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "DEFERRABLE constraints are permanently disabled; they exist only to document referential integrity rules without enforcement"
+          "text": "A DEFERRABLE INITIALLY DEFERRED constraint is checked only at COMMIT time."
         },
         {
           "key": "B",
-          "text": "With INITIALLY DEFERRED, constraint violations are checked immediately after each DML statement, not at COMMIT"
+          "text": "Deferring constraint checking can allow temporary violations within a transaction that are resolved before COMMIT."
         },
         {
           "key": "C",
-          "text": "With INITIALLY DEFERRED, constraint violations are checked at COMMIT time, allowing a transaction to temporarily violate the constraint during execution"
+          "text": "All constraints are deferrable by default."
         },
         {
           "key": "D",
-          "text": "DEFERRABLE constraints can only be applied to FOREIGN KEY constraints — PRIMARY KEY and UNIQUE do not support deferral"
+          "text": "A deferred constraint is checked after every single statement."
+        },
+        {
+          "key": "E",
+          "text": "DEFERRABLE can only be applied to NOT NULL constraints."
         }
       ],
       "correct": [
-        "C"
+        "A",
+        "B"
       ],
-      "explanation": "Constraints DEFERRABLE permitem que a verificação de integridade seja adiada para o momento do COMMIT em vez de ser verificada imediatamente após cada instrução DML. Com INITIALLY DEFERRED, a constraint começa deferida por padrão em toda nova transação — violações temporárias são permitidas durante a transação, mas ao executar COMMIT, o Oracle verifica todas as constraints deferidas e faz rollback da transação se alguma for violada. Isso é útil em situações como inserir registros com dependências mútuas. Para alterar o modo durante uma transação, usa-se SET CONSTRAINT nome DEFERRED|IMMEDIATE. PRIMARY KEY, UNIQUE e FOREIGN KEY todos suportam DEFERRABLE — NOT NULL é a exceção, pois não pode ser deferida. A opção B inverteu o comportamento: verificação imediata é o modo INITIALLY IMMEDIATE (padrão)."
+      "explanation": "Uma constraint DEFERRABLE INITIALLY DEFERRED só é verificada no momento do COMMIT (A), o que permite violações temporárias durante a transação, desde que resolvidas antes do commit (B) — útil, por exemplo, para atualizar chaves em cascata manualmente. Constraints NÃO são deferrable por padrão (C errado); uma deferred não é checada a cada statement (D errado); e DEFERRABLE aplica-se a PK/FK/UNIQUE/CHECK, não só NOT NULL (E errado)."
     },
     {
       "id": 316,
@@ -8892,31 +9037,36 @@
       "id": 317,
       "topic": "set",
       "context": "",
-      "text": "Which of the following statements about UNION and UNION ALL in Oracle SQL is TRUE?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about UNION and UNION ALL? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "UNION ALL removes duplicate rows, whereas UNION retains all duplicates including repeated rows"
+          "text": "UNION removes duplicate rows from the combined result."
         },
         {
           "key": "B",
-          "text": "UNION implicitly includes an ORDER BY clause, guaranteeing the final result set is always sorted"
+          "text": "UNION ALL keeps all rows, including duplicates, and is usually faster."
         },
         {
           "key": "C",
-          "text": "UNION removes duplicate rows (implicit DISTINCT), while UNION ALL retains all rows including duplicates and is generally faster"
+          "text": "UNION ALL removes duplicate rows."
         },
         {
           "key": "D",
-          "text": "Both UNION and UNION ALL require the same data types but allow a different number of columns in each SELECT"
+          "text": "UNION preserves duplicate rows."
+        },
+        {
+          "key": "E",
+          "text": "UNION ALL requires the queries to have different numbers of columns."
         }
       ],
       "correct": [
-        "C"
+        "A",
+        "B"
       ],
-      "explanation": "UNION combina os resultados de dois ou mais SELECT e elimina linhas duplicadas do resultado final — comportamento equivalente a aplicar DISTINCT. UNION ALL também combina os resultados, mas PRESERVA todas as linhas, incluindo duplicatas. Por não precisar ordenar e comparar linhas para eliminar duplicatas, UNION ALL é geralmente mais rápido e deve ser preferido quando duplicatas são aceitáveis ou impossíveis. A opção A inverteu as definições incorretamente. A opção B está errada: UNION não garante nenhuma ordem específica no resultado; para ordenar, adicione ORDER BY após a última instrução SELECT do conjunto. A opção D está errada: tanto UNION quanto UNION ALL exigem o mesmo número de colunas E tipos de dados compatíveis em cada SELECT — caso contrário, ORA-01789 (número de colunas incorreto) ou ORA-01790 (tipo de dados incompatível) são lançados."
+      "explanation": "UNION remove as linhas duplicadas do resultado combinado (A), enquanto UNION ALL mantém todas, inclusive duplicatas, e por não fazer a deduplicação costuma ser mais rápido (B). Por isso C e D invertem os conceitos, e UNION ALL exige o MESMO número de colunas, não diferente (E errado)."
     },
     {
       "topic": "fundamentals",
@@ -9581,32 +9731,37 @@
     {
       "id": 345,
       "topic": "functions",
-      "context": "",
-      "text": "What do ROUND(1587, -2) and TRUNC(1587, -2) return, respectively?",
-      "type": "single",
-      "correctCount": 1,
+      "context": "The value 1587 is used.",
+      "text": "Which two statements are true about ROUND and TRUNC with a negative second argument? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "1587 and 1587, because a negative second argument is invalid and is ignored, returning the original number unchanged."
+          "text": "ROUND(1587, -2) returns 1600."
         },
         {
           "key": "B",
-          "text": "1600 and 1500, because a negative n rounds/truncates to the left of the decimal point (to the hundreds place here), with ROUND rounding to the nearest hundred and TRUNC simply cutting off the digits."
+          "text": "TRUNC(1587, -2) returns 1500."
         },
         {
           "key": "C",
-          "text": "15.87 and 15.87, because negative n shifts the decimal point n places to the left."
+          "text": "ROUND(1587, -2) returns 1500."
         },
         {
           "key": "D",
-          "text": "1590 and 1580, because negative n rounds/truncates to the nearest ten."
+          "text": "TRUNC(1587, -2) returns 1600."
+        },
+        {
+          "key": "E",
+          "text": "A negative second argument is not allowed."
         }
       ],
       "correct": [
+        "A",
         "B"
       ],
-      "explanation": "Quando o segundo argumento (n) de ROUND ou TRUNC é negativo, o arredondamento/truncamento ocorre à ESQUERDA do ponto decimal, na casa correspondente: n = -2 atua na casa das centenas. ROUND(1587, -2) arredonda 1587 para a centena mais próxima, resultando em 1600 (já que 87 está acima da metade de 100). TRUNC(1587, -2) apenas descarta os dígitos das dezenas e unidades sem arredondar, resultando em 1500. Essa é uma diferença fundamental entre as duas funções: ROUND aproxima para o valor mais próximo, enquanto TRUNC sempre corta em direção a zero, sem considerar se o restante seria arredondado para cima."
+      "explanation": "Um segundo argumento negativo atua à ESQUERDA do ponto decimal: ROUND(1587, -2) arredonda para a centena mais próxima (1600) — A; TRUNC(1587, -2) CORTA na casa das centenas, dando 1500 — B. Por isso C e D estão trocados, e o argumento negativo É permitido (E errado)."
     },
     {
       "id": 346,
@@ -10092,31 +10247,36 @@
       "id": 364,
       "topic": "select",
       "context": "",
-      "text": "Which statement about the ORDER BY clause in Oracle SQL is correct?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about the ORDER BY clause? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "ORDER BY can reference a column alias defined in the SELECT list, a column position number, or an expression on a column not in the SELECT list — but that last option is not allowed if the query uses DISTINCT or is part of a set operator (UNION, INTERSECT, MINUS)"
+          "text": "ORDER BY can reference a column alias defined in the SELECT list."
         },
         {
           "key": "B",
-          "text": "ORDER BY can never reference a column alias, only actual column names"
+          "text": "ORDER BY can sort by a column that is not in the SELECT list."
         },
         {
           "key": "C",
-          "text": "ORDER BY must always list exactly the same columns as the SELECT clause, in the same order"
+          "text": "ORDER BY is evaluated before the WHERE clause."
         },
         {
           "key": "D",
-          "text": "Position numbers (e.g. ORDER BY 2) are not supported in Oracle SQL"
+          "text": "By default, NULLs sort first in ascending order."
+        },
+        {
+          "key": "E",
+          "text": "ORDER BY can only reference columns by position, never by name."
         }
       ],
       "correct": [
-        "A"
+        "A",
+        "B"
       ],
-      "explanation": "O ORDER BY do Oracle é flexível: aceita aliases de coluna definidos no SELECT, números de posição (ORDER BY 1, 2) e até expressões sobre colunas que nem aparecem no SELECT. Porém, quando a consulta usa DISTINCT ou faz parte de um operador de conjunto (UNION, INTERSECT, MINUS), o ORDER BY só pode referenciar colunas ou aliases que estejam de fato na lista do SELECT, pois nesses casos o resultado já foi processado como um conjunto de linhas distintas e não há mais acesso direto às colunas-base."
+      "explanation": "O ORDER BY pode referenciar um alias definido no SELECT (A) e pode ordenar por uma coluna que não está na lista de seleção (B). Ele é avaliado por ÚLTIMO, depois do WHERE e do SELECT (C errado); por padrão, em ordem ASCENDENTE os NULLs vêm por ÚLTIMO (D errado); e pode referenciar colunas por nome, alias ou posição (E errado)."
     },
     {
       "id": 365,
@@ -10362,31 +10522,36 @@
       "id": 375,
       "topic": "ddl",
       "context": "",
-      "text": "Which of the following is NOT allowed when defining a CHECK constraint on a table?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about the restrictions on a CHECK constraint? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "CHECK (salary BETWEEN 1000 AND 50000)"
+          "text": "A CHECK constraint cannot reference the SYSDATE pseudo-column."
         },
         {
           "key": "B",
-          "text": "CHECK (UPPER(status) IN ('A','I','P'))"
+          "text": "A CHECK constraint cannot contain a subquery."
         },
         {
           "key": "C",
-          "text": "CHECK (salary > (SELECT AVG(salary) FROM employees))"
+          "text": "A CHECK constraint can reference columns of other tables."
         },
         {
           "key": "D",
-          "text": "CHECK (salary + NVL(commission_pct,0) > 0)"
+          "text": "A CHECK constraint can call user-defined PL/SQL functions freely."
+        },
+        {
+          "key": "E",
+          "text": "A CHECK constraint can use the CURRVAL of a sequence."
         }
       ],
       "correct": [
-        "C"
+        "A",
+        "B"
       ],
-      "explanation": "A condição de uma CHECK constraint deve poder ser avaliada usando apenas os valores da própria linha sendo inserida ou atualizada — ela pode referenciar múltiplas colunas dessa mesma linha e usar funções e expressões sobre elas (como nas opções A, B e D), mas nunca pode conter uma subquery, já que o Oracle precisa validar a constraint sem consultar outras linhas ou tabelas. Tentar criar uma CHECK constraint com subquery gera um erro (ORA-02251 ou equivalente, dependendo do contexto)."
+      "explanation": "Um CHECK NÃO pode referenciar funções não determinísticas como SYSDATE (A) nem conter subqueries (B). Também não pode referenciar colunas de OUTRAS tabelas (C errado), não pode chamar funções PL/SQL do usuário (D errado) nem usar CURRVAL/NEXTVAL de sequence (E errado)."
     },
     {
       "id": 376,
@@ -10632,31 +10797,36 @@
       "id": 385,
       "topic": "functions",
       "context": "",
-      "text": "What do ROUND(1234, -2) and TRUNC(1234, -2) return, respectively?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about the TO_NUMBER and TO_DATE conversion functions? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "1200 and 1200 — both operate on the hundreds place because of the negative second argument; ROUND rounds down here because 34 is less than half of 100, so both happen to coincide at 1200."
+          "text": "TO_NUMBER('1234') converts the string to the number 1234."
         },
         {
           "key": "B",
-          "text": "1200 and 1234 — ROUND rounds to the nearest hundred, while TRUNC ignores a negative second argument and simply returns the number unchanged."
+          "text": "TO_DATE('2024-01-15', 'YYYY-MM-DD') converts the string to a DATE."
         },
         {
           "key": "C",
-          "text": "1300 and 1200 — ROUND always rounds up when the second argument is negative, while TRUNC always rounds down."
+          "text": "TO_NUMBER converts a DATE to a number of days."
         },
         {
           "key": "D",
-          "text": "1234 and 1234 — a negative second argument is invalid for both ROUND and TRUNC and is simply ignored."
+          "text": "TO_DATE returns a VARCHAR2."
+        },
+        {
+          "key": "E",
+          "text": "TO_NUMBER requires a format model in all cases."
         }
       ],
       "correct": [
-        "A"
+        "A",
+        "B"
       ],
-      "explanation": "Um segundo argumento negativo em ROUND e TRUNC indica a posição à esquerda do ponto decimal onde a operação deve ocorrer — aqui, -2 significa a casa das centenas. TRUNC(1234, -2) simplesmente descarta tudo abaixo da casa das centenas, resultando em 1200. ROUND(1234, -2) avalia se o valor descartado (34) é maior ou igual à metade de 100 (ou seja, 50): como 34 é menor, o resultado é arredondado para baixo, também gerando 1200. Ambas as funções aceitam normalmente segundo argumento negativo — não é um uso inválido."
+      "explanation": "TO_NUMBER('1234') converte a string para o número 1234 (A), e TO_DATE com máscara converte a string para DATE (B). TO_NUMBER não converte DATE para número (C errado); TO_DATE devolve DATE, não VARCHAR2 (D errado); e o format model do TO_NUMBER é opcional quando a string já está num formato numérico simples (E errado)."
     },
     {
       "id": 386,
@@ -11566,31 +11736,36 @@
     {
       "topic": "dictionary",
       "context": "",
-      "text": "Which statement is true about the DICTIONARY (or DICT) data dictionary view?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about the DICTIONARY (DICT) data dictionary view? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "It lists the data dictionary views and tables accessible to the current user, with a short description of each."
+          "text": "It lists the data dictionary views and tables accessible to the current user."
         },
         {
           "key": "B",
-          "text": "It contains one row for every row of every user table."
+          "text": "It has a COMMENTS column describing each object."
         },
         {
           "key": "C",
-          "text": "It can only be queried by the SYS user."
+          "text": "It contains one row per row of every user table."
         },
         {
           "key": "D",
-          "text": "It stores the initialization parameters of the instance."
+          "text": "It can be queried only by SYS."
+        },
+        {
+          "key": "E",
+          "text": "It stores the database initialization parameters."
         }
       ],
       "correct": [
-        "A"
+        "A",
+        "B"
       ],
-      "explanation": "A view DICTIONARY (sinônimo DICT) é um 'catálogo do catálogo': lista as views e tabelas do dicionário de dados acessíveis ao usuário, com uma coluna COMMENTS descrevendo cada uma — útil para descobrir qual view consultar. Não contém dados das tabelas de usuário (B), pode ser consultada por qualquer usuário (C errado) e não guarda parâmetros de inicialização (D).",
+      "explanation": "A view DICTIONARY (DICT) lista as views e tabelas do dicionário acessíveis ao usuário (A), com uma coluna COMMENTS descrevendo cada objeto (B) — ótima para descobrir qual view consultar. Não contém dados das tabelas de usuário (C errado); pode ser consultada por qualquer usuário (D errado); e não guarda parâmetros de inicialização (E errado).",
       "id": 420
     },
     {
@@ -11891,31 +12066,36 @@
     {
       "topic": "timezone",
       "context": "",
-      "text": "Which function returns the time zone of the database itself (not the session)?",
-      "type": "single",
-      "correctCount": 1,
+      "text": "Which two statements are true about the DBTIMEZONE and SESSIONTIMEZONE functions? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
       "options": [
         {
           "key": "A",
-          "text": "DBTIMEZONE"
+          "text": "DBTIMEZONE returns the time zone of the database."
         },
         {
           "key": "B",
-          "text": "SESSIONTIMEZONE"
+          "text": "SESSIONTIMEZONE returns the time zone of the current session."
         },
         {
           "key": "C",
-          "text": "LOCALTIMESTAMP"
+          "text": "DBTIMEZONE returns the session's time zone."
         },
         {
           "key": "D",
-          "text": "CURRENT_DATE"
+          "text": "SESSIONTIMEZONE returns the database time zone."
+        },
+        {
+          "key": "E",
+          "text": "Both functions return a full timestamp value."
         }
       ],
       "correct": [
-        "A"
+        "A",
+        "B"
       ],
-      "explanation": "DBTIMEZONE retorna o fuso horário do BANCO DE DADOS (um offset ou região). SESSIONTIMEZONE retorna o fuso da SESSÃO atual (B). LOCALTIMESTAMP devolve data/hora local sem offset (C), e CURRENT_DATE devolve a data no fuso da sessão (D) — nenhum deles informa o fuso do banco.",
+      "explanation": "DBTIMEZONE devolve o fuso horário do BANCO (A) e SESSIONTIMEZONE, o fuso da SESSÃO atual (B). Por isso C e D estão trocados. Ambas devolvem um fuso (offset ou região), não um timestamp completo (E errado).",
       "id": 430
     },
     {
