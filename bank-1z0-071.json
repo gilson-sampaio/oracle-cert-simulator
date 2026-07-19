@@ -11497,6 +11497,716 @@
         "A"
       ],
       "explanation": "MINUS é um operador de conjunto que compara linhas inteiras entre os dois resultados, tratando NULL de forma especial nesse contexto (duas linhas são consideradas iguais também quando ambas têm NULL na posição correspondente) — por isso ele consegue simplesmente remover o valor 2 e retornar 1 e 3 sem se afetar pelo NULL isolado de B. Já NOT IN (subquery) é reescrito internamente como uma série de comparações '<> ALL'; se a subquery retornar qualquer linha com NULL, a comparação valor <> NULL avalia para UNKNOWN, e como NOT IN precisa que TODAS as comparações sejam verdadeiras para incluir a linha, a presença de um único NULL na subquery faz com que nenhuma linha externa seja incluída, retornando um conjunto vazio — uma armadilha clássica e um dos motivos pelos quais NOT EXISTS costuma ser preferido a NOT IN quando a subquery pode conter NULLs."
+    },
+    {
+      "topic": "dictionary",
+      "context": "",
+      "text": "Which two statements are true about the data dictionary views prefixed with USER_, ALL_, and DBA_? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "USER_ views show only the objects owned by the current user."
+        },
+        {
+          "key": "B",
+          "text": "ALL_ views show the objects the current user owns plus those they have been granted access to."
+        },
+        {
+          "key": "C",
+          "text": "USER_ views always include an OWNER column."
+        },
+        {
+          "key": "D",
+          "text": "DBA_ views can be queried by any user without additional privileges."
+        },
+        {
+          "key": "E",
+          "text": "ALL_ views can only be queried by the SYS user."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "As views USER_ mostram apenas os objetos do próprio usuário (A), e as ALL_ mostram os objetos que o usuário possui MAIS aqueles a que tem acesso concedido (B). As USER_ normalmente NÃO têm coluna OWNER, pois o dono é sempre o usuário atual (C errado). As DBA_ exigem privilégio administrativo (ex.: SELECT ANY DICTIONARY ou papel DBA) — não são acessíveis a qualquer um (D errado), e as ALL_ podem ser consultadas por qualquer usuário, não só SYS (E errado).",
+      "id": 418
+    },
+    {
+      "topic": "dictionary",
+      "context": "",
+      "text": "Which data dictionary view would you query to see the names and data types of the columns of the tables you own?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "USER_TAB_COLUMNS"
+        },
+        {
+          "key": "B",
+          "text": "USER_TABLES"
+        },
+        {
+          "key": "C",
+          "text": "USER_OBJECTS"
+        },
+        {
+          "key": "D",
+          "text": "USER_CONSTRAINTS"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "USER_TAB_COLUMNS descreve as COLUNAS (nome, tipo de dado, tamanho, nullability) das tabelas do usuário. USER_TABLES lista as tabelas mas não o detalhe de cada coluna (B); USER_OBJECTS lista todos os objetos genericamente (C); e USER_CONSTRAINTS traz as constraints, não as colunas (D).",
+      "id": 419
+    },
+    {
+      "topic": "dictionary",
+      "context": "",
+      "text": "Which statement is true about the DICTIONARY (or DICT) data dictionary view?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It lists the data dictionary views and tables accessible to the current user, with a short description of each."
+        },
+        {
+          "key": "B",
+          "text": "It contains one row for every row of every user table."
+        },
+        {
+          "key": "C",
+          "text": "It can only be queried by the SYS user."
+        },
+        {
+          "key": "D",
+          "text": "It stores the initialization parameters of the instance."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "A view DICTIONARY (sinônimo DICT) é um 'catálogo do catálogo': lista as views e tabelas do dicionário de dados acessíveis ao usuário, com uma coluna COMMENTS descrevendo cada uma — útil para descobrir qual view consultar. Não contém dados das tabelas de usuário (B), pode ser consultada por qualquer usuário (C errado) e não guarda parâmetros de inicialização (D).",
+      "id": 420
+    },
+    {
+      "topic": "dictionary",
+      "context": "",
+      "text": "Which two statements are true about querying the data dictionary? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The data dictionary is owned by the SYS user."
+        },
+        {
+          "key": "B",
+          "text": "USER_OBJECTS contains a row for each object owned by the current user, including tables, indexes, and sequences."
+        },
+        {
+          "key": "C",
+          "text": "Data dictionary views can be updated with INSERT and UPDATE statements by their owner."
+        },
+        {
+          "key": "D",
+          "text": "The data dictionary is stored in the temporary tablespace."
+        },
+        {
+          "key": "E",
+          "text": "USER_TABLES shows tables owned by every user in the database."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O dicionário de dados pertence ao usuário SYS (A), e USER_OBJECTS tem uma linha para cada objeto do usuário atual — tabelas, índices, sequences, views, etc. (B). As views do dicionário são de SOMENTE LEITURA para o usuário; não se faz DML direto nelas (C errado). O dicionário fica no tablespace SYSTEM, não no temporary (D errado), e USER_TABLES mostra só as tabelas do usuário atual, não de todos (E errado).",
+      "id": 421
+    },
+    {
+      "topic": "dictionary",
+      "context": "",
+      "text": "Which data dictionary view lists the constraints defined on the tables owned by the current user?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "USER_CONSTRAINTS"
+        },
+        {
+          "key": "B",
+          "text": "USER_INDEXES"
+        },
+        {
+          "key": "C",
+          "text": "USER_TAB_PRIVS"
+        },
+        {
+          "key": "D",
+          "text": "USER_SOURCE"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "USER_CONSTRAINTS lista as constraints (PRIMARY KEY, FOREIGN KEY, UNIQUE, CHECK, NOT NULL) das tabelas do usuário, incluindo o tipo e o status. USER_INDEXES traz índices (B); USER_TAB_PRIVS, privilégios de objeto concedidos/recebidos (C); e USER_SOURCE, o código-fonte de objetos PL/SQL (D).",
+      "id": 422
+    },
+    {
+      "topic": "dictionary",
+      "context": "",
+      "text": "Which two statements are true about the difference between DBA_ and ALL_ data dictionary views? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "DBA_ views show all objects in the database, regardless of owner."
+        },
+        {
+          "key": "B",
+          "text": "Querying DBA_ views typically requires administrative privileges."
+        },
+        {
+          "key": "C",
+          "text": "ALL_ views show only objects owned by the current user."
+        },
+        {
+          "key": "D",
+          "text": "DBA_ views can never be queried, even by SYS."
+        },
+        {
+          "key": "E",
+          "text": "ALL_ views require the DBA role to be queried."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "As views DBA_ mostram TODOS os objetos do banco, de qualquer dono (A), e por isso exigem privilégios administrativos para serem consultadas (B). As ALL_ mostram o que o usuário possui MAIS o que lhe foi concedido — não apenas os próprios objetos (C errado). DBA_ é plenamente consultável por SYS/DBAs (D errado), e ALL_ não exige o papel DBA (E errado).",
+      "id": 423
+    },
+    {
+      "topic": "dictionary",
+      "context": "",
+      "text": "Which data dictionary view would you query to find the sequences you own and their current values?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "USER_SEQUENCES"
+        },
+        {
+          "key": "B",
+          "text": "USER_TABLES"
+        },
+        {
+          "key": "C",
+          "text": "USER_SYNONYMS"
+        },
+        {
+          "key": "D",
+          "text": "USER_VIEWS"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "USER_SEQUENCES lista as sequences do usuário, com colunas como MIN_VALUE, MAX_VALUE, INCREMENT_BY, CACHE_SIZE e LAST_NUMBER. USER_TABLES traz tabelas (B), USER_SYNONYMS os sinônimos (C) e USER_VIEWS as views com sua query de definição (D).",
+      "id": 424
+    },
+    {
+      "topic": "dictionary",
+      "context": "",
+      "text": "Which two statements are true about the data dictionary in an Oracle database? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "It is created and maintained automatically by the Oracle server."
+        },
+        {
+          "key": "B",
+          "text": "It is a set of read-only reference tables and views describing the database."
+        },
+        {
+          "key": "C",
+          "text": "Users must manually update it after creating a table."
+        },
+        {
+          "key": "D",
+          "text": "It stores only user data, not metadata."
+        },
+        {
+          "key": "E",
+          "text": "It is dropped and rebuilt every time the instance restarts."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O dicionário de dados é criado e mantido AUTOMATICAMENTE pelo servidor Oracle conforme objetos são criados/alterados (A), e é um conjunto de tabelas e views de referência, de SOMENTE LEITURA, que descrevem a estrutura do banco (B). O usuário nunca o atualiza manualmente (C errado); ele guarda METADADOS, não dados de usuário (D errado), e é persistente — não é recriado a cada reinício (E errado).",
+      "id": 425
+    },
+    {
+      "topic": "timezone",
+      "context": "",
+      "text": "Which two statements are true about the CURRENT_DATE, CURRENT_TIMESTAMP, and LOCALTIMESTAMP functions? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "CURRENT_DATE returns the current date and time in the session's time zone, as a DATE."
+        },
+        {
+          "key": "B",
+          "text": "CURRENT_TIMESTAMP returns a TIMESTAMP WITH TIME ZONE value in the session's time zone."
+        },
+        {
+          "key": "C",
+          "text": "LOCALTIMESTAMP returns a value that includes an explicit time zone offset."
+        },
+        {
+          "key": "D",
+          "text": "CURRENT_DATE returns the database server's operating system date, ignoring the session time zone."
+        },
+        {
+          "key": "E",
+          "text": "CURRENT_TIMESTAMP always returns UTC."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "CURRENT_DATE devolve a data/hora corrente no fuso da SESSÃO, como um DATE (A); CURRENT_TIMESTAMP devolve um TIMESTAMP WITH TIME ZONE no fuso da sessão (B). LOCALTIMESTAMP devolve um TIMESTAMP SEM offset de fuso (C errado). Quem reflete o relógio do SO do servidor (ignorando o fuso da sessão) é SYSDATE/SYSTIMESTAMP, não CURRENT_DATE (D errado), e CURRENT_TIMESTAMP usa o fuso da sessão, não UTC fixo (E errado).",
+      "id": 426
+    },
+    {
+      "topic": "timezone",
+      "context": "",
+      "text": "You must store a duration such as '2 years and 6 months' that supports date arithmetic. Which data type is most appropriate?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "INTERVAL YEAR TO MONTH"
+        },
+        {
+          "key": "B",
+          "text": "INTERVAL DAY TO SECOND"
+        },
+        {
+          "key": "C",
+          "text": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "key": "D",
+          "text": "DATE"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "INTERVAL YEAR TO MONTH armazena durações em anos e meses, ideal para '2 anos e 6 meses'. INTERVAL DAY TO SECOND guarda dias/horas/minutos/segundos (bom para durações curtas e precisas), não anos/meses (B). TIMESTAMP WITH TIME ZONE representa um instante no tempo, não uma duração (C), e DATE também é um ponto no tempo, não um intervalo (D).",
+      "id": 427
+    },
+    {
+      "topic": "timezone",
+      "context": "",
+      "text": "Evaluate:\n\nSELECT DATE '2024-03-31' + INTERVAL '1' MONTH FROM dual;",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It returns 30-APR-2024, adjusting to the last valid day of April."
+        },
+        {
+          "key": "B",
+          "text": "It returns 01-MAY-2024."
+        },
+        {
+          "key": "C",
+          "text": "It raises an error because April has no 31st day."
+        },
+        {
+          "key": "D",
+          "text": "It returns 31-APR-2024."
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "Somar INTERVAL '1' MONTH a uma data preserva o dia (31), mas 31 de abril NÃO existe, então o Oracle lança um erro (ORA-01839: date not valid for month specified). Isso difere de ADD_MONTHS, que AJUSTARIA para o último dia válido do mês (30-ABR). Por isso a aritmética com INTERVAL pode falhar onde ADD_MONTHS teria sucesso.",
+      "id": 428
+    },
+    {
+      "topic": "timezone",
+      "context": "",
+      "text": "Which two statements are true about the SYSDATE and SYSTIMESTAMP functions? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "SYSDATE returns the date and time of the operating system where the database resides, as a DATE."
+        },
+        {
+          "key": "B",
+          "text": "SYSTIMESTAMP returns a TIMESTAMP WITH TIME ZONE value."
+        },
+        {
+          "key": "C",
+          "text": "SYSDATE returns the time in the session's declared time zone."
+        },
+        {
+          "key": "D",
+          "text": "SYSTIMESTAMP returns a plain DATE with no fractional seconds."
+        },
+        {
+          "key": "E",
+          "text": "SYSDATE includes fractional seconds."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "SYSDATE devolve a data/hora do SO onde o banco reside, como DATE (A), e SYSTIMESTAMP devolve um TIMESTAMP WITH TIME ZONE, com fuso e frações de segundo (B). SYSDATE usa o relógio do servidor, não o fuso declarado da sessão (C errado); SYSTIMESTAMP inclui frações de segundo (D errado), enquanto o tipo DATE do SYSDATE NÃO guarda frações de segundo (E errado).",
+      "id": 429
+    },
+    {
+      "topic": "timezone",
+      "context": "",
+      "text": "Which function returns the time zone of the database itself (not the session)?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "DBTIMEZONE"
+        },
+        {
+          "key": "B",
+          "text": "SESSIONTIMEZONE"
+        },
+        {
+          "key": "C",
+          "text": "LOCALTIMESTAMP"
+        },
+        {
+          "key": "D",
+          "text": "CURRENT_DATE"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "DBTIMEZONE retorna o fuso horário do BANCO DE DADOS (um offset ou região). SESSIONTIMEZONE retorna o fuso da SESSÃO atual (B). LOCALTIMESTAMP devolve data/hora local sem offset (C), e CURRENT_DATE devolve a data no fuso da sessão (D) — nenhum deles informa o fuso do banco.",
+      "id": 430
+    },
+    {
+      "topic": "timezone",
+      "context": "A column of type TIMESTAMP WITH LOCAL TIME ZONE is used.",
+      "text": "Which statement is true about how TIMESTAMP WITH LOCAL TIME ZONE stores and displays values?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The value is normalized to the database time zone on storage and converted to the session's time zone on retrieval."
+        },
+        {
+          "key": "B",
+          "text": "The value is stored with an explicit time zone offset that is always displayed."
+        },
+        {
+          "key": "C",
+          "text": "It cannot store any time information, only the date."
+        },
+        {
+          "key": "D",
+          "text": "It always displays values in UTC regardless of the session."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "TIMESTAMP WITH LOCAL TIME ZONE normaliza o valor para o fuso do BANCO ao gravar e o converte automaticamente para o fuso da SESSÃO na recuperação — sem armazenar/exibir um offset explícito (por isso B está errado). Ele guarda hora completa (C errado) e a exibição depende do fuso da sessão, não é fixa em UTC (D errado).",
+      "id": 431
+    },
+    {
+      "topic": "timezone",
+      "context": "",
+      "text": "Which two are valid uses of the EXTRACT function with date/timestamp values? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "EXTRACT(YEAR FROM SYSDATE) returns the year component as a number."
+        },
+        {
+          "key": "B",
+          "text": "EXTRACT(MONTH FROM hire_date) returns the month component as a number."
+        },
+        {
+          "key": "C",
+          "text": "EXTRACT(HOUR FROM SYSDATE) works, because DATE values expose an HOUR field to EXTRACT."
+        },
+        {
+          "key": "D",
+          "text": "EXTRACT can only be used on VARCHAR2 columns."
+        },
+        {
+          "key": "E",
+          "text": "EXTRACT(DAY FROM 100) returns 100."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "EXTRACT devolve um componente de uma data/timestamp como número: EXTRACT(YEAR FROM ...) o ano (A) e EXTRACT(MONTH FROM ...) o mês (B). EXTRACT de HOUR/MINUTE/SECOND só funciona sobre TIMESTAMP, não sobre DATE puro (C errado). EXTRACT opera sobre datas/timestamps/intervals, não sobre VARCHAR2 (D errado) nem sobre um número solto (E errado).",
+      "id": 432
+    },
+    {
+      "topic": "access",
+      "context": "",
+      "text": "Which two statements are true about the difference between system privileges and object privileges? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A system privilege allows a user to perform a particular kind of action database-wide, such as CREATE TABLE."
+        },
+        {
+          "key": "B",
+          "text": "An object privilege grants access to perform a specific action on a specific schema object, such as SELECT on a table."
+        },
+        {
+          "key": "C",
+          "text": "System privileges are granted only with the WITH GRANT OPTION clause."
+        },
+        {
+          "key": "D",
+          "text": "Object privileges can only be granted by the DBA."
+        },
+        {
+          "key": "E",
+          "text": "There is no functional difference between system and object privileges."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Um privilégio de SISTEMA autoriza um tipo de ação em nível de banco (ex.: CREATE TABLE, CREATE SESSION) — A. Um privilégio de OBJETO concede uma ação específica sobre um objeto específico (ex.: SELECT em uma tabela) — B. Privilégios de sistema usam WITH ADMIN OPTION (não GRANT OPTION) para repasse (C errado); privilégios de objeto podem ser concedidos pelo DONO do objeto, não só pelo DBA (D errado); e há diferença clara entre eles (E errado).",
+      "id": 433
+    },
+    {
+      "topic": "access",
+      "context": "",
+      "text": "Which clause allows a user who received an OBJECT privilege to grant that same privilege to other users?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "WITH GRANT OPTION"
+        },
+        {
+          "key": "B",
+          "text": "WITH ADMIN OPTION"
+        },
+        {
+          "key": "C",
+          "text": "WITH CASCADE"
+        },
+        {
+          "key": "D",
+          "text": "WITH HIERARCHY OPTION"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Para privilégios de OBJETO, a cláusula WITH GRANT OPTION permite ao beneficiário repassar o privilégio a outros. WITH ADMIN OPTION é o equivalente, mas para privilégios de SISTEMA e roles (B) — confundir as duas é uma pegadinha clássica. WITH CASCADE e WITH HIERARCHY OPTION não são cláusulas dessa finalidade (C, D).",
+      "id": 434
+    },
+    {
+      "topic": "access",
+      "context": "User A granted SELECT on a table to user B using WITH GRANT OPTION, and B granted it to C. User A then revokes SELECT from B.",
+      "text": "What happens to user C's SELECT privilege?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "C's privilege is also revoked (the revoke cascades)."
+        },
+        {
+          "key": "B",
+          "text": "C keeps the privilege permanently."
+        },
+        {
+          "key": "C",
+          "text": "An error is raised and the revoke fails."
+        },
+        {
+          "key": "D",
+          "text": "C's privilege is converted to a system privilege."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Para privilégios de OBJETO, a revogação é EM CASCATA: ao revogar de B, o privilégio que B havia repassado a C (via WITH GRANT OPTION) também é revogado automaticamente (A). Esse comportamento difere dos privilégios de sistema, cuja revogação NÃO cascateia. Por isso C não mantém o privilégio (B), não há erro (C) e nada vira privilégio de sistema (D).",
+      "id": 435
+    },
+    {
+      "topic": "access",
+      "context": "",
+      "text": "Which two statements are true about roles? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A role is a named group of related privileges that can be granted to users or to other roles."
+        },
+        {
+          "key": "B",
+          "text": "Granting a role to a user is a convenient way to manage multiple privileges together."
+        },
+        {
+          "key": "C",
+          "text": "A role can own schema objects such as tables."
+        },
+        {
+          "key": "D",
+          "text": "A role can be granted only to a single user."
+        },
+        {
+          "key": "E",
+          "text": "Object privileges cannot be granted to a role."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Um role é um grupo nomeado de privilégios relacionados que pode ser concedido a usuários OU a outros roles (A), facilitando a gestão de vários privilégios de uma vez (B). Roles NÃO possuem objetos de esquema — quem possui é um usuário (C errado); um role pode ser concedido a vários usuários (D errado); e tanto privilégios de sistema quanto de objeto podem ser concedidos a roles (E errado).",
+      "id": 436
+    },
+    {
+      "topic": "access",
+      "context": "You want user MARY to be able to create FOREIGN KEY constraints in her own tables that reference your ORDERS table.",
+      "text": "Which object privilege must you grant to MARY on the ORDERS table?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "REFERENCES"
+        },
+        {
+          "key": "B",
+          "text": "SELECT"
+        },
+        {
+          "key": "C",
+          "text": "INDEX"
+        },
+        {
+          "key": "D",
+          "text": "ALTER"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "O privilégio de objeto REFERENCES permite que outro usuário crie FOREIGN KEYs que apontem para a sua tabela. SELECT só permite consultar (B); INDEX permite criar índices sobre a tabela (C); e ALTER permite alterar a estrutura (D) — nenhum deles habilita a criação de FK referenciando a tabela.",
+      "id": 437
+    },
+    {
+      "topic": "access",
+      "context": "",
+      "text": "Which statement correctly grants only the ability to update the SALARY and COMMISSION columns of the EMPLOYEES table to user JOHN?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "GRANT UPDATE (salary, commission) ON employees TO john;"
+        },
+        {
+          "key": "B",
+          "text": "GRANT UPDATE ON employees.salary, employees.commission TO john;"
+        },
+        {
+          "key": "C",
+          "text": "GRANT UPDATE COLUMNS (salary, commission) ON employees TO john;"
+        },
+        {
+          "key": "D",
+          "text": "GRANT UPDATE (salary, commission) TO john ON employees;"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "A sintaxe correta para conceder UPDATE em colunas específicas é GRANT UPDATE (coluna1, coluna2) ON tabela TO usuário (A). Não se qualifica a coluna com tabela.coluna nessa cláusula (B), não existe a palavra COLUMNS aqui (C), e a ordem ON tabela vem antes de TO usuário (D errado).",
+      "id": 438
+    },
+    {
+      "topic": "access",
+      "context": "",
+      "text": "Which two statements are true about granting privileges? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The owner of an object automatically has all object privileges on it."
+        },
+        {
+          "key": "B",
+          "text": "PUBLIC can be used as the grantee so that all users receive the privilege."
+        },
+        {
+          "key": "C",
+          "text": "Revoking a system privilege cascades to privileges the grantee had passed on."
+        },
+        {
+          "key": "D",
+          "text": "Only the DBA can grant object privileges on any object."
+        },
+        {
+          "key": "E",
+          "text": "WITH ADMIN OPTION is used to pass on object privileges."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O dono de um objeto detém automaticamente todos os privilégios de objeto sobre ele (A), e é possível conceder a PUBLIC para que todos os usuários recebam o privilégio (B). A revogação de privilégio de SISTEMA NÃO cascateia (C errado, diferente do de objeto). O dono pode conceder privilégios de objeto do seu objeto — não só o DBA (D errado), e WITH ADMIN OPTION é para privilégios de sistema/roles, não de objeto (E errado — esse usa WITH GRANT OPTION).",
+      "id": 439
     }
   ]
 }
