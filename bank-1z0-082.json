@@ -19,5 +19,671 @@
     "sql-dml": "SQL: DML e Transações (INSERT, UPDATE, DELETE, COMMIT, ROLLBACK, controle de transações)",
     "sql-ddl": "SQL: DDL e Objetos de Esquema (tabelas, constraints, views, sequences, synonyms, indexes, temporary tables)"
   },
-  "questions": []
+  "questions": [
+    {
+      "id": 1,
+      "topic": "architecture",
+      "context": "",
+      "text": "Which two statements are true about the System Global Area (SGA) of an Oracle database instance? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The Program Global Area (PGA) is a subcomponent of the SGA."
+        },
+        {
+          "key": "B",
+          "text": "The database buffer cache holds copies of data blocks read from datafiles."
+        },
+        {
+          "key": "C",
+          "text": "The shared pool contains the library cache and the data dictionary cache."
+        },
+        {
+          "key": "D",
+          "text": "The redo log buffer is flushed to the datafiles by the DBWn process."
+        },
+        {
+          "key": "E",
+          "text": "The SGA is a private memory region allocated per server process."
+        }
+      ],
+      "correct": [
+        "B",
+        "C"
+      ],
+      "explanation": "A SGA é a memória COMPARTILHADA da instância. O buffer cache guarda cópias de blocos lidos dos datafiles (B), e o shared pool contém a library cache e o dictionary cache (C). A PGA é memória PRIVADA de cada processo servidor, não faz parte da SGA (A e E errados). O redo log buffer é gravado nos redo log files pelo processo LGWR — não nos datafiles pelo DBWn (D errado)."
+    },
+    {
+      "id": 2,
+      "topic": "instance",
+      "context": "You start a database instance that was cleanly shut down, and it is currently in the MOUNT state.",
+      "text": "Which statement is true about what has occurred up to and including the MOUNT stage?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The datafiles and online redo log files have been opened."
+        },
+        {
+          "key": "B",
+          "text": "The control file has been read (opened), but the datafiles and online redo logs are not yet opened."
+        },
+        {
+          "key": "C",
+          "text": "Only the initialization parameter file has been read; the control file is not yet accessed."
+        },
+        {
+          "key": "D",
+          "text": "The database is fully available for user transactions."
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "No arranque, NOMOUNT lê o parameter file e aloca a SGA/inicia os processos de fundo; MOUNT abre (lê) o control file, mas ainda NÃO abre os datafiles nem os online redo logs — isso só ocorre no estágio OPEN. Por isso, em MOUNT o control file já foi lido (B), mas o banco ainda não está disponível para transações (D errado)."
+    },
+    {
+      "id": 3,
+      "topic": "instance",
+      "context": "Your instance is started using an SPFILE. You execute:\n\nALTER SYSTEM SET open_cursors = 400;\n\n(no SCOPE clause is specified)",
+      "text": "Where does the change take effect?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "In memory only; it is lost on the next restart."
+        },
+        {
+          "key": "B",
+          "text": "In the SPFILE only; it takes effect at the next restart."
+        },
+        {
+          "key": "C",
+          "text": "In both memory and the SPFILE (SCOPE=BOTH is the default when an SPFILE is in use)."
+        },
+        {
+          "key": "D",
+          "text": "It fails because SCOPE is mandatory when using an SPFILE."
+        }
+      ],
+      "correct": [
+        "C"
+      ],
+      "explanation": "Quando a instância usa SPFILE e nenhuma cláusula SCOPE é informada, o default é SCOPE=BOTH: a mudança é aplicada na instância em memória E persistida no SPFILE. Se estivesse usando PFILE, o único SCOPE válido seria MEMORY. Um parâmetro estático (não dinâmico) exigiria SCOPE=SPFILE, mas open_cursors é dinâmico."
+    },
+    {
+      "id": 4,
+      "topic": "users",
+      "context": "",
+      "text": "Which two account or password behaviors can be controlled by assigning a profile to a user? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The maximum number of failed login attempts before the account is locked."
+        },
+        {
+          "key": "B",
+          "text": "The list of tables the user is allowed to query."
+        },
+        {
+          "key": "C",
+          "text": "The number of days before a password expires and must be changed."
+        },
+        {
+          "key": "D",
+          "text": "The default tablespace assigned to the user."
+        },
+        {
+          "key": "E",
+          "text": "The set of system privileges granted to the user."
+        }
+      ],
+      "correct": [
+        "A",
+        "C"
+      ],
+      "explanation": "Profiles controlam limites de recurso e regras de senha/conta: FAILED_LOGIN_ATTEMPTS (A) e PASSWORD_LIFE_TIME (C) são parâmetros clássicos de profile. Já o acesso a tabelas e privilégios de sistema (B, E) são controlados por GRANT/REVOKE, e o default tablespace (D) é definido no CREATE/ALTER USER — nenhum deles faz parte de um profile."
+    },
+    {
+      "id": 5,
+      "topic": "storage",
+      "context": "You need table compression that compresses rows during all DML operations (not only direct-path loads), with the lowest CPU overhead among the OLTP-suitable options.",
+      "text": "Which compression clause is most appropriate?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "ROW STORE COMPRESS ADVANCED"
+        },
+        {
+          "key": "B",
+          "text": "ROW STORE COMPRESS BASIC"
+        },
+        {
+          "key": "C",
+          "text": "COLUMN STORE COMPRESS FOR QUERY HIGH"
+        },
+        {
+          "key": "D",
+          "text": "COLUMN STORE COMPRESS FOR ARCHIVE HIGH"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "ROW STORE COMPRESS ADVANCED (a antiga 'OLTP compression') comprime linhas em todas as operações DML, sendo a escolha para ambientes transacionais. ROW STORE COMPRESS BASIC só comprime em cargas direct-path (INSERT convencional não é comprimido). As opções COLUMN STORE (Hybrid Columnar Compression) são voltadas a data warehouse/arquivamento, com CPU e foco diferentes."
+    },
+    {
+      "id": 6,
+      "topic": "storage",
+      "context": "DEFERRED_SEGMENT_CREATION is set to TRUE (the default).",
+      "text": "Which two statements are true about deferred segment creation? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "When you create a table, its segment is created immediately even if no rows are inserted."
+        },
+        {
+          "key": "B",
+          "text": "The table's segment is not created until the first row is inserted."
+        },
+        {
+          "key": "C",
+          "text": "It saves storage for tables that are created but never populated."
+        },
+        {
+          "key": "D",
+          "text": "Dependent indexes always have their segments created immediately, regardless of the table."
+        },
+        {
+          "key": "E",
+          "text": "It is only supported for tables in dictionary-managed tablespaces."
+        }
+      ],
+      "correct": [
+        "B",
+        "C"
+      ],
+      "explanation": "Com deferred segment creation, o segmento de uma tabela (e de seus índices/LOBs dependentes) só é alocado na PRIMEIRA inserção de linha (B), economizando espaço para objetos criados mas nunca populados (C) — útil em aplicações com milhares de tabelas raramente usadas. Portanto A e D estão errados (nada é criado até o primeiro INSERT), e o recurso é suportado em locally managed tablespaces, não dictionary-managed (E errado)."
+    },
+    {
+      "id": 7,
+      "topic": "movedata",
+      "context": "",
+      "text": "Which two statements are true about moving data using Oracle-supplied tools? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "An external table using the ORACLE_DATAPUMP access driver can be used to unload data from the database into a portable dump file."
+        },
+        {
+          "key": "B",
+          "text": "SQL*Loader loads data from the database into flat files."
+        },
+        {
+          "key": "C",
+          "text": "Data Pump Export (expdp) creates a master table to track and control the export job."
+        },
+        {
+          "key": "D",
+          "text": "External tables support INSERT, UPDATE, and DELETE against the underlying file."
+        },
+        {
+          "key": "E",
+          "text": "SQL*Loader requires the target table's segment to be dropped before loading."
+        }
+      ],
+      "correct": [
+        "A",
+        "C"
+      ],
+      "explanation": "O access driver ORACLE_DATAPUMP permite descarregar (unload) dados do banco para um dump file através de uma external table (A). O Data Pump cria uma master table para controlar/reiniciar o job (C). SQL*Loader CARREGA dados de arquivos externos PARA o banco, não o contrário (B errado). External tables são somente leitura para o dado no arquivo — não suportam UPDATE/DELETE (D errado), e o SQL*Loader não exige dropar o segmento (E errado)."
+    },
+    {
+      "id": 8,
+      "topic": "tools",
+      "context": "",
+      "text": "Which two statements are true about the Oracle-supplied client tools SQL*Plus and SQL Developer? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "SQL*Plus has its own set of commands (such as SET, COLUMN, DESCRIBE) that are not SQL statements."
+        },
+        {
+          "key": "B",
+          "text": "The DESCRIBE command can be used in both SQL*Plus and SQL Developer."
+        },
+        {
+          "key": "C",
+          "text": "SQL*Plus can only be used interactively and cannot run scripts."
+        },
+        {
+          "key": "D",
+          "text": "SQL Developer is a command-line-only tool with no graphical interface."
+        },
+        {
+          "key": "E",
+          "text": "SQL*Plus cannot connect to a remote database instance."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "SQL*Plus possui comandos próprios (SET, COLUMN, DESCRIBE, etc.) que não são instruções SQL, mas do próprio ambiente (A). O comando DESCRIBE funciona tanto em SQL*Plus quanto em SQL Developer (B). SQL*Plus pode executar scripts (via @arquivo.sql), não só interativamente (C errado); SQL Developer é uma ferramenta GRÁFICA (D errado); e SQL*Plus conecta a instâncias remotas via connection string (E errado)."
+    },
+    {
+      "id": 9,
+      "topic": "network",
+      "context": "",
+      "text": "Which two statements are true about dynamic service registration with the Oracle listener? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The LREG background process registers instance services with the listener."
+        },
+        {
+          "key": "B",
+          "text": "Dynamically registered services must also be listed in the listener.ora file for the listener to accept connections."
+        },
+        {
+          "key": "C",
+          "text": "By default, the instance registers with a listener running on the local host and port 1521."
+        },
+        {
+          "key": "D",
+          "text": "Dynamic registration requires the listener to be restarted every time a new service is added."
+        },
+        {
+          "key": "E",
+          "text": "Static registration is required for the LREG process to function."
+        }
+      ],
+      "correct": [
+        "A",
+        "C"
+      ],
+      "explanation": "O processo LREG (Listener Registration) registra dinamicamente os serviços da instância no listener (A). Por padrão, sem LOCAL_LISTENER customizado, o registro ocorre num listener no host local na porta 1521 (C). Justamente por ser DINÂMICO, o serviço não precisa constar no listener.ora (B errado) nem exige reiniciar o listener a cada serviço (D errado); e o registro dinâmico independe de registro estático (E errado)."
+    },
+    {
+      "id": 10,
+      "topic": "tablespaces",
+      "context": "You create a bigfile tablespace:\n\nCREATE BIGFILE TABLESPACE big_ts\nDATAFILE '/u01/oradata/big01.dbf' SIZE 50M AUTOEXTEND ON;",
+      "text": "Which two statements are true about this bigfile tablespace? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "AUTOEXTEND is allowed for its single datafile."
+        },
+        {
+          "key": "B",
+          "text": "Additional datafiles can be added to it with ALTER TABLESPACE ... ADD DATAFILE."
+        },
+        {
+          "key": "C",
+          "text": "It contains exactly one datafile, which can grow very large."
+        },
+        {
+          "key": "D",
+          "text": "It is created as a dictionary-managed tablespace by default."
+        },
+        {
+          "key": "E",
+          "text": "Every bigfile tablespace must use a 32K block size."
+        }
+      ],
+      "correct": [
+        "A",
+        "C"
+      ],
+      "explanation": "Uma bigfile tablespace tem exatamente UM datafile (C), que pode crescer a tamanhos muito grandes, e esse datafile suporta AUTOEXTEND (A). Por ter só um datafile, você NÃO pode adicionar outros (B errado). Tablespaces são locally managed por padrão nas versões atuais, não dictionary-managed (D errado), e o block size não é fixo em 32K (E errado)."
+    },
+    {
+      "id": 11,
+      "topic": "undo",
+      "context": "An undo tablespace has RETENTION GUARANTEE enabled and AUTOEXTEND off, and it is currently full of unexpired undo.",
+      "text": "Which two statements are true about UNDO_RETENTION and RETENTION GUARANTEE? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "With RETENTION GUARANTEE, a new DML may fail rather than overwrite unexpired undo."
+        },
+        {
+          "key": "B",
+          "text": "UNDO_RETENTION specifies how long Oracle attempts to retain unexpired undo."
+        },
+        {
+          "key": "C",
+          "text": "RETENTION GUARANTEE allows unexpired undo to be overwritten to make room for new transactions."
+        },
+        {
+          "key": "D",
+          "text": "UNDO_RETENTION guarantees that active (uncommitted) undo is discarded after the retention period."
+        },
+        {
+          "key": "E",
+          "text": "Undo data never generates redo."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "UNDO_RETENTION define por quanto tempo o Oracle TENTA manter o undo já expirado como não-expirado (B). Com RETENTION GUARANTEE, o banco prioriza preservar o undo não-expirado a ponto de FALHAR uma nova DML (ex.: ORA-30036) em vez de sobrescrevê-lo (A) — logo C está errado. O undo ativo (de transações não commitadas) NUNCA é descartado enquanto a transação vive (D errado), e a geração de undo também gera redo (E errado)."
+    },
+    {
+      "id": 12,
+      "topic": "sql-select",
+      "context": "Examine this WHERE clause:\n\nWHERE department_id = 10 OR department_id = 20 AND salary > 5000",
+      "text": "Given Oracle's operator precedence, which statement correctly describes how this is evaluated?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It is evaluated as: department_id = 10 OR (department_id = 20 AND salary > 5000), because AND has higher precedence than OR."
+        },
+        {
+          "key": "B",
+          "text": "It is evaluated as: (department_id = 10 OR department_id = 20) AND salary > 5000, because OR is evaluated first."
+        },
+        {
+          "key": "C",
+          "text": "It raises a syntax error because parentheses are required."
+        },
+        {
+          "key": "D",
+          "text": "All three conditions must be true for a row to be returned."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "AND tem precedência MAIOR que OR. Assim, a cláusula é avaliada como department_id = 10 OR (department_id = 20 AND salary > 5000): todo funcionário do departamento 10 é retornado independentemente do salário, mais os do departamento 20 que ganham acima de 5000. Não há erro de sintaxe — parênteses só seriam necessários para forçar a ordem oposta."
+    },
+    {
+      "id": 13,
+      "topic": "sql-select",
+      "context": "The PRODUCTS table has a LIST_PRICE column. You want the 5 most expensive products, including any products tied at the 5th-highest price.",
+      "text": "Which clause achieves this?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "ORDER BY list_price DESC FETCH FIRST 5 ROWS WITH TIES"
+        },
+        {
+          "key": "B",
+          "text": "ORDER BY list_price DESC FETCH FIRST 5 ROWS ONLY"
+        },
+        {
+          "key": "C",
+          "text": "ORDER BY list_price DESC FETCH FIRST 5 PERCENT ROWS ONLY"
+        },
+        {
+          "key": "D",
+          "text": "WHERE ROWNUM <= 5 ORDER BY list_price DESC"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "FETCH FIRST 5 ROWS WITH TIES retorna as 5 primeiras linhas E também quaisquer linhas empatadas no valor da última posição (o 5º maior preço) — exatamente o pedido. ROWS ONLY cortaria em 5 exatas, ignorando empates. PERCENT trabalha com percentual, não quantidade. E o filtro WHERE ROWNUM <= 5 é aplicado ANTES do ORDER BY, pegando 5 linhas arbitrárias."
+    },
+    {
+      "id": 14,
+      "topic": "sql-functions",
+      "context": "The EMPLOYEES table has a COMMISSION_PCT column that is NULL for some rows.",
+      "text": "Which two expressions return a non-null value for a row where COMMISSION_PCT is NULL? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "NVL(commission_pct, 0)"
+        },
+        {
+          "key": "B",
+          "text": "NVL2(commission_pct, commission_pct, 0)"
+        },
+        {
+          "key": "C",
+          "text": "COALESCE(commission_pct)"
+        },
+        {
+          "key": "D",
+          "text": "NULLIF(commission_pct, 0)"
+        },
+        {
+          "key": "E",
+          "text": "commission_pct + 100"
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "NVL(commission_pct, 0) devolve 0 quando o valor é nulo (A). NVL2(expr, val_se_nao_nulo, val_se_nulo) devolve o terceiro argumento (0) quando expr é nulo (B). COALESCE exige pelo menos DOIS argumentos — com um só gera erro (C). NULLIF(x, 0) retorna x, que continua nulo (D). E qualquer aritmética com NULL resulta em NULL (E)."
+    },
+    {
+      "id": 15,
+      "topic": "sql-functions",
+      "context": "The STORES table has a START_DATE column of type DATE. You want only rows where START_DATE is within the last 25 months from now.",
+      "text": "Which WHERE clause is correct?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "WHERE MONTHS_BETWEEN(SYSDATE, start_date) <= 25"
+        },
+        {
+          "key": "B",
+          "text": "WHERE MONTHS_BETWEEN(start_date, SYSDATE) <= 25"
+        },
+        {
+          "key": "C",
+          "text": "WHERE ADD_MONTHS(start_date, 25) <= SYSDATE"
+        },
+        {
+          "key": "D",
+          "text": "WHERE TO_NUMBER(start_date - SYSDATE) <= 25"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "MONTHS_BETWEEN(SYSDATE, start_date) devolve um número POSITIVO de meses decorridos desde start_date (data mais recente primeiro); exigir <= 25 seleciona corretamente os últimos 25 meses (A). Inverter a ordem (B) daria valores negativos, retornando datas muito antigas. ADD_MONTHS(start_date, 25) <= SYSDATE (C) tem a lógica invertida, e start_date - SYSDATE (D) dá diferença em DIAS, não meses."
+    },
+    {
+      "id": 16,
+      "topic": "sql-groups",
+      "context": "The EMPLOYEES table has columns DEPARTMENT_ID, JOB_ID and SALARY.",
+      "text": "Which query executes successfully?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "SELECT department_id, job_id, SUM(salary) FROM employees GROUP BY department_id, job_id;"
+        },
+        {
+          "key": "B",
+          "text": "SELECT department_id, job_id, SUM(salary) FROM employees GROUP BY department_id;"
+        },
+        {
+          "key": "C",
+          "text": "SELECT department_id, SUM(salary) FROM employees WHERE SUM(salary) > 10000 GROUP BY department_id;"
+        },
+        {
+          "key": "D",
+          "text": "SELECT department_id, AVG(MAX(salary)) FROM employees GROUP BY department_id;"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Toda coluna não agregada do SELECT deve constar no GROUP BY. Em A, department_id e job_id estão ambos no GROUP BY — válido. Em B, job_id está no SELECT mas fora do GROUP BY (erro). Em C, uma função de grupo não pode aparecer no WHERE (deveria ser HAVING). Em D, funções de grupo aninhadas (AVG(MAX(...))) não podem ser combinadas com uma coluna simples como department_id no SELECT."
+    },
+    {
+      "id": 17,
+      "topic": "sql-joins",
+      "context": "DEPARTMENTS has 4 rows; some departments have no employees. EMPLOYEES has some rows with a NULL department_id.",
+      "text": "Which two statements are true about outer joins between EMPLOYEES and DEPARTMENTS? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A LEFT OUTER JOIN with EMPLOYEES on the left returns employees even if their department_id has no match."
+        },
+        {
+          "key": "B",
+          "text": "A FULL OUTER JOIN returns matched rows plus unmatched rows from both tables."
+        },
+        {
+          "key": "C",
+          "text": "The Oracle (+) operator can be placed on both sides of the join condition to produce a full outer join."
+        },
+        {
+          "key": "D",
+          "text": "An outer join automatically eliminates rows with NULL join keys."
+        },
+        {
+          "key": "E",
+          "text": "A RIGHT OUTER JOIN and a LEFT OUTER JOIN always return the same rows."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Um LEFT OUTER JOIN preserva todas as linhas da tabela à esquerda (EMPLOYEES), inclusive as sem correspondência (A). Um FULL OUTER JOIN retorna as linhas casadas mais as não casadas de AMBAS as tabelas (B). O operador tradicional (+) NÃO pode aparecer nos dois lados simultaneamente — para full outer join é preciso a sintaxe ANSI (C errado). Outer joins justamente PRESERVAM linhas sem correspondência (D errado), e LEFT vs RIGHT preservam lados opostos, dando resultados diferentes em geral (E errado)."
+    },
+    {
+      "id": 18,
+      "topic": "sql-setops",
+      "context": "Two queries are combined with a set operator.",
+      "text": "Which two statements are true about set operators (UNION, UNION ALL, INTERSECT, MINUS)? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Each SELECT must return the same number of columns, and corresponding columns must be of the same data type group."
+        },
+        {
+          "key": "B",
+          "text": "An ORDER BY clause, if used, can appear only once, at the end of the compound query."
+        },
+        {
+          "key": "C",
+          "text": "UNION ALL removes duplicate rows from the combined result."
+        },
+        {
+          "key": "D",
+          "text": "The column names of the final result come from the last SELECT in the compound query."
+        },
+        {
+          "key": "E",
+          "text": "INTERSECT has lower precedence than UNION."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Operadores de conjunto exigem o MESMO número de colunas com grupos de tipo compatíveis entre as consultas (A), e o ORDER BY só pode aparecer UMA vez, no fim da consulta composta (B). UNION ALL PRESERVA duplicatas (só UNION as remove) — C errado. Os nomes das colunas do resultado vêm da PRIMEIRA consulta, não da última (D errado). E o INTERSECT tem precedência MAIOR que os demais operadores, não menor (E errado)."
+    },
+    {
+      "id": 19,
+      "topic": "sql-dml",
+      "context": "Examine this sequence in a single session:\n\nINSERT INTO t VALUES (1);\nSAVEPOINT a;\nINSERT INTO t VALUES (2);\nROLLBACK TO a;\nINSERT INTO t VALUES (3);\nCOMMIT;",
+      "text": "Which two statements are true about the final state? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Rows with values 1 and 3 are committed."
+        },
+        {
+          "key": "B",
+          "text": "The value 2 is not present in the table."
+        },
+        {
+          "key": "C",
+          "text": "All three rows (1, 2, 3) are committed."
+        },
+        {
+          "key": "D",
+          "text": "ROLLBACK TO a also undoes the insert of value 1."
+        },
+        {
+          "key": "E",
+          "text": "The COMMIT is rejected because a SAVEPOINT was used."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "ROLLBACK TO SAVEPOINT a desfaz apenas o que ocorreu APÓS o savepoint — ou seja, o INSERT do valor 2 é revertido (B), mas o INSERT do valor 1 (anterior ao savepoint) permanece. Depois insere-se 3 e faz-se COMMIT, então 1 e 3 ficam gravados (A). Logo, nem os 3 são commitados (C errado), o valor 1 não é desfeito (D errado), e o COMMIT funciona normalmente após o uso de savepoint (E errado)."
+    },
+    {
+      "id": 20,
+      "topic": "sql-ddl",
+      "context": "",
+      "text": "Which two statements are true about constraints in an Oracle database? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A table can have only one PRIMARY KEY constraint but multiple UNIQUE constraints."
+        },
+        {
+          "key": "B",
+          "text": "A UNIQUE constraint column can contain multiple NULL values."
+        },
+        {
+          "key": "C",
+          "text": "A PRIMARY KEY column can contain one NULL value."
+        },
+        {
+          "key": "D",
+          "text": "A NOT NULL constraint can be defined only at the table level."
+        },
+        {
+          "key": "E",
+          "text": "A FOREIGN KEY constraint requires the referenced column to also be a FOREIGN KEY."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Uma tabela tem no máximo UMA PRIMARY KEY, mas pode ter várias constraints UNIQUE (A). Uma coluna UNIQUE admite múltiplos NULLs, pois NULL nunca é igual a NULL (B). A PRIMARY KEY implica NOT NULL — não aceita nenhum nulo (C errado). NOT NULL só pode ser definido no nível de COLUNA, não de tabela (D errado). E uma FOREIGN KEY deve referenciar uma coluna com PRIMARY KEY ou UNIQUE, não outra foreign key (E errado)."
+    }
+  ]
 }
