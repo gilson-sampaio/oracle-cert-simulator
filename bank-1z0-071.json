@@ -12207,6 +12207,1406 @@
       ],
       "explanation": "O dono de um objeto detém automaticamente todos os privilégios de objeto sobre ele (A), e é possível conceder a PUBLIC para que todos os usuários recebam o privilégio (B). A revogação de privilégio de SISTEMA NÃO cascateia (C errado, diferente do de objeto). O dono pode conceder privilégios de objeto do seu objeto — não só o DBA (D errado), e WITH ADMIN OPTION é para privilégios de sistema/roles, não de objeto (E errado — esse usa WITH GRANT OPTION).",
       "id": 439
+    },
+    {
+      "topic": "functions",
+      "context": "Examine this query:\n\nSELECT TO_CHAR(1234.5, '$99,999.00'), TO_CHAR(SYSDATE, 'DD') FROM dual;",
+      "text": "Which two statements are true about the TO_CHAR function? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "It can format a number with a currency symbol, group separators, and a fixed number of decimals."
+        },
+        {
+          "key": "B",
+          "text": "It converts a DATE or number to a VARCHAR2 using a format model."
+        },
+        {
+          "key": "C",
+          "text": "It converts a character string to a DATE."
+        },
+        {
+          "key": "D",
+          "text": "The format model is optional and defaults to scientific notation for numbers."
+        },
+        {
+          "key": "E",
+          "text": "It can only be applied to NUMBER values."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "TO_CHAR formata um número (com cifrão, separador de milhar e casas decimais) — A — e converte DATE ou number para VARCHAR2 usando um format model (B). Quem converte string para DATE é TO_DATE (C errado). Sem format model, TO_CHAR usa o formato padrão da sessão, não notação científica (D errado), e aceita tanto DATE quanto NUMBER (E errado).",
+      "id": 440
+    },
+    {
+      "topic": "functions",
+      "context": "",
+      "text": "Which two statements are true about the NVL and COALESCE functions? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "NVL(a, b) returns b when a is NULL, and a otherwise."
+        },
+        {
+          "key": "B",
+          "text": "COALESCE can take two or more arguments and returns the first non-null one."
+        },
+        {
+          "key": "C",
+          "text": "NVL requires at least three arguments."
+        },
+        {
+          "key": "D",
+          "text": "COALESCE evaluates every argument even after finding a non-null value."
+        },
+        {
+          "key": "E",
+          "text": "NVL and COALESCE cannot be combined in the same query."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "NVL(a, b) devolve b quando a é nulo e a caso contrário (A); COALESCE aceita dois ou mais argumentos e devolve o primeiro não nulo (B). NVL tem exatamente dois argumentos (C errado); COALESCE PARA de avaliar ao achar o primeiro não nulo — avaliação preguiçosa (D errado); e ambas podem coexistir numa consulta (E errado).",
+      "id": 441
+    },
+    {
+      "topic": "functions",
+      "context": "The EMP table has a HIRE_DATE column of type DATE.",
+      "text": "Which two expressions are valid and return a value? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "MONTHS_BETWEEN(SYSDATE, hire_date)"
+        },
+        {
+          "key": "B",
+          "text": "ADD_MONTHS(hire_date, 6)"
+        },
+        {
+          "key": "C",
+          "text": "hire_date + hire_date"
+        },
+        {
+          "key": "D",
+          "text": "hire_date * 2"
+        },
+        {
+          "key": "E",
+          "text": "NEXT_DAY(hire_date)"
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "MONTHS_BETWEEN devolve o número de meses entre duas datas (A) e ADD_MONTHS soma meses a uma data (B). NÃO se pode somar duas datas entre si (C errado) nem multiplicar uma data (D errado) — só somar/subtrair NÚMEROS a datas. NEXT_DAY exige dois argumentos (data e dia da semana), então com um só falha (E errado).",
+      "id": 442
+    },
+    {
+      "topic": "functions",
+      "context": "",
+      "text": "Which two statements are true about single-row character functions? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "SUBSTR(str, -2) returns the last two characters of str."
+        },
+        {
+          "key": "B",
+          "text": "INSTR returns 0 when the search substring is not found."
+        },
+        {
+          "key": "C",
+          "text": "CONCAT can join three arguments in a single call."
+        },
+        {
+          "key": "D",
+          "text": "LENGTH returns the byte size of a string regardless of character set."
+        },
+        {
+          "key": "E",
+          "text": "LPAD cannot be used to add leading zeros to a number."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "SUBSTR com posição negativa conta a partir do fim: SUBSTR(str, -2) devolve os 2 últimos caracteres (A). INSTR devolve 0 quando a substring não é encontrada (B). CONCAT aceita apenas DOIS argumentos (C errado). LENGTH devolve o número de CARACTERES (LENGTHB é que dá bytes) — D errado. LPAD é justamente usado para preencher com zeros à esquerda (E errado).",
+      "id": 443
+    },
+    {
+      "topic": "ddl",
+      "context": "",
+      "text": "Which two statements are true about constraints in an Oracle database? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A table can have at most one PRIMARY KEY constraint."
+        },
+        {
+          "key": "B",
+          "text": "A UNIQUE constraint column can contain multiple NULL values."
+        },
+        {
+          "key": "C",
+          "text": "A NOT NULL constraint can be defined at the table level."
+        },
+        {
+          "key": "D",
+          "text": "A PRIMARY KEY column may contain one NULL value."
+        },
+        {
+          "key": "E",
+          "text": "A CHECK constraint can reference columns of another table."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Uma tabela tem no máximo UMA PRIMARY KEY (A), e uma coluna UNIQUE aceita múltiplos NULLs, pois NULL nunca é igual a NULL (B). NOT NULL só pode ser definida no nível de COLUNA, não de tabela (C errado). PRIMARY KEY implica NOT NULL — não aceita nulo (D errado), e um CHECK não pode referenciar colunas de outra tabela (E errado).",
+      "id": 444
+    },
+    {
+      "topic": "ddl",
+      "context": "",
+      "text": "Which two statements are true about views and how they store data? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A simple view based on a single table without aggregation is generally updatable through DML."
+        },
+        {
+          "key": "B",
+          "text": "A view stores the defining query, not a physical copy of the data."
+        },
+        {
+          "key": "C",
+          "text": "A view always has its own data segment."
+        },
+        {
+          "key": "D",
+          "text": "DML through a view whose defining query contains GROUP BY is always allowed."
+        },
+        {
+          "key": "E",
+          "text": "Dropping a view drops its base table."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Uma view simples (uma tabela, sem agregação/GROUP BY/DISTINCT) costuma aceitar DML (A), e a view armazena a QUERY que a define, não uma cópia física dos dados (B). Por isso a view NÃO tem segmento de dados próprio (C errado). DML através de views com GROUP BY não é permitido (D errado), e dropar a view não afeta a tabela base (E errado).",
+      "id": 445
+    },
+    {
+      "topic": "ddl",
+      "context": "",
+      "text": "Which two statements are true about the TRUNCATE TABLE statement? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "It removes all rows and cannot be rolled back, because it is a DDL command with an implicit commit."
+        },
+        {
+          "key": "B",
+          "text": "It resets the table's high-water mark, releasing the storage."
+        },
+        {
+          "key": "C",
+          "text": "It can use a WHERE clause to remove only some rows."
+        },
+        {
+          "key": "D",
+          "text": "It drops the table's structure along with the rows."
+        },
+        {
+          "key": "E",
+          "text": "It fires any DELETE triggers on the table."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "TRUNCATE remove todas as linhas e não pode ser desfeito com ROLLBACK, por ser DDL com commit implícito (A), além de reposicionar o high-water mark, liberando o espaço (B). Não aceita WHERE (C errado), preserva a ESTRUTURA da tabela (D errado) e NÃO dispara triggers de DELETE (E errado).",
+      "id": 446
+    },
+    {
+      "topic": "joins",
+      "context": "EMPLOYEES(employee_id, department_id) has rows with NULL department_id. DEPARTMENTS(department_id, name) has departments with no employees.",
+      "text": "Which two statements are true about outer joins between these tables? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "EMPLOYEES LEFT OUTER JOIN DEPARTMENTS keeps employees whose department_id has no match."
+        },
+        {
+          "key": "B",
+          "text": "A FULL OUTER JOIN returns matched rows plus unmatched rows from both tables."
+        },
+        {
+          "key": "C",
+          "text": "An INNER JOIN keeps employees with NULL department_id."
+        },
+        {
+          "key": "D",
+          "text": "The (+) operator can appear on both sides of the condition to produce a full outer join."
+        },
+        {
+          "key": "E",
+          "text": "A RIGHT OUTER JOIN and a LEFT OUTER JOIN always return identical rows."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Um LEFT OUTER JOIN a partir de EMPLOYEES preserva os empregados sem departamento correspondente (A); um FULL OUTER JOIN traz linhas casadas mais as não casadas de ambos os lados (B). Um INNER JOIN descarta linhas sem correspondência, inclusive as de department_id nulo (C errado). O operador (+) não pode aparecer nos dois lados (D errado), e LEFT vs RIGHT preservam lados opostos (E errado).",
+      "id": 447
+    },
+    {
+      "topic": "joins",
+      "context": "",
+      "text": "Which two statements are true about subqueries? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A single-row subquery can be used with the = operator."
+        },
+        {
+          "key": "B",
+          "text": "A multiple-row subquery can be used with the IN operator."
+        },
+        {
+          "key": "C",
+          "text": "A single-row subquery that returns more than one row at runtime uses only the first row."
+        },
+        {
+          "key": "D",
+          "text": "A subquery in the WHERE clause always executes after the outer query."
+        },
+        {
+          "key": "E",
+          "text": "A correlated subquery cannot reference columns from the outer query."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Uma subquery de linha única pode ser usada com = (A), e uma de múltiplas linhas com IN (B). Se uma subquery de linha única retornar mais de uma linha em execução, o Oracle lança ERRO (ORA-01427), não usa a primeira (C errado). Uma subquery não-correlacionada executa ANTES do outer (D errado), e a correlacionada JUSTAMENTE referencia colunas do outer (E errado).",
+      "id": 448
+    },
+    {
+      "topic": "joins",
+      "context": "",
+      "text": "Which two statements are true about the NATURAL JOIN and the USING clause? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A NATURAL JOIN joins tables on all columns that share the same name and compatible type."
+        },
+        {
+          "key": "B",
+          "text": "A column referenced in a USING clause cannot be qualified with a table alias elsewhere in the query."
+        },
+        {
+          "key": "C",
+          "text": "A NATURAL JOIN requires an explicit ON clause."
+        },
+        {
+          "key": "D",
+          "text": "USING can specify a join condition on columns with different names."
+        },
+        {
+          "key": "E",
+          "text": "NATURAL JOIN always produces a Cartesian product."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O NATURAL JOIN une as tabelas por TODAS as colunas de mesmo nome e tipo compatível (A). Uma coluna listada em USING vira coluna única e não pode ser prefixada por alias em nenhum lugar da consulta (B). NATURAL JOIN não usa ON (C errado); USING exige colunas de MESMO nome (D errado); e só vira produto cartesiano se NÃO houver colunas em comum (E errado como afirmação geral).",
+      "id": 449
+    },
+    {
+      "topic": "select",
+      "context": "",
+      "text": "Which two statements are true about the DISTINCT keyword and column aliases? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "DISTINCT must appear immediately after SELECT and applies to the whole select list."
+        },
+        {
+          "key": "B",
+          "text": "A column alias can be referenced in the ORDER BY clause."
+        },
+        {
+          "key": "C",
+          "text": "A column alias can be referenced in the WHERE clause of the same query."
+        },
+        {
+          "key": "D",
+          "text": "DISTINCT can be applied to just one of several selected columns."
+        },
+        {
+          "key": "E",
+          "text": "An alias never needs double quotes."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "DISTINCT vem logo após SELECT e afeta toda a lista de seleção (A); um alias de coluna pode ser usado no ORDER BY, avaliado depois do SELECT (B). O alias NÃO pode ser usado no WHERE (avaliado antes) — C errado. Não dá para aplicar DISTINCT a apenas uma de várias colunas (D errado), e aliases com espaços ou case exigem aspas duplas (E errado).",
+      "id": 450
+    },
+    {
+      "topic": "select",
+      "context": "The PRODUCTS table has a LIST_PRICE column.",
+      "text": "Which two clauses correctly limit the result to the 10 most expensive products? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "ORDER BY list_price DESC FETCH FIRST 10 ROWS ONLY"
+        },
+        {
+          "key": "B",
+          "text": "ORDER BY list_price DESC FETCH FIRST 10 ROWS WITH TIES"
+        },
+        {
+          "key": "C",
+          "text": "WHERE ROWNUM <= 10 ORDER BY list_price DESC"
+        },
+        {
+          "key": "D",
+          "text": "ORDER BY list_price DESC LIMIT 10"
+        },
+        {
+          "key": "E",
+          "text": "FETCH FIRST 10 ROWS ONLY (without ORDER BY) guarantees the most expensive."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "FETCH FIRST 10 ROWS ONLY após ORDER BY DESC traz os 10 mais caros (A); WITH TIES traz os 10 e mais os empatados no 10º preço (B) — ambos válidos. WHERE ROWNUM <= 10 aplica-se ANTES do ORDER BY, pegando 10 linhas arbitrárias (C errado). LIMIT não existe em Oracle (D errado), e sem ORDER BY o FETCH não garante os mais caros (E errado).",
+      "id": 451
+    },
+    {
+      "topic": "dml",
+      "context": "Examine:\n\nINSERT INTO t VALUES (1);\nSAVEPOINT s1;\nINSERT INTO t VALUES (2);\nROLLBACK TO s1;\nCOMMIT;",
+      "text": "Which two statements are true about the final result? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The row with value 1 is committed."
+        },
+        {
+          "key": "B",
+          "text": "The row with value 2 is not present."
+        },
+        {
+          "key": "C",
+          "text": "Both rows are committed."
+        },
+        {
+          "key": "D",
+          "text": "ROLLBACK TO s1 also undoes the insert of value 1."
+        },
+        {
+          "key": "E",
+          "text": "The COMMIT fails because a SAVEPOINT was used."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "ROLLBACK TO SAVEPOINT s1 desfaz apenas o que ocorreu APÓS o savepoint — o INSERT do 2 é revertido (B), mas o do 1 (anterior ao savepoint) permanece e é commitado (A). Logo, nem ambos são commitados (C errado), o valor 1 não é desfeito (D errado) e o COMMIT funciona normalmente (E errado).",
+      "id": 452
+    },
+    {
+      "topic": "dml",
+      "context": "",
+      "text": "Which two statements are true about transaction control in Oracle? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A DDL statement such as CREATE TABLE causes an implicit COMMIT of the current transaction."
+        },
+        {
+          "key": "B",
+          "text": "COMMIT releases the row locks held by the transaction."
+        },
+        {
+          "key": "C",
+          "text": "A ROLLBACK can undo changes that were already committed."
+        },
+        {
+          "key": "D",
+          "text": "A SELECT statement starts a transaction that must be committed."
+        },
+        {
+          "key": "E",
+          "text": "Uncommitted changes are visible to other sessions immediately."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Qualquer DDL dispara COMMIT implícito da transação corrente (A), e o COMMIT libera os locks de linha da transação (B). Não se desfaz com ROLLBACK o que já foi commitado (C errado); um SELECT puro não abre transação a commitar (D errado); e alterações não commitadas NÃO são vistas por outras sessões (E errado).",
+      "id": 453
+    },
+    {
+      "topic": "set",
+      "context": "",
+      "text": "Which two statements are true about combining queries with set operators? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Each SELECT must return the same number of columns, with compatible data type groups."
+        },
+        {
+          "key": "B",
+          "text": "UNION removes duplicate rows, while UNION ALL keeps them."
+        },
+        {
+          "key": "C",
+          "text": "A single ORDER BY, if used, can appear after any of the individual SELECTs."
+        },
+        {
+          "key": "D",
+          "text": "MINUS returns the rows common to both queries."
+        },
+        {
+          "key": "E",
+          "text": "The final column names come from the last SELECT."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Os operadores exigem o mesmo número de colunas com grupos de tipo compatíveis (A); UNION remove duplicatas e UNION ALL as mantém (B). O ORDER BY só pode aparecer UMA vez, no fim do compound query (C errado). MINUS retorna o que está na primeira e NÃO na segunda (D errado), e os nomes de coluna vêm da PRIMEIRA consulta (E errado).",
+      "id": 454
+    },
+    {
+      "topic": "set",
+      "context": "Query A returns product_ids {10,20,30}; Query B returns {20,30,40}.",
+      "text": "Which two statements are true about combining A and B with set operators? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A INTERSECT B returns {20, 30}."
+        },
+        {
+          "key": "B",
+          "text": "A MINUS B returns {10}."
+        },
+        {
+          "key": "C",
+          "text": "A UNION B returns {10,20,30,40} with duplicates preserved."
+        },
+        {
+          "key": "D",
+          "text": "B MINUS A returns {10}."
+        },
+        {
+          "key": "E",
+          "text": "A INTERSECT B returns {10, 40}."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "INTERSECT devolve os valores comuns a ambos: {20, 30} (A). MINUS devolve o que está em A e não em B: {10} (B). UNION remove duplicatas, então A UNION B = {10,20,30,40} SEM duplicatas (C errado). B MINUS A seria {40}, não {10} (D errado), e a interseção não é {10,40} (E errado).",
+      "id": 455
+    },
+    {
+      "topic": "groups",
+      "context": "The EMPLOYEES table has DEPARTMENT_ID, JOB_ID and SALARY.",
+      "text": "Which two queries execute successfully and correctly group the data? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "SELECT department_id, SUM(salary) FROM employees GROUP BY department_id;"
+        },
+        {
+          "key": "B",
+          "text": "SELECT department_id, job_id, COUNT(*) FROM employees GROUP BY department_id, job_id;"
+        },
+        {
+          "key": "C",
+          "text": "SELECT department_id, SUM(salary) FROM employees WHERE SUM(salary) > 1000 GROUP BY department_id;"
+        },
+        {
+          "key": "D",
+          "text": "SELECT department_id, job_id, SUM(salary) FROM employees GROUP BY department_id;"
+        },
+        {
+          "key": "E",
+          "text": "SELECT department_id, AVG(MAX(salary)) FROM employees GROUP BY department_id;"
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Em A e B todas as colunas não agregadas do SELECT constam no GROUP BY — válidas. Em C, uma função de grupo não pode ir no WHERE (deveria ser HAVING). Em D, job_id está no SELECT mas fora do GROUP BY. Em E, funções de grupo aninhadas (AVG(MAX(...))) não podem coexistir com a coluna simples department_id no SELECT.",
+      "id": 456
+    },
+    {
+      "topic": "groups",
+      "context": "",
+      "text": "Which two statements are true about the COUNT function and NULLs? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "COUNT(*) counts all rows, including rows with NULLs."
+        },
+        {
+          "key": "B",
+          "text": "COUNT(column) ignores rows where that column is NULL."
+        },
+        {
+          "key": "C",
+          "text": "COUNT(column) treats NULL as zero and counts it."
+        },
+        {
+          "key": "D",
+          "text": "COUNT(DISTINCT column) counts NULLs once."
+        },
+        {
+          "key": "E",
+          "text": "COUNT can only be applied to NUMBER columns."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "COUNT(*) conta todas as linhas, independentemente de nulos (A); COUNT(coluna) ignora as linhas em que a coluna é NULL (B). COUNT não trata NULL como zero (C errado); COUNT(DISTINCT coluna) também ignora NULLs, não os conta (D errado); e COUNT funciona com qualquer tipo de dado, não só NUMBER (E errado).",
+      "id": 457
+    },
+    {
+      "topic": "access",
+      "context": "",
+      "text": "Which two statements are true about system privileges and object privileges? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "CREATE SESSION is a system privilege that allows a user to connect to the instance."
+        },
+        {
+          "key": "B",
+          "text": "SELECT on a specific table is an object privilege."
+        },
+        {
+          "key": "C",
+          "text": "Revoking a system privilege cascades to users who received it from the grantee."
+        },
+        {
+          "key": "D",
+          "text": "Object privileges are passed on using WITH ADMIN OPTION."
+        },
+        {
+          "key": "E",
+          "text": "Only the DBA can grant object privileges on any object."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "CREATE SESSION é privilégio de SISTEMA para conectar-se à instância (A); SELECT numa tabela específica é privilégio de OBJETO (B). A revogação de privilégio de SISTEMA NÃO cascateia (C errado — a de objeto sim). Privilégios de objeto são repassados com WITH GRANT OPTION, não ADMIN (D errado), e o DONO do objeto pode conceder privilégios sobre ele, não só o DBA (E errado).",
+      "id": 458
+    },
+    {
+      "topic": "fundamentals",
+      "context": "",
+      "text": "Which two statements are true about relational database concepts and SQL? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A foreign key in a child table references a primary or unique key in a parent table."
+        },
+        {
+          "key": "B",
+          "text": "SQL provides logical data independence from the underlying physical storage."
+        },
+        {
+          "key": "C",
+          "text": "A table can have multiple primary keys."
+        },
+        {
+          "key": "D",
+          "text": "Every column in a table must be part of some constraint."
+        },
+        {
+          "key": "E",
+          "text": "A primary key column can contain duplicate values."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Uma foreign key na tabela filha referencia uma primary/unique key na tabela pai (A), e o SQL oferece independência lógica em relação ao armazenamento físico (B). Uma tabela tem no máximo UMA primary key (C errado); colunas não precisam estar em constraints (D errado); e a primary key garante unicidade, não admitindo duplicatas (E errado).",
+      "id": 459
+    },
+    {
+      "topic": "functions",
+      "context": "Evaluate these expressions on the value 157.892.",
+      "text": "Which two statements are true about the ROUND and TRUNC number functions? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "ROUND(157.892, 2) returns 157.89."
+        },
+        {
+          "key": "B",
+          "text": "TRUNC(157.892, 2) returns 158."
+        },
+        {
+          "key": "C",
+          "text": "ROUND(157.892, -2) returns 200."
+        },
+        {
+          "key": "D",
+          "text": "TRUNC(157.892, 0) returns 158."
+        },
+        {
+          "key": "E",
+          "text": "ROUND(157.892) returns 157."
+        }
+      ],
+      "correct": [
+        "A",
+        "C"
+      ],
+      "explanation": "ROUND(157.892, 2) arredonda para 2 casas decimais: 157.89 (A). ROUND(157.892, -2) arredonda para a centena mais próxima: 200 (C). TRUNC(157.892, 2) CORTA na 2ª casa, dando 157.89 (não 158), então B é falsa. TRUNC(157.892, 0) dá 157, não 158 (D errada), e ROUND(157.892) dá 158, não 157 (E errada).",
+      "id": 460
+    },
+    {
+      "topic": "functions",
+      "context": "",
+      "text": "Which two statements are true about the CASE expression and the DECODE function? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A searched CASE can evaluate range conditions such as salary > 5000."
+        },
+        {
+          "key": "B",
+          "text": "DECODE compares an expression to a list of values for equality only."
+        },
+        {
+          "key": "C",
+          "text": "DECODE can evaluate range conditions directly."
+        },
+        {
+          "key": "D",
+          "text": "CASE can only be used in PL/SQL, not in SQL."
+        },
+        {
+          "key": "E",
+          "text": "DECODE and CASE cannot appear in the same SELECT."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O searched CASE avalia condições de faixa/comparação como salary > 5000 (A), enquanto DECODE só compara igualdade contra uma lista de valores (B). DECODE não avalia ranges diretamente (C errado); CASE funciona plenamente em SQL (D errado); e ambos podem coexistir na mesma consulta (E errado).",
+      "id": 461
+    },
+    {
+      "topic": "functions",
+      "context": "The EMPLOYEES table has a COMMISSION_PCT column that is NULL for some rows.",
+      "text": "Which two expressions return a non-null value when COMMISSION_PCT is NULL? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "NVL(commission_pct, 0)"
+        },
+        {
+          "key": "B",
+          "text": "NVL2(commission_pct, commission_pct, 0)"
+        },
+        {
+          "key": "C",
+          "text": "COALESCE(commission_pct)"
+        },
+        {
+          "key": "D",
+          "text": "commission_pct + 10"
+        },
+        {
+          "key": "E",
+          "text": "NULLIF(commission_pct, 0)"
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "NVL(commission_pct, 0) devolve 0 quando é nulo (A); NVL2(expr, v1, v2) devolve o terceiro argumento (0) quando expr é nulo (B). COALESCE exige ao menos dois argumentos (C errado); aritmética com NULL resulta em NULL (D errado); e NULLIF(x, 0) devolve x, que continua nulo (E errado).",
+      "id": 462
+    },
+    {
+      "topic": "ddl",
+      "context": "",
+      "text": "Which two statements are true about indexes in an Oracle database? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A PRIMARY KEY or UNIQUE constraint automatically creates a supporting index if a suitable one does not exist."
+        },
+        {
+          "key": "B",
+          "text": "A table can have several indexes on different columns."
+        },
+        {
+          "key": "C",
+          "text": "Creating an index guarantees the optimizer will use it for every query on that column."
+        },
+        {
+          "key": "D",
+          "text": "An index cannot be created on a column that allows NULLs."
+        },
+        {
+          "key": "E",
+          "text": "Dropping a table leaves its indexes in place."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Uma constraint PRIMARY KEY ou UNIQUE cria automaticamente um índice de apoio se não houver um adequado (A), e uma tabela pode ter vários índices em colunas diferentes (B). A existência do índice não garante seu uso — o otimizador decide (C errado); índices podem existir em colunas com NULLs (D errado); e dropar a tabela remove seus índices junto (E errado).",
+      "id": 463
+    },
+    {
+      "topic": "ddl",
+      "context": "",
+      "text": "Which two statements are true about sequences? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A sequence can produce gaps in its values, for example after a rollback or an instance crash with cached values."
+        },
+        {
+          "key": "B",
+          "text": "CURRVAL is available in a session only after NEXTVAL has been referenced at least once."
+        },
+        {
+          "key": "C",
+          "text": "A sequence guarantees gap-free numbering under all conditions."
+        },
+        {
+          "key": "D",
+          "text": "A sequence stores every generated number in a table."
+        },
+        {
+          "key": "E",
+          "text": "A sequence can be used by only the user who created it."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Sequences podem gerar lacunas: valores cacheados se perdem num rollback/crash (A). Numa sessão, CURRVAL só funciona depois que NEXTVAL foi chamado ao menos uma vez ali (B). Elas NÃO garantem numeração sem lacunas (C errado); não armazenam fisicamente cada número (D errado); e podem ser concedidas a outros usuários com GRANT SELECT (E errado).",
+      "id": 464
+    },
+    {
+      "topic": "ddl",
+      "context": "",
+      "text": "Which two statements are true about setting a column to UNUSED with ALTER TABLE ... SET UNUSED? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Multiple columns can be set to UNUSED in a single statement."
+        },
+        {
+          "key": "B",
+          "text": "An UNUSED column no longer appears in DESCRIBE output or SELECT *."
+        },
+        {
+          "key": "C",
+          "text": "An UNUSED column can still be queried by name until dropped."
+        },
+        {
+          "key": "D",
+          "text": "Setting a column to UNUSED immediately reclaims its storage."
+        },
+        {
+          "key": "E",
+          "text": "An UNUSED column can be renamed and reused."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "SET UNUSED aceita várias colunas de uma vez (A), e uma coluna marcada como UNUSED deixa de aparecer no DESCRIBE e no SELECT * (B). Ela NÃO pode mais ser consultada por nome (C errado); o espaço só é recuperado ao executar DROP UNUSED COLUMNS depois (D errado); e não pode ser 'reusada' — fica inacessível até ser dropada (E errado).",
+      "id": 465
+    },
+    {
+      "topic": "select",
+      "context": "Examine this WHERE clause:\n\nWHERE department_id = 10 OR department_id = 20 AND salary > 5000",
+      "text": "Which two statements are true about how Oracle evaluates this clause? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "AND has higher precedence than OR, so it is evaluated first."
+        },
+        {
+          "key": "B",
+          "text": "It is equivalent to: department_id = 10 OR (department_id = 20 AND salary > 5000)."
+        },
+        {
+          "key": "C",
+          "text": "It is equivalent to: (department_id = 10 OR department_id = 20) AND salary > 5000."
+        },
+        {
+          "key": "D",
+          "text": "Parentheses are required or the statement fails."
+        },
+        {
+          "key": "E",
+          "text": "OR is evaluated before AND."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "AND tem precedência MAIOR que OR (A), portanto a cláusula equivale a department_id = 10 OR (department_id = 20 AND salary > 5000) (B): todos do departamento 10 entram, mais os do 20 com salário acima de 5000. A interpretação C exigiria parênteses explícitos. Não há erro sem parênteses (D errado), e OR não é avaliado antes de AND (E errado).",
+      "id": 466
+    },
+    {
+      "topic": "select",
+      "context": "",
+      "text": "Which two statements are true about substitution variables in SQL*Plus and SQL Developer? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A single ampersand (&) prompts for a value each time the variable is referenced, unless already defined."
+        },
+        {
+          "key": "B",
+          "text": "A double ampersand (&&) defines the variable for the session after the first prompt."
+        },
+        {
+          "key": "C",
+          "text": "Substitution variables can be used only in the WHERE clause."
+        },
+        {
+          "key": "D",
+          "text": "SET VERIFY OFF causes an error when a substitution variable is used."
+        },
+        {
+          "key": "E",
+          "text": "Substitution variables are a database server feature, not a client tool feature."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Um & simples pede o valor a cada referência (se não definido) — A; o && define a variável para a sessão após o primeiro prompt (B). Podem ser usadas em várias cláusulas, não só no WHERE (C errado); SET VERIFY OFF apenas suprime as linhas old/new, sem erro (D errado); e são recurso das ferramentas CLIENTE (SQL*Plus/SQL Developer), não do servidor (E errado).",
+      "id": 467
+    },
+    {
+      "topic": "select",
+      "context": "The CUSTOMERS table has a CITY column.",
+      "text": "Which two WHERE clauses return customers whose city starts with 'D' followed by at least two more characters? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "WHERE city LIKE 'D_%'"
+        },
+        {
+          "key": "B",
+          "text": "WHERE city LIKE 'D__%'"
+        },
+        {
+          "key": "C",
+          "text": "WHERE city = 'D_%'"
+        },
+        {
+          "key": "D",
+          "text": "WHERE city LIKE 'D%' AND LENGTH(city) >= 3"
+        },
+        {
+          "key": "E",
+          "text": "WHERE city LIKE '_D%'"
+        }
+      ],
+      "correct": [
+        "B",
+        "D"
+      ],
+      "explanation": "'D__%' exige 'D' seguido de pelo menos dois caracteres (dois _ obrigatórios) e depois qualquer coisa (B). A alternativa D combina começar com 'D' e ter comprimento >= 3, atendendo ao requisito (D). 'D_%' exige só UM caractere após o D (A errado); '=' com curingas não faz pattern matching (C errado); e '_D%' pede um caractere ANTES do D (E errado).",
+      "id": 468
+    },
+    {
+      "topic": "joins",
+      "context": "EMPLOYEES(employee_id, manager_id) — manager_id references employee_id in the same table.",
+      "text": "Which two statements are true about a self join used to list employees with their managers? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The EMPLOYEES table is referenced twice using two different aliases."
+        },
+        {
+          "key": "B",
+          "text": "A LEFT OUTER self join can include employees who have no manager."
+        },
+        {
+          "key": "C",
+          "text": "A self join must always be a cross join."
+        },
+        {
+          "key": "D",
+          "text": "A self join requires two physically different tables."
+        },
+        {
+          "key": "E",
+          "text": "A self join cannot use an ON clause."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Um self join referencia a MESMA tabela duas vezes com aliases distintos (ex.: e e m) — A. Usando LEFT OUTER JOIN, é possível incluir empregados sem gerente (manager_id nulo) — B. Não precisa ser cross join (C errado), não exige duas tabelas físicas diferentes (D errado) e usa normalmente a cláusula ON (E errado).",
+      "id": 469
+    },
+    {
+      "topic": "joins",
+      "context": "",
+      "text": "Which two statements are true about multiple-row subqueries? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "They can be used with the IN operator."
+        },
+        {
+          "key": "B",
+          "text": "They can be used with ANY or ALL comparison operators."
+        },
+        {
+          "key": "C",
+          "text": "They can be used with the = operator when they return several rows."
+        },
+        {
+          "key": "D",
+          "text": "They must always return exactly one column."
+        },
+        {
+          "key": "E",
+          "text": "They cannot appear in the WHERE clause."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Subqueries de múltiplas linhas funcionam com IN (A) e com operadores como ANY/ALL (B). Não podem ser usadas com = quando retornam várias linhas — isso gera erro (C errado); podem retornar mais de uma coluna, ex.: em pair-wise comparisons (D errado); e podem aparecer no WHERE normalmente (E errado).",
+      "id": 470
+    },
+    {
+      "topic": "dml",
+      "context": "STAGING(order_id, amount). SALES_A and SALES_B have the same structure.",
+      "text": "Which two statements are true about the multitable INSERT (INSERT ALL / INSERT FIRST)? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "INSERT ALL can insert each source row into more than one target table."
+        },
+        {
+          "key": "B",
+          "text": "INSERT FIRST inserts a row only into the first WHEN clause whose condition is true."
+        },
+        {
+          "key": "C",
+          "text": "A multitable INSERT can insert only into a single table."
+        },
+        {
+          "key": "D",
+          "text": "INSERT ALL evaluates only the first matching WHEN condition."
+        },
+        {
+          "key": "E",
+          "text": "Multitable INSERT cannot use a subquery as its data source."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "INSERT ALL pode inserir cada linha de origem em VÁRIAS tabelas destino (A); INSERT FIRST insere a linha apenas no primeiro WHEN cuja condição é verdadeira (B). Um multitable INSERT insere em várias tabelas, não só uma (C errado); INSERT ALL avalia TODAS as condições WHEN (não só a primeira) — D errado; e usa justamente uma subquery como fonte de dados (E errado).",
+      "id": 471
+    },
+    {
+      "topic": "dml",
+      "context": "A FOREIGN KEY links EMPLOYEES.department_id to DEPARTMENTS.department_id, with the default (no ON DELETE clause).",
+      "text": "Which two statements are true about DML with this constraint? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Deleting a DEPARTMENTS row still referenced by employees raises an integrity constraint error."
+        },
+        {
+          "key": "B",
+          "text": "Inserting an employee with a department_id that does not exist in DEPARTMENTS raises an error."
+        },
+        {
+          "key": "C",
+          "text": "The employee rows are automatically deleted when the parent department is deleted."
+        },
+        {
+          "key": "D",
+          "text": "The child department_id is automatically set to NULL when the parent is deleted."
+        },
+        {
+          "key": "E",
+          "text": "A NULL department_id in an employee row violates the foreign key."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Sem ON DELETE, apagar um departamento ainda referenciado gera erro de integridade (A), e inserir um empregado com department_id inexistente no pai também gera erro (B). Exclusão em cascata (C) e SET NULL (D) só ocorrem com ON DELETE CASCADE / SET NULL explícito. Uma FK só valida valores NÃO nulos, então department_id nulo é permitido (E errado).",
+      "id": 472
+    },
+    {
+      "topic": "access",
+      "context": "",
+      "text": "Which two statements are true about revoking privileges? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Revoking an object privilege granted WITH GRANT OPTION cascades to users who received it from the grantee."
+        },
+        {
+          "key": "B",
+          "text": "Revoking a system privilege does not cascade to users who received it from the grantee."
+        },
+        {
+          "key": "C",
+          "text": "Revoking a system privilege always cascades like object privileges."
+        },
+        {
+          "key": "D",
+          "text": "Only SYS can revoke any privilege."
+        },
+        {
+          "key": "E",
+          "text": "A privilege cannot be revoked once granted."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "A revogação de um privilégio de OBJETO concedido WITH GRANT OPTION cascateia para quem o recebeu do beneficiário (A); já a revogação de um privilégio de SISTEMA NÃO cascateia (B). Portanto C está errado (system não cascateia). Não é só SYS que revoga — quem concedeu pode revogar (D errado); e privilégios podem ser revogados (E errado).",
+      "id": 473
+    },
+    {
+      "topic": "access",
+      "context": "",
+      "text": "Which two statements are true about roles in an Oracle database? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A role can be granted to a user or to another role."
+        },
+        {
+          "key": "B",
+          "text": "A role groups related privileges so they can be managed together."
+        },
+        {
+          "key": "C",
+          "text": "A role owns the objects created while it is enabled."
+        },
+        {
+          "key": "D",
+          "text": "A role can be granted to only one user at a time."
+        },
+        {
+          "key": "E",
+          "text": "Object privileges cannot be included in a role."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Um role pode ser concedido a um usuário OU a outro role (A) e agrupa privilégios relacionados para gestão conjunta (B). Roles NÃO possuem objetos — o dono é sempre um usuário/esquema (C errado); podem ser concedidos a vários usuários (D errado); e admitem tanto privilégios de sistema quanto de objeto (E errado).",
+      "id": 474
+    },
+    {
+      "topic": "timezone",
+      "context": "",
+      "text": "Which two statements are true about the CURRENT_DATE, CURRENT_TIMESTAMP, and SYSDATE functions? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "CURRENT_DATE returns the date and time in the session's time zone."
+        },
+        {
+          "key": "B",
+          "text": "SYSDATE returns the date and time of the database server's operating system."
+        },
+        {
+          "key": "C",
+          "text": "CURRENT_TIMESTAMP returns a plain DATE with no time zone."
+        },
+        {
+          "key": "D",
+          "text": "SYSDATE always returns a value in UTC."
+        },
+        {
+          "key": "E",
+          "text": "CURRENT_DATE ignores the session time zone."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "CURRENT_DATE devolve data/hora no fuso da SESSÃO (A), enquanto SYSDATE devolve a data/hora do SO do servidor do banco (B). CURRENT_TIMESTAMP retorna TIMESTAMP WITH TIME ZONE, não DATE (C errado); SYSDATE usa o relógio do servidor, não UTC fixo (D errado); e CURRENT_DATE respeita o fuso da sessão (E errado).",
+      "id": 475
+    },
+    {
+      "topic": "dictionary",
+      "context": "",
+      "text": "Which two statements are true about querying the data dictionary with the USER_, ALL_ and DBA_ prefixes? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "USER_TABLES lists the tables owned by the current user."
+        },
+        {
+          "key": "B",
+          "text": "ALL_TABLES lists tables the user owns plus those they can access."
+        },
+        {
+          "key": "C",
+          "text": "DBA_TABLES can be queried by any user without extra privileges."
+        },
+        {
+          "key": "D",
+          "text": "USER_ views include an OWNER column identifying other schemas."
+        },
+        {
+          "key": "E",
+          "text": "ALL_ views can only be queried by SYS."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "USER_TABLES lista as tabelas do usuário atual (A); ALL_TABLES lista as que ele possui MAIS as que pode acessar (B). DBA_TABLES exige privilégio administrativo (C errado); as USER_ não têm coluna OWNER, pois o dono é sempre o usuário atual (D errado); e as ALL_ podem ser consultadas por qualquer usuário, não só SYS (E errado).",
+      "id": 476
+    },
+    {
+      "topic": "groups",
+      "context": "",
+      "text": "Which two statements are true about the WHERE and HAVING clauses? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "WHERE filters rows before they are grouped."
+        },
+        {
+          "key": "B",
+          "text": "HAVING filters groups after aggregation and can use group functions."
+        },
+        {
+          "key": "C",
+          "text": "A group function can be used in the WHERE clause."
+        },
+        {
+          "key": "D",
+          "text": "HAVING can only be used together with ORDER BY."
+        },
+        {
+          "key": "E",
+          "text": "Non-aggregated SELECT columns need not appear in GROUP BY."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O WHERE filtra linhas ANTES do agrupamento (A); o HAVING filtra GRUPOS após a agregação e pode usar funções de grupo (B). Funções de grupo não podem ir no WHERE (C errado); HAVING independe de ORDER BY (D errado); e colunas não agregadas do SELECT DEVEM constar no GROUP BY (E errado).",
+      "id": 477
+    },
+    {
+      "topic": "set",
+      "context": "Examine:\n\nSELECT id FROM a\nUNION\nSELECT id FROM b\nORDER BY id;",
+      "text": "Which two statements are true about the ORDER BY in this compound query? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The ORDER BY applies to the entire combined result, not to each SELECT separately."
+        },
+        {
+          "key": "B",
+          "text": "It can reference the column position (e.g., ORDER BY 1) or a name from the first SELECT."
+        },
+        {
+          "key": "C",
+          "text": "Each SELECT can have its own ORDER BY."
+        },
+        {
+          "key": "D",
+          "text": "The ORDER BY must appear before the UNION."
+        },
+        {
+          "key": "E",
+          "text": "Column aliases from the second SELECT can be used in the ORDER BY."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Num compound query, o ORDER BY final ordena o RESULTADO combinado inteiro (A) e pode usar posição de coluna ou nome da PRIMEIRA consulta (B). As consultas individuais não têm ORDER BY próprio (C errado); o ORDER BY vem no FIM, não antes do UNION (D errado); e aliases da segunda consulta não valem (E errado).",
+      "id": 478
+    },
+    {
+      "topic": "fundamentals",
+      "context": "",
+      "text": "Which two statements are true about primary keys and foreign keys? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A foreign key value must match an existing primary/unique key value or be NULL."
+        },
+        {
+          "key": "B",
+          "text": "A table can have multiple foreign keys but only one primary key."
+        },
+        {
+          "key": "C",
+          "text": "A foreign key column must have the same name as the referenced column."
+        },
+        {
+          "key": "D",
+          "text": "A primary key column can contain NULL values."
+        },
+        {
+          "key": "E",
+          "text": "A foreign key must reference another foreign key."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Um valor de foreign key deve casar com um valor existente de primary/unique key OU ser NULL (A); uma tabela pode ter várias foreign keys, mas apenas uma primary key (B). A FK não precisa ter o mesmo NOME da coluna referenciada (C errado); primary key não aceita NULL (D errado); e a FK referencia uma primary/unique key, não outra foreign key (E errado).",
+      "id": 479
     }
   ]
 }
