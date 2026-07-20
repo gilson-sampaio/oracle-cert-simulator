@@ -13787,6 +13787,681 @@
       ],
       "explanation": "Um valor de foreign key deve casar com um valor existente de primary/unique key OU ser NULL (A); uma tabela pode ter várias foreign keys, mas apenas uma primary key (B). A FK não precisa ter o mesmo NOME da coluna referenciada (C errado); primary key não aceita NULL (D errado); e a FK referencia uma primary/unique key, não outra foreign key (E errado).",
       "id": 479
+    },
+    {
+      "topic": "dictionary",
+      "context": "",
+      "text": "Which two statements are true about the USER_TAB_COLUMNS data dictionary view? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "It shows column names, data types, and nullability for tables owned by the current user."
+        },
+        {
+          "key": "B",
+          "text": "It includes columns of tables owned by other users, as long as the current user has SELECT on them."
+        },
+        {
+          "key": "C",
+          "text": "It contains a column DATA_TYPE describing the type of each column."
+        },
+        {
+          "key": "D",
+          "text": "It requires the SELECT ANY DICTIONARY privilege to be queried."
+        },
+        {
+          "key": "E",
+          "text": "It only lists columns of views, never of tables."
+        }
+      ],
+      "correct": [
+        "A",
+        "C"
+      ],
+      "explanation": "USER_TAB_COLUMNS mostra apenas objetos do PRÓPRIO usuário (A) e traz a coluna DATA_TYPE com o tipo de cada coluna (C). Para ver colunas de tabelas de outros usuários seria preciso ALL_TAB_COLUMNS, não USER_ (B errado); nenhum privilégio especial é necessário para consultar as views USER_ (D errado); e ela lista colunas de tabelas E de views (E errado).",
+      "id": 480
+    },
+    {
+      "topic": "dictionary",
+      "context": "",
+      "text": "A DBA runs: SELECT table_name FROM all_tables WHERE owner = 'HR'; Which statement is true?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It lists all tables owned by HR that the current user has some privilege to see."
+        },
+        {
+          "key": "B",
+          "text": "It fails because ALL_TABLES has no OWNER column."
+        },
+        {
+          "key": "C",
+          "text": "It returns only tables owned by the current session's user, regardless of the WHERE clause."
+        },
+        {
+          "key": "D",
+          "text": "It requires the DBA role to execute."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "ALL_TABLES lista os objetos que o usuário atual pode acessar (próprios + com privilégio concedido), e possui a coluna OWNER para filtrar por esquema (A). A view existe e tem OWNER (B errado); o filtro WHERE owner='HR' é respeitado, não é ignorado (C errado); e não é necessário ter o papel DBA para consultar ALL_ views, apenas ter algum privilégio sobre os objetos (D errado).",
+      "id": 481
+    },
+    {
+      "topic": "dictionary",
+      "context": "",
+      "text": "Which two statements are true about the difference between USER_OBJECTS and DBA_OBJECTS? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "USER_OBJECTS shows only objects owned by the current user."
+        },
+        {
+          "key": "B",
+          "text": "DBA_OBJECTS shows every object in the database, regardless of owner, and requires suitable privileges to query."
+        },
+        {
+          "key": "C",
+          "text": "USER_OBJECTS and DBA_OBJECTS always return the exact same rows."
+        },
+        {
+          "key": "D",
+          "text": "DBA_OBJECTS has no OWNER column, unlike USER_OBJECTS."
+        },
+        {
+          "key": "E",
+          "text": "Any user can query DBA_OBJECTS without being granted SELECT_CATALOG_ROLE, DBA, or a similar privilege."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "USER_OBJECTS restringe-se aos objetos do usuário conectado (A), enquanto DBA_OBJECTS mostra todos os objetos do banco, exigindo privilégio adequado — tipicamente SELECT_CATALOG_ROLE ou DBA — para ser consultada (B). Elas não retornam as mesmas linhas (C errado); DBA_OBJECTS também possui a coluna OWNER, aliás é por isso que é útil para listar objetos de qualquer esquema (D errado); e sem esse privilégio adequado o acesso a DBA_OBJECTS é negado, contrariando E (errado).",
+      "id": 482
+    },
+    {
+      "topic": "dictionary",
+      "context": "",
+      "text": "Which two statements are true about querying the data dictionary for constraints? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "USER_CONSTRAINTS shows the constraint name, type, and status for constraints owned by the current user."
+        },
+        {
+          "key": "B",
+          "text": "USER_CONS_COLUMNS shows which columns belong to each constraint."
+        },
+        {
+          "key": "C",
+          "text": "The CONSTRAINT_TYPE column in USER_CONSTRAINTS stores the full word, such as 'PRIMARY KEY'."
+        },
+        {
+          "key": "D",
+          "text": "A disabled constraint is automatically removed from USER_CONSTRAINTS."
+        },
+        {
+          "key": "E",
+          "text": "USER_CONSTRAINTS never shows check constraints, only primary and foreign keys."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "USER_CONSTRAINTS traz nome, tipo e status (ENABLED/DISABLED) das constraints do usuário (A), e USER_CONS_COLUMNS relaciona quais colunas compõem cada constraint (B). CONSTRAINT_TYPE guarda apenas um código de uma letra ('P','R','U','C', etc.), não a palavra completa (C errado); uma constraint desabilitada continua listada, apenas com STATUS='DISABLED' (D errado); e check constraints (tipo 'C') também aparecem normalmente (E errado).",
+      "id": 483
+    },
+    {
+      "topic": "timezone",
+      "context": "",
+      "text": "Examine:\n\nSELECT CURRENT_DATE, SYSDATE FROM dual;",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "CURRENT_DATE reflects the session's time zone; SYSDATE reflects the database server's time zone."
+        },
+        {
+          "key": "B",
+          "text": "Both columns return a value of data type DATE."
+        },
+        {
+          "key": "C",
+          "text": "CURRENT_DATE and SYSDATE always return an identical value regardless of session time zone."
+        },
+        {
+          "key": "D",
+          "text": "SYSDATE returns a TIMESTAMP WITH TIME ZONE value."
+        },
+        {
+          "key": "E",
+          "text": "CURRENT_DATE cannot be selected from the DUAL table."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "CURRENT_DATE usa o fuso da SESSÃO, enquanto SYSDATE usa o fuso do SERVIDOR do banco (A); ambas retornam tipo DATE (B). Se a sessão estiver em fuso diferente do servidor, os valores DIVERGEM (C errado); SYSDATE é DATE, não TIMESTAMP WITH TIME ZONE — quem retorna isso é SYSTIMESTAMP (D errado); e CURRENT_DATE pode sim ser usada em DUAL, como qualquer pseudo-coluna/função (E errado).",
+      "id": 484
+    },
+    {
+      "topic": "timezone",
+      "context": "",
+      "text": "Which two statements are true about the INTERVAL YEAR TO MONTH and INTERVAL DAY TO SECOND data types? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "INTERVAL YEAR TO MONTH stores a period of years and months."
+        },
+        {
+          "key": "B",
+          "text": "INTERVAL DAY TO SECOND can store days, hours, minutes, and fractional seconds."
+        },
+        {
+          "key": "C",
+          "text": "INTERVAL DAY TO SECOND can store a period expressed in years and months instead of days."
+        },
+        {
+          "key": "D",
+          "text": "INTERVAL YEAR TO MONTH can also store days and hours."
+        },
+        {
+          "key": "E",
+          "text": "Interval values cannot be used in arithmetic expressions with dates."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "INTERVAL YEAR TO MONTH guarda um período em anos e meses (A); INTERVAL DAY TO SECOND guarda dias, horas, minutos e segundos fracionários (B). É o INTERVAL YEAR TO MONTH que guarda anos/meses, não o DAY TO SECOND — os papéis estão trocados em C (errado); INTERVAL YEAR TO MONTH NÃO armazena dias/horas, isso é papel do DAY TO SECOND (D errado); e intervalos são feitos justamente para aritmética com datas, sendo somados/subtraídos de DATE e TIMESTAMP normalmente (E errado).",
+      "id": 485
+    },
+    {
+      "topic": "timezone",
+      "context": "A session has ALTER SESSION SET TIME_ZONE = '-05:00'; executed.",
+      "text": "Which statement is true about SESSIONTIMEZONE after this command?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "SESSIONTIMEZONE returns the offset '-05:00' for the current session only."
+        },
+        {
+          "key": "B",
+          "text": "SESSIONTIMEZONE changes for every session connected to the database."
+        },
+        {
+          "key": "C",
+          "text": "The command fails because TIME_ZONE cannot be set at the session level."
+        },
+        {
+          "key": "D",
+          "text": "SESSIONTIMEZONE always reflects the database's time zone, ignoring ALTER SESSION."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "ALTER SESSION SET TIME_ZONE afeta apenas a sessão atual, e SESSIONTIMEZONE passa a refletir o novo offset '-05:00' somente para quem executou o comando (A). Outras sessões não são afetadas (B errado); o comando é válido e amplamente usado (C errado); e SESSIONTIMEZONE é justamente o fuso da sessão, que pode ser diferente do fuso do banco (D errado).",
+      "id": 486
+    },
+    {
+      "topic": "access",
+      "context": "",
+      "text": "Examine:\n\nGRANT SELECT ON hr.employees TO scott WITH GRANT OPTION;",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "SCOTT can query HR.EMPLOYEES."
+        },
+        {
+          "key": "B",
+          "text": "SCOTT can grant the SELECT privilege on HR.EMPLOYEES to other users."
+        },
+        {
+          "key": "C",
+          "text": "SCOTT automatically receives INSERT and UPDATE privileges as well."
+        },
+        {
+          "key": "D",
+          "text": "WITH GRANT OPTION only works for system privileges, not object privileges."
+        },
+        {
+          "key": "E",
+          "text": "If HR later revokes SELECT from SCOTT, any grants SCOTT already made to other users remain valid and unaffected."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O GRANT concede SELECT (A) e, com WITH GRANT OPTION, permite que SCOTT repasse esse mesmo privilégio a outros usuários (B). Apenas SELECT foi concedido, não INSERT/UPDATE (C errado); WITH GRANT OPTION é usado justamente em privilégios de OBJETO — para privilégios de sistema o equivalente é WITH ADMIN OPTION (D errado); e ao revogar SELECT de SCOTT, o Oracle revoga EM CASCATA os grants que SCOTT concedeu a partir daquele privilégio — eles não permanecem válidos (E errado).",
+      "id": 487
+    },
+    {
+      "topic": "access",
+      "context": "",
+      "text": "Which two statements are true about the PUBLIC keyword when granting privileges? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "GRANT SELECT ON hr.employees TO PUBLIC; makes the privilege available to every user in the database."
+        },
+        {
+          "key": "B",
+          "text": "Revoking a privilege granted to PUBLIC removes it for all users at once."
+        },
+        {
+          "key": "C",
+          "text": "PUBLIC is a role that must be created by the DBA before use."
+        },
+        {
+          "key": "D",
+          "text": "Privileges granted to PUBLIC can be revoked individually from a single user."
+        },
+        {
+          "key": "E",
+          "text": "PUBLIC can only receive object privileges, never system privileges."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "PUBLIC é um grupo especial que representa todos os usuários do banco; conceder a PUBLIC libera o privilégio para todos (A), e revogar de PUBLIC remove para todos de uma vez (B). PUBLIC já existe por padrão no banco, não precisa ser criado (C errado); não é possível revogar de um único usuário um privilégio concedido a PUBLIC — teria que revogar de PUBLIC inteiro (D errado); e PUBLIC pode receber tanto privilégios de objeto quanto de sistema (E errado).",
+      "id": 488
+    },
+    {
+      "topic": "access",
+      "context": "",
+      "text": "Which two statements are true about privileges required to create a view? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The user needs the CREATE VIEW system privilege to create a view in their own schema."
+        },
+        {
+          "key": "B",
+          "text": "The user needs sufficient object privileges (such as SELECT) on every base table or view referenced."
+        },
+        {
+          "key": "C",
+          "text": "Creating a view automatically grants SELECT on it to every other user."
+        },
+        {
+          "key": "D",
+          "text": "The CREATE ANY VIEW privilege is required even to create a view in one's own schema."
+        },
+        {
+          "key": "E",
+          "text": "A view can be created even without any privilege on the base tables, as long as the view name is unique."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Para criar uma view no próprio esquema é preciso o privilégio de sistema CREATE VIEW (A), além de privilégios de objeto (como SELECT) sobre as tabelas/views base referenciadas (B). A criação da view não concede automaticamente SELECT a outros usuários — isso exige um GRANT explícito (C errado); CREATE ANY VIEW é necessário apenas para criar views em esquemas de OUTROS usuários, não no próprio (D errado); e sem privilégio sobre as tabelas base a criação falha, independentemente do nome da view ser único (E errado).",
+      "id": 489
+    },
+    {
+      "topic": "groups",
+      "context": "Examine:\n\nSELECT department_id, COUNT(*), AVG(salary)\nFROM employees\nGROUP BY department_id\nHAVING COUNT(*) > 5\nORDER BY AVG(salary) DESC;",
+      "text": "Which two statements are true about the execution of this statement? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Oracle groups the rows by DEPARTMENT_ID before evaluating the HAVING condition."
+        },
+        {
+          "key": "B",
+          "text": "Only departments with more than 5 employees appear in the result."
+        },
+        {
+          "key": "C",
+          "text": "The ORDER BY is evaluated before the GROUP BY."
+        },
+        {
+          "key": "D",
+          "text": "HAVING COUNT(*) > 5 filters individual employee rows before grouping."
+        },
+        {
+          "key": "E",
+          "text": "The statement fails because AVG cannot be used in ORDER BY."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Oracle primeiro agrupa por DEPARTMENT_ID e só então aplica o HAVING sobre os grupos formados (A), de modo que apenas departamentos com mais de 5 funcionários sobrevivem ao filtro (B). O ORDER BY é a ÚLTIMA cláusula avaliada logicamente, não antes do GROUP BY (C errado); HAVING atua sobre GRUPOS já formados, não sobre linhas individuais antes do agrupamento — isso é papel do WHERE (D errado); e usar uma função de grupo como AVG no ORDER BY é perfeitamente válido (E errado).",
+      "id": 490
+    },
+    {
+      "topic": "groups",
+      "context": "",
+      "text": "Which two statements are true about nesting group functions, such as MAX(AVG(salary))? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Oracle allows group functions to be nested up to two levels deep."
+        },
+        {
+          "key": "B",
+          "text": "MAX(AVG(salary)) can be used to find the highest of several departmental averages."
+        },
+        {
+          "key": "C",
+          "text": "Nested group functions can be nested to any depth without restriction."
+        },
+        {
+          "key": "D",
+          "text": "Nested group functions like MAX(AVG(salary)) may only reference columns that also appear in the GROUP BY clause."
+        },
+        {
+          "key": "E",
+          "text": "Nested group functions cannot appear in a SELECT list, only in HAVING."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Oracle permite aninhar funções de grupo em até dois níveis (A), o que é exatamente o caso de MAX(AVG(salary)) para achar a maior média entre departamentos (B). Não há aninhamento ilimitado — o limite prático de duas funções é a regra testada (C errado). A coluna usada dentro da função de grupo (aqui, salary) não precisa constar no GROUP BY — só as colunas não agregadas do SELECT precisariam (D errado); e funções de grupo aninhadas podem aparecer normalmente no SELECT, não só no HAVING (E errado).",
+      "id": 491
+    },
+    {
+      "topic": "groups",
+      "context": "",
+      "text": "Which statement about GROUP BY and expressions is true?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "GROUP BY can reference an expression, such as GROUP BY TRUNC(hire_date, 'YYYY'), not only column names."
+        },
+        {
+          "key": "B",
+          "text": "GROUP BY can only reference columns that already exist in the table, never expressions."
+        },
+        {
+          "key": "C",
+          "text": "An expression used in GROUP BY must also be given a column alias."
+        },
+        {
+          "key": "D",
+          "text": "GROUP BY expressions must always match exactly one column from the SELECT list."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "O GROUP BY aceita expressões, como TRUNC(hire_date,'YYYY') para agrupar por ano de contratação, não apenas nomes de coluna crus (A). A afirmação B contradiz isso diretamente. Não é necessário dar alias à expressão no GROUP BY (C errado); e a expressão do GROUP BY não precisa corresponder a nenhuma coluna do SELECT — pode-se agrupar por algo que nem aparece no SELECT (D errado).",
+      "id": 492
+    },
+    {
+      "topic": "fundamentals",
+      "context": "",
+      "text": "Which two statements are true about the relationship between a table and a view in a relational database? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A view does not store data by itself; it stores a query definition executed against base tables."
+        },
+        {
+          "key": "B",
+          "text": "A simple view based on a single table can, under certain conditions, be used to perform DML on the base table."
+        },
+        {
+          "key": "C",
+          "text": "Dropping a view also drops the underlying base table."
+        },
+        {
+          "key": "D",
+          "text": "A view always physically duplicates the data of its base table."
+        },
+        {
+          "key": "E",
+          "text": "Views cannot have column aliases different from the base table's column names."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Uma view não armazena dados fisicamente — ela guarda a definição de uma consulta executada contra as tabelas base (A); e uma view simples (baseada em uma única tabela, sem funções de grupo, DISTINCT, etc.) pode permitir DML que se reflete na tabela base (B). Excluir uma view NÃO afeta a tabela base (C errado); como a view não duplica dados fisicamente, D contradiz A (errado); e views podem sim renomear colunas com aliases diferentes dos nomes originais (E errado).",
+      "id": 493
+    },
+    {
+      "topic": "fundamentals",
+      "context": "",
+      "text": "Which two statements are true about entities and attributes in the process of designing a relational database? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "An entity typically becomes a table, and its attributes typically become columns."
+        },
+        {
+          "key": "B",
+          "text": "An attribute represents a characteristic or property of an entity."
+        },
+        {
+          "key": "C",
+          "text": "An entity can only have one attribute."
+        },
+        {
+          "key": "D",
+          "text": "Attributes must always be numeric data types."
+        },
+        {
+          "key": "E",
+          "text": "Entities are only used for reporting and have no relation to physical tables."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "No modelo relacional, uma entidade tipicamente vira uma tabela e seus atributos viram colunas (A); um atributo representa uma característica ou propriedade daquela entidade, como nome ou salário (B). Uma entidade normalmente tem VÁRIOS atributos, não apenas um (C errado); atributos podem ser de qualquer tipo de dado — texto, data, número (D errado); e entidades se traduzem diretamente em tabelas físicas no banco (E errado).",
+      "id": 494
+    },
+    {
+      "topic": "select",
+      "context": "Examine:\n\nSELECT last_name, salary\nFROM employees\nFETCH FIRST 5 ROWS WITH TIES;",
+      "text": "Which two statements are true about this statement? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Without an ORDER BY, the result may return an unpredictable set of rows."
+        },
+        {
+          "key": "B",
+          "text": "WITH TIES can return more than 5 rows if there is a tie in the ordering column at the boundary."
+        },
+        {
+          "key": "C",
+          "text": "WITH TIES requires no ORDER BY clause to determine ties."
+        },
+        {
+          "key": "D",
+          "text": "FETCH FIRST is only valid when combined with the OFFSET clause."
+        },
+        {
+          "key": "E",
+          "text": "This syntax is only valid in a subquery, never in a top-level SELECT."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Sem ORDER BY, não há uma ordem determinística e o conjunto de 5 linhas retornado pode variar entre execuções (A); WITH TIES faz o Oracle incluir linhas adicionais empatadas com a última linha do corte, podendo retornar mais que 5 linhas (B). Justamente por causa disso, WITH TIES EXIGE um ORDER BY para saber o que conta como empate — sem ele a cláusula não faz sentido (C errado); FETCH FIRST funciona sozinho, sem exigir OFFSET (D errado); e a sintaxe é válida em qualquer SELECT de nível superior, não só em subqueries (E errado).",
+      "id": 495
+    },
+    {
+      "topic": "select",
+      "context": "",
+      "text": "A user defines: SQL> DEFINE dept_id = 50 Then runs: SELECT * FROM employees WHERE department_id = &dept_id; Which statement is true?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "SQL*Plus substitutes &dept_id with the value 50 already defined, without prompting the user."
+        },
+        {
+          "key": "B",
+          "text": "The statement always prompts for a value, ignoring the DEFINE command."
+        },
+        {
+          "key": "C",
+          "text": "DEFINE only works with double ampersand (&&) variables, not single ampersand."
+        },
+        {
+          "key": "D",
+          "text": "The statement fails because DEFINE cannot be used before a SELECT."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Quando uma variável de substituição já foi definida com DEFINE, o SQL*Plus usa esse valor diretamente ao encontrar &dept_id na consulta, sem pedir input ao usuário (A). Só haveria prompt se a variável NÃO estivesse definida (B errado); DEFINE funciona tanto para variáveis referenciadas com & quanto com && (C errado); e não há nenhuma restrição de ordem — DEFINE pode ser usado antes de qualquer comando (D errado).",
+      "id": 496
+    },
+    {
+      "topic": "functions",
+      "context": "",
+      "text": "Which two statements are true about the NVL2 function? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "NVL2(commission_pct, salary*1.1, salary) returns salary*1.1 when commission_pct is not NULL."
+        },
+        {
+          "key": "B",
+          "text": "NVL2 takes exactly three arguments: an expression, a value if not null, and a value if null."
+        },
+        {
+          "key": "C",
+          "text": "NVL2 can only be used with NUMBER columns."
+        },
+        {
+          "key": "D",
+          "text": "NVL2 returns NULL whenever the first argument is NULL, regardless of the other arguments."
+        },
+        {
+          "key": "E",
+          "text": "NVL2 is equivalent to NVL and accepts only two arguments."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "NVL2 avalia o primeiro argumento: se NÃO for NULL, retorna o segundo argumento (aqui, salary*1.1); se for NULL, retorna o terceiro (A). Ela recebe exatamente três argumentos: expressão, valor-se-não-nulo e valor-se-nulo (B). NVL2 funciona com qualquer tipo de dado compatível, não só NUMBER (C errado); quando o primeiro argumento é NULL ela retorna o TERCEIRO argumento, não necessariamente NULL (D errado); e diferente de NVL, ela exige três argumentos, não dois (E errado).",
+      "id": 497
+    },
+    {
+      "topic": "joins",
+      "context": "Examine:\n\nSELECT e.last_name, m.last_name AS manager\nFROM employees e LEFT JOIN employees m\nON e.manager_id = m.employee_id;",
+      "text": "Which two statements are true about this self join? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Employees with no manager (manager_id IS NULL) still appear in the result, with NULL in the manager column."
+        },
+        {
+          "key": "B",
+          "text": "The EMPLOYEES table must be given two different aliases to be joined to itself."
+        },
+        {
+          "key": "C",
+          "text": "This query returns only employees who have a manager."
+        },
+        {
+          "key": "D",
+          "text": "A self join like this can only be written as an INNER JOIN, never as an OUTER JOIN."
+        },
+        {
+          "key": "E",
+          "text": "The ON clause is optional when performing a self join."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Por ser um LEFT JOIN, funcionários sem manager (manager_id NULL) continuam aparecendo, com NULL na coluna do manager (A); e para juntar a tabela consigo mesma é obrigatório usar dois aliases distintos (e e m), senão o Oracle não consegue diferenciar as referências às colunas (B). Se fosse INNER, aí sim só apareceriam quem tem manager — mas como É LEFT, C está errado; self joins podem ser INNER ou OUTER normalmente (D errado); e a condição ON é necessária para definir como as duas 'cópias' da tabela se relacionam (E errado).",
+      "id": 498
+    },
+    {
+      "topic": "set",
+      "context": "",
+      "text": "Which statement is true about combining the results of two queries with INTERSECT?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "INTERSECT returns only the rows that appear in the results of both queries, with duplicates eliminated."
+        },
+        {
+          "key": "B",
+          "text": "INTERSECT returns all rows from the first query that are not in the second, keeping duplicates."
+        },
+        {
+          "key": "C",
+          "text": "INTERSECT requires both queries to reference the same table."
+        },
+        {
+          "key": "D",
+          "text": "INTERSECT keeps duplicate rows that appear in both queries."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "INTERSECT retorna apenas as linhas que aparecem no resultado de AMBAS as consultas, eliminando duplicatas do resultado final (A). A descrição de retornar linhas da primeira que não estão na segunda é do MINUS, não do INTERSECT (B errado); as consultas de um compound query podem referenciar tabelas diferentes, desde que as listas de colunas sejam compatíveis em número e tipo (C errado); e assim como UNION, o INTERSECT elimina duplicatas — não as mantém (D errado).",
+      "id": 499
     }
   ]
 }

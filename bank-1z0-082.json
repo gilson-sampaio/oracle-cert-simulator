@@ -3329,6 +3329,701 @@
       ],
       "explanation": "Sequences podem ter lacunas: valores 'cacheados' se perdem num rollback/crash, e um NEXTVAL de transação desfeita não volta (A). Numa sessão, CURRVAL só funciona após NEXTVAL ser chamado ao menos uma vez ali (B). Não garantem numeração sem lacunas (C errado), não armazenam fisicamente cada número (D errado) e podem ser concedidas a outros via GRANT SELECT (E errado).",
       "id": 100
+    },
+    {
+      "topic": "architecture",
+      "context": "",
+      "text": "Which two statements are true about the relationship between an Oracle instance and a database? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "An instance consists of the SGA memory structures and the background processes."
+        },
+        {
+          "key": "B",
+          "text": "A single instance can mount and open only one database at a time in a non-RAC configuration."
+        },
+        {
+          "key": "C",
+          "text": "A database can exist and be usable without ever being mounted by any instance."
+        },
+        {
+          "key": "D",
+          "text": "An instance and a database always share the exact same name in every configuration."
+        },
+        {
+          "key": "E",
+          "text": "Shutting down an instance permanently deletes the database's datafiles."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Uma instância é composta pela SGA e pelos processos em background (A); numa configuração não-RAC, uma instância monta e abre apenas UM banco de dados por vez (B). Um banco de dados só se torna utilizável quando montado e aberto por uma instância — sem instância não há acesso (C errado); em RAC múltiplas instâncias podem ter nomes diferentes do banco (D errado); e desligar a instância apenas encerra os processos em memória, os datafiles permanecem intactos no disco (E errado).",
+      "id": 101
+    },
+    {
+      "topic": "architecture",
+      "context": "",
+      "text": "Which statement is true about the System Global Area (SGA)?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The SGA is a shared memory area accessible by all server and background processes of the instance."
+        },
+        {
+          "key": "B",
+          "text": "Each server process has its own private copy of the entire SGA."
+        },
+        {
+          "key": "C",
+          "text": "The SGA is allocated on disk, not in memory."
+        },
+        {
+          "key": "D",
+          "text": "The SGA is destroyed and recreated automatically every time a new session connects."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "A SGA é uma área de memória COMPARTILHADA, acessível por todos os processos de servidor e background da instância (A). Ela não é privada por processo — quem é privado é a PGA (B errado); a SGA é alocada em MEMÓRIA, não em disco (C errado); e ela é criada uma vez na inicialização da instância, permanecendo estável enquanto a instância estiver ativa, não sendo recriada a cada conexão (D errado).",
+      "id": 102
+    },
+    {
+      "topic": "users",
+      "context": "",
+      "text": "Which two statements are true about profiles in Oracle Database? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A profile can limit resource usage, such as CPU_PER_SESSION and SESSIONS_PER_USER."
+        },
+        {
+          "key": "B",
+          "text": "A profile can enforce password policies, such as PASSWORD_LIFE_TIME and FAILED_LOGIN_ATTEMPTS."
+        },
+        {
+          "key": "C",
+          "text": "Every user must have a uniquely created profile; the DEFAULT profile cannot be assigned to more than one user."
+        },
+        {
+          "key": "D",
+          "text": "Resource limits in a profile are enforced by default even when the RESOURCE_LIMIT parameter is left at its default."
+        },
+        {
+          "key": "E",
+          "text": "A profile is required before a user can be created."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Um profile pode limitar recursos como CPU_PER_SESSION e SESSIONS_PER_USER (A), e pode impor políticas de senha como PASSWORD_LIFE_TIME e FAILED_LOGIN_ATTEMPTS (B). O profile DEFAULT pode ser (e normalmente é) atribuído a vários usuários simultaneamente (C errado); os limites de recurso só são realmente aplicados se o parâmetro RESOURCE_LIMIT estiver setado para TRUE — por padrão ele é FALSE (D errado); e um usuário pode ser criado sem especificar profile, recebendo o DEFAULT automaticamente (E errado).",
+      "id": 103
+    },
+    {
+      "topic": "storage",
+      "context": "",
+      "text": "Which two statements are true about PCTFREE for a table segment? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "PCTFREE reserves a percentage of space in each block for future row updates."
+        },
+        {
+          "key": "B",
+          "text": "A higher PCTFREE value leaves less room per block for new row inserts."
+        },
+        {
+          "key": "C",
+          "text": "PCTFREE controls how many extents a segment can allocate."
+        },
+        {
+          "key": "D",
+          "text": "PCTFREE applies only to indexes, never to tables."
+        },
+        {
+          "key": "E",
+          "text": "PCTFREE has no effect on row migration."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "PCTFREE reserva um percentual de cada bloco para acomodar o crescimento de linhas já existentes por causa de UPDATEs (A); consequentemente, quanto MAIOR o PCTFREE, MENOS espaço sobra no bloco para novas inserções (B). Quem controla extents é o storage clause (NEXT, MAXEXTENTS), não o PCTFREE (C errado); PCTFREE se aplica tanto a tabelas quanto a índices (D errado); e um PCTFREE mal dimensionado é justamente uma das causas de row migration, quando a linha cresce além do espaço reservado no bloco (E errado).",
+      "id": 104
+    },
+    {
+      "topic": "movedata",
+      "context": "",
+      "text": "Which two statements are true about Oracle Data Pump Export (expdp) and Import (impdp)? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Data Pump jobs run on the database server and write dump files to a directory object, not to the client's file system."
+        },
+        {
+          "key": "B",
+          "text": "A Data Pump export writes its dump files directly to the client machine that launched expdp, bypassing the server's file system."
+        },
+        {
+          "key": "C",
+          "text": "Data Pump always requires the SYS user to run any export or import job."
+        },
+        {
+          "key": "D",
+          "text": "The classic export and import utilities (exp/imp) produce dump files compatible with expdp/impdp in every version."
+        },
+        {
+          "key": "E",
+          "text": "Data Pump can perform a schema-level export without needing to export the entire database."
+        }
+      ],
+      "correct": [
+        "A",
+        "E"
+      ],
+      "explanation": "Data Pump executa no SERVIDOR e grava os arquivos de dump num diretório referenciado por um DIRECTORY object, não no sistema de arquivos do cliente (A); e é possível fazer export apenas de um esquema específico, sem precisar exportar o banco inteiro (E). B inverte a lógica de A — o processamento e a gravação ocorrem no servidor, não na máquina cliente (errado). Não é necessário ser SYS: qualquer usuário com os privilégios adequados, como DATAPUMP_EXP_FULL_DATABASE, pode rodar Data Pump (C errado); e os formatos de dump do exp/imp clássico NÃO são compatíveis com expdp/impdp (D errado).",
+      "id": 105
+    },
+    {
+      "topic": "tools",
+      "context": "",
+      "text": "Which two statements are true about Oracle Enterprise Manager (EM) Express? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "EM Express is accessed through a web browser, connecting directly to the database via HTTP(S)."
+        },
+        {
+          "key": "B",
+          "text": "EM Express requires a dedicated middle-tier application server to be installed."
+        },
+        {
+          "key": "C",
+          "text": "EM Express runs entirely inside the database, using an XML DB HTTP listener."
+        },
+        {
+          "key": "D",
+          "text": "EM Express can only be used to monitor the database; it cannot perform any configuration changes."
+        },
+        {
+          "key": "E",
+          "text": "EM Express replaces SQL*Plus entirely and cannot coexist with it."
+        }
+      ],
+      "correct": [
+        "A",
+        "C"
+      ],
+      "explanation": "EM Express é acessada via navegador web, conectando-se diretamente ao banco por HTTP(S) (A), e roda inteiramente DENTRO do banco, usando o listener HTTP do XML DB — sem precisar de servidor de aplicação separado (C). Justamente por isso, NÃO precisa de um middle-tier dedicado como o EM Cloud Control precisa (B errado); EM Express permite tanto monitorar quanto realizar diversas alterações de configuração, não é somente leitura (D errado); e ela coexiste normalmente com o SQL*Plus, que continua disponível (E errado).",
+      "id": 106
+    },
+    {
+      "topic": "network",
+      "context": "",
+      "text": "Which two statements are true about the Oracle Net Listener? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The listener's configuration, including the ports it listens on, is defined in listener.ora."
+        },
+        {
+          "key": "B",
+          "text": "The listener hands off the client connection to a server process and is not involved in ongoing data transfer for that session."
+        },
+        {
+          "key": "C",
+          "text": "The listener must be restarted every time a new session connects to the database."
+        },
+        {
+          "key": "D",
+          "text": "A database instance cannot register itself with a listener; registration must always be manual."
+        },
+        {
+          "key": "E",
+          "text": "The listener performs all SQL parsing on behalf of the client."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O listener é configurado no listener.ora, incluindo as portas em que escuta (A); após estabelecer a conexão, ele repassa a sessão a um processo servidor e não participa da troca de dados subsequente daquela sessão (B). Ele NÃO precisa reiniciar a cada nova conexão — continua ativo ouvindo novas requisições (C errado); a instância pode se registrar automaticamente no listener via o processo PMON, através do dynamic service registration (D errado); e o parsing de SQL é feito pelo processo servidor/instância, não pelo listener (E errado).",
+      "id": 107
+    },
+    {
+      "topic": "tablespaces",
+      "context": "",
+      "text": "Which two statements are true about Oracle Managed Files (OMF) for tablespaces? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "With OMF enabled via DB_CREATE_FILE_DEST, Oracle automatically generates the datafile name and location."
+        },
+        {
+          "key": "B",
+          "text": "When a tablespace using OMF is dropped with its datafiles, Oracle can also remove the underlying OS files automatically."
+        },
+        {
+          "key": "C",
+          "text": "OMF requires the DBA to specify the exact file name in every CREATE TABLESPACE statement."
+        },
+        {
+          "key": "D",
+          "text": "OMF can only be used for temporary tablespaces, never for permanent ones."
+        },
+        {
+          "key": "E",
+          "text": "OMF prevents a tablespace from ever being resized."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Com OMF habilitado (via DB_CREATE_FILE_DEST), o Oracle gera automaticamente nome e local do datafile (A); ao remover uma tablespace OMF com INCLUDING CONTENTS AND DATAFILES, o Oracle também apaga os arquivos físicos do sistema operacional automaticamente (B). Isso é justamente o oposto de OMF — o objetivo do recurso é dispensar o DBA de especificar nomes manualmente (C errado); OMF pode ser usado tanto em tablespaces permanentes quanto temporárias (D errado); e datafiles OMF continuam podendo crescer via AUTOEXTEND normalmente (E errado).",
+      "id": 108
+    },
+    {
+      "topic": "undo",
+      "context": "",
+      "text": "Which two statements are true about UNDO_RETENTION and guaranteed undo retention? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "UNDO_RETENTION specifies, in seconds, how long Oracle attempts to retain undo data for read consistency and flashback."
+        },
+        {
+          "key": "B",
+          "text": "Enabling guaranteed retention on the undo tablespace can cause DML to fail if space runs out, rather than overwriting needed undo."
+        },
+        {
+          "key": "C",
+          "text": "UNDO_RETENTION is measured in number of transactions, not seconds."
+        },
+        {
+          "key": "D",
+          "text": "Guaranteed undo retention is the default behavior for every undo tablespace with no extra configuration."
+        },
+        {
+          "key": "E",
+          "text": "Undo data is only used for ROLLBACK and has no role in read consistency."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "UNDO_RETENTION define, em SEGUNDOS, por quanto tempo o Oracle tenta reter dados de undo para leitura consistente e flashback (A); quando a retenção é GARANTIDA (RETENTION GUARANTEE na tablespace de undo), o banco pode preferir falhar um DML por falta de espaço a sobrescrever undo ainda necessário (B). A unidade é segundos, não número de transações (C errado); por padrão a retenção NÃO é garantida — é preciso habilitar explicitamente com ALTER TABLESPACE ... RETENTION GUARANTEE (D errado); e o undo também sustenta a leitura consistente (multi-versioning), não só o ROLLBACK (E errado).",
+      "id": 109
+    },
+    {
+      "topic": "sql-select",
+      "context": "Examine:\n\nSELECT DISTINCT department_id, job_id\nFROM employees\nORDER BY department_id;",
+      "text": "Which two statements are true about how DISTINCT behaves with multiple columns in this statement? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "DISTINCT applies to the combination of DEPARTMENT_ID and JOB_ID, not to each column separately."
+        },
+        {
+          "key": "B",
+          "text": "The statement can still return multiple rows with the same DEPARTMENT_ID if JOB_ID differs."
+        },
+        {
+          "key": "C",
+          "text": "DISTINCT here removes duplicates based only on DEPARTMENT_ID, ignoring JOB_ID."
+        },
+        {
+          "key": "D",
+          "text": "ORDER BY department_id is invalid because DEPARTMENT_ID is used with DISTINCT."
+        },
+        {
+          "key": "E",
+          "text": "The statement fails because ORDER BY cannot follow a DISTINCT query."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Quando DISTINCT precede uma lista de colunas, ele elimina duplicatas considerando a COMBINAÇÃO de todas elas, não cada coluna isoladamente (A); por isso, linhas com o mesmo DEPARTMENT_ID mas JOB_ID diferente continuam aparecendo separadamente (B). C contradiz diretamente A (errado); ORDER BY funciona normalmente com DISTINCT, referenciando qualquer coluna do SELECT (D errado); e a cláusula ORDER BY é plenamente válida após DISTINCT (E errado).",
+      "id": 110
+    },
+    {
+      "topic": "sql-functions",
+      "context": "",
+      "text": "Which two statements are true about implicit data type conversion in Oracle SQL? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Oracle can implicitly convert a VARCHAR2 containing digits, such as '100', to a NUMBER for arithmetic operations."
+        },
+        {
+          "key": "B",
+          "text": "Oracle can implicitly convert a VARCHAR2 in a valid default date format to a DATE for comparisons."
+        },
+        {
+          "key": "C",
+          "text": "Implicit conversion always throws an error and must be avoided entirely."
+        },
+        {
+          "key": "D",
+          "text": "Explicit conversion functions like TO_NUMBER and TO_DATE are never necessary once implicit conversion exists."
+        },
+        {
+          "key": "E",
+          "text": "Oracle can implicitly convert a NUMBER to a DATE regardless of its value."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Oracle converte implicitamente uma string numérica como '100' para NUMBER em operações aritméticas (A), e uma string em formato de data padrão para DATE em comparações (B). A conversão implícita funciona silenciosamente na maioria dos casos válidos, não lança erro sempre — só falha quando o valor não é convertível (C errado); funções explícitas continuam sendo recomendadas por clareza e para evitar comportamentos inesperados ou erros com formatos ambíguos (D errado); e não existe conversão implícita de NUMBER para DATE — isso exigiria lógica explícita, não é suportado (E errado).",
+      "id": 111
+    },
+    {
+      "topic": "sql-groups",
+      "context": "Examine:\n\nSELECT job_id, department_id, SUM(salary)\nFROM employees\nGROUP BY job_id, department_id;",
+      "text": "Which two statements are true about how SUM(salary) is grouped in this statement? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "SUM(salary) is calculated for each distinct combination of JOB_ID and DEPARTMENT_ID."
+        },
+        {
+          "key": "B",
+          "text": "Both JOB_ID and DEPARTMENT_ID must appear in the GROUP BY because they are non-aggregated columns in the SELECT list."
+        },
+        {
+          "key": "C",
+          "text": "The GROUP BY clause could be omitted since SUM is a group function."
+        },
+        {
+          "key": "D",
+          "text": "This query returns exactly one row per JOB_ID, ignoring DEPARTMENT_ID."
+        },
+        {
+          "key": "E",
+          "text": "SUM(salary) here includes rows from all departments combined into a single total."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Com GROUP BY em duas colunas, SUM(salary) é calculado para cada combinação distinta de JOB_ID e DEPARTMENT_ID (A); e ambas precisam estar no GROUP BY justamente por serem colunas não agregadas do SELECT (B). Omitir o GROUP BY causaria erro ORA-00937, pois há colunas não agregadas junto com uma função de grupo (C errado); o resultado tem uma linha por COMBINAÇÃO de job e departamento, não uma linha só por job (D errado); e o SUM é calculado por grupo, não como um total geral de todos os departamentos somados (E errado).",
+      "id": 112
+    },
+    {
+      "topic": "sql-groups",
+      "context": "",
+      "text": "Which two statements are true about the COUNT(*) and COUNT(column_name) functions? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "COUNT(*) counts all rows, including those with NULL values in any column."
+        },
+        {
+          "key": "B",
+          "text": "COUNT(column_name) counts only the rows where column_name is not NULL."
+        },
+        {
+          "key": "C",
+          "text": "COUNT(*) and COUNT(column_name) always return the same result."
+        },
+        {
+          "key": "D",
+          "text": "COUNT(column_name) counts NULL values as well as non-NULL values."
+        },
+        {
+          "key": "E",
+          "text": "COUNT(*) ignores duplicate rows automatically."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "COUNT(*) conta TODAS as linhas, independentemente de haver NULL em alguma coluna (A); já COUNT(column_name) conta apenas as linhas onde aquela coluna NÃO é NULL (B). Por isso elas só coincidem quando a coluna não tem NULLs — não são sempre iguais (C errado); COUNT(column_name) explicitamente IGNORA os NULLs, não os conta (D errado); e COUNT(*) não elimina duplicatas — para isso seria necessário COUNT(DISTINCT ...) (E errado).",
+      "id": 113
+    },
+    {
+      "topic": "sql-joins",
+      "context": "Examine:\n\nSELECT e.last_name, d.department_name\nFROM employees e, departments d\nWHERE e.department_id = d.department_id (+);",
+      "text": "Which two statements are true about this old-style outer join syntax? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "This is old-style Oracle syntax for a LEFT OUTER JOIN, keeping all rows from EMPLOYEES."
+        },
+        {
+          "key": "B",
+          "text": "Employees with a DEPARTMENT_ID that has no matching row in DEPARTMENTS still appear, with NULL for DEPARTMENT_NAME."
+        },
+        {
+          "key": "C",
+          "text": "The (+) operator must be placed on the EMPLOYEES side to produce this result."
+        },
+        {
+          "key": "D",
+          "text": "This syntax is equivalent to an INNER JOIN and excludes unmatched employees."
+        },
+        {
+          "key": "E",
+          "text": "The (+) syntax can express a FULL OUTER JOIN just as easily as a LEFT or RIGHT OUTER JOIN."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O operador (+) aplicado ao lado de DEPARTMENTS é a sintaxe antiga do Oracle para um LEFT OUTER JOIN a partir de EMPLOYEES, preservando todas as linhas da tabela sem o (+) (A); assim, funcionários cujo DEPARTMENT_ID não tenha correspondência aparecem mesmo assim, com NULL em DEPARTMENT_NAME (B). O (+) foi colocado no lado de DEPARTMENTS, não de EMPLOYEES, para produzir esse efeito — C inverte o lado (errado); não é equivalente a INNER JOIN, que excluiria justamente esses funcionários sem departamento (D errado); e a sintaxe (+) NÃO consegue expressar um FULL OUTER JOIN — isso resulta em erro ORA-01468 (E errado).",
+      "id": 114
+    },
+    {
+      "topic": "sql-setops",
+      "context": "",
+      "text": "Which two statements are true about the UNION ALL operator? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "UNION ALL keeps duplicate rows that appear in both queries' results."
+        },
+        {
+          "key": "B",
+          "text": "UNION ALL generally performs better than UNION because it skips the sort/dedup step."
+        },
+        {
+          "key": "C",
+          "text": "UNION ALL requires both queries to select from the same table."
+        },
+        {
+          "key": "D",
+          "text": "UNION ALL automatically removes duplicate rows, just like UNION."
+        },
+        {
+          "key": "E",
+          "text": "UNION ALL cannot be used with an ORDER BY on the final combined result."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "UNION ALL mantém as linhas duplicadas presentes nos resultados combinados (A), e por não precisar eliminar duplicatas (sem a etapa de sort/dedup), tende a ter melhor desempenho que o UNION simples (B). Não há exigência de que as consultas usem a mesma tabela, apenas listas de colunas compatíveis (C errado); quem remove duplicatas é o UNION simples, não o UNION ALL (D errado); e um ORDER BY final é perfeitamente válido após UNION ALL, aplicado ao resultado combinado (E errado).",
+      "id": 115
+    },
+    {
+      "topic": "sql-dml",
+      "context": "Examine:\n\nMERGE INTO employees_target t\nUSING employees_source s\nON (t.employee_id = s.employee_id)\nWHEN MATCHED THEN UPDATE SET t.salary = s.salary\nWHEN NOT MATCHED THEN INSERT (employee_id, salary) VALUES (s.employee_id, s.salary);",
+      "text": "Which two statements are true about this MERGE statement? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Rows in the source that match an existing target row by EMPLOYEE_ID are updated instead of inserted."
+        },
+        {
+          "key": "B",
+          "text": "Rows in the source with no matching EMPLOYEE_ID in the target are inserted as new rows."
+        },
+        {
+          "key": "C",
+          "text": "MERGE always requires both a WHEN MATCHED and a WHEN NOT MATCHED clause to be valid."
+        },
+        {
+          "key": "D",
+          "text": "MERGE can only update columns, never insert new rows in the same statement."
+        },
+        {
+          "key": "E",
+          "text": "This statement performs the equivalent of two separate DELETE statements."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Quando há correspondência pelo EMPLOYEE_ID, a linha é ATUALIZADA (A); quando não há correspondência, a linha do source é INSERIDA no target (B). O MERGE é válido com apenas uma das cláusulas (só MATCHED ou só NOT MATCHED); as duas juntas não são obrigatórias (C errado); o próprio exemplo mostra que MERGE pode fazer UPDATE e INSERT na mesma instrução (D errado); e não há qualquer DELETE envolvido nesse comando (E errado).",
+      "id": 116
+    },
+    {
+      "topic": "sql-dml",
+      "context": "An UPDATE statement modifies 200 rows in the ORDERS table, followed by a SAVEPOINT sp1, then a DELETE that removes 10 rows, then ROLLBACK TO sp1.",
+      "text": "Which two statements are true after the ROLLBACK TO sp1? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The DELETE of the 10 rows is undone, but the earlier UPDATE of the 200 rows remains in effect."
+        },
+        {
+          "key": "B",
+          "text": "The transaction is still active and can continue with more statements or a final COMMIT/ROLLBACK."
+        },
+        {
+          "key": "C",
+          "text": "The ROLLBACK TO sp1 also undoes the UPDATE of the 200 rows."
+        },
+        {
+          "key": "D",
+          "text": "The ROLLBACK TO sp1 automatically ends the transaction, requiring a new one to be started."
+        },
+        {
+          "key": "E",
+          "text": "SAVEPOINT sp1 is removed after the ROLLBACK TO sp1, so it cannot be used again in the same transaction."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "ROLLBACK TO SAVEPOINT desfaz apenas as alterações feitas APÓS aquele ponto — aqui, o DELETE — preservando o que veio antes, como o UPDATE (A); e a transação continua ATIVA, podendo prosseguir normalmente (B). O UPDATE anterior ao savepoint não é desfeito (C errado); ROLLBACK TO SAVEPOINT não encerra a transação, ao contrário de um ROLLBACK completo (D errado); e o savepoint sp1 permanece válido e pode ser reutilizado na mesma transação após o rollback parcial (E errado).",
+      "id": 117
+    },
+    {
+      "topic": "sql-ddl",
+      "context": "",
+      "text": "Which two statements are true about external tables in Oracle Database? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "An external table lets you query data stored in an OS file as if it were a regular table, without loading it into the database first."
+        },
+        {
+          "key": "B",
+          "text": "DML operations such as INSERT, UPDATE, and DELETE are not supported against an external table."
+        },
+        {
+          "key": "C",
+          "text": "An external table always duplicates the data by copying it into a database segment."
+        },
+        {
+          "key": "D",
+          "text": "An external table can have indexes created directly on it, just like a regular heap table."
+        },
+        {
+          "key": "E",
+          "text": "External tables cannot be used in a join with regular database tables."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Uma external table permite consultar dados de um arquivo do sistema operacional como se fosse uma tabela comum, sem carregá-los antes para dentro do banco (A); e por não ter um segmento de dados gerenciável, ela não suporta DML (INSERT/UPDATE/DELETE) (B). Justamente por isso ela NÃO duplica os dados em um segmento do banco — os dados continuam no arquivo externo (C errado); não é possível criar índices sobre uma external table, pois ela não tem um segmento de tabela tradicional (D errado); e external tables podem ser usadas normalmente em joins com tabelas comuns, como qualquer outra fonte de linhas (E errado).",
+      "id": 118
+    },
+    {
+      "topic": "sql-ddl",
+      "context": "",
+      "text": "Which two statements are true about adding a NOT NULL constraint to an existing column with ALTER TABLE? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The ALTER TABLE ... MODIFY statement fails if the column currently contains any NULL values."
+        },
+        {
+          "key": "B",
+          "text": "Existing rows must satisfy the new NOT NULL constraint at the moment it is added."
+        },
+        {
+          "key": "C",
+          "text": "Adding NOT NULL to a column automatically deletes rows where that column is NULL."
+        },
+        {
+          "key": "D",
+          "text": "A NOT NULL constraint can be added only when the table is first created, never afterward."
+        },
+        {
+          "key": "E",
+          "text": "NOT NULL constraints cannot be named; Oracle never generates a constraint name for them."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Se a coluna já tiver algum valor NULL, o ALTER TABLE ... MODIFY para adicionar NOT NULL falha (A) — justamente porque as linhas existentes precisam satisfazer a nova constraint no momento em que ela é adicionada (B). O comando não apaga linhas automaticamente; ele simplesmente falha com erro caso existam NULLs (C errado); constraints podem ser adicionadas a qualquer momento via ALTER TABLE, não só na criação (D errado); e o Oracle gera um nome de sistema (como SYS_C00...) para a constraint mesmo que nenhum nome seja informado (E errado).",
+      "id": 119
+    },
+    {
+      "topic": "sql-ddl",
+      "context": "",
+      "text": "Which two statements are true about synonyms in Oracle Database? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A synonym is an alternative name for a table, view, sequence, or other schema object."
+        },
+        {
+          "key": "B",
+          "text": "A PUBLIC synonym can be used by any user in the database, subject to the underlying object's privileges."
+        },
+        {
+          "key": "C",
+          "text": "Creating a synonym for a table copies the table's data under the new name."
+        },
+        {
+          "key": "D",
+          "text": "Dropping a synonym also drops the underlying object it refers to."
+        },
+        {
+          "key": "E",
+          "text": "A private synonym is automatically visible and usable by every schema in the database."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Um sinônimo é um nome alternativo para uma tabela, view, sequence ou outro objeto de esquema (A); um sinônimo PUBLIC pode ser usado por qualquer usuário do banco, desde que ele tenha os privilégios necessários sobre o objeto referenciado (B). Criar um sinônimo NÃO copia dados — é apenas um apelido/ponteiro (C errado); remover o sinônimo não afeta o objeto original, que continua existindo normalmente (D errado); e um sinônimo PRIVADO só é visível/usável pelo esquema que o criou, ao contrário do PUBLIC (E errado).",
+      "id": 120
     }
   ]
 }
