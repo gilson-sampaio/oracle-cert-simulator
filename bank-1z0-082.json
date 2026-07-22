@@ -4708,6 +4708,686 @@
         "E"
       ],
       "explanation": "Como a constraint é DEFERRABLE INITIALLY DEFERRED, o Oracle só verifica essa CHECK constraint no momento do COMMIT, a menos que a sessão mude o modo explicitamente com SET CONSTRAINT (A correta). Isso significa que uma violação pode não ser detectada logo após o DML ofensivo, mas fará a transação falhar no COMMIT (B correta). Se DEFERRABLE/NOT DEFERRABLE não for especificado na criação, o padrão do Oracle é NOT DEFERRABLE — verificação imediata após cada DML (E correta). C está errado porque o INITIALLY DEFERRED muda o momento da verificação para o COMMIT, ao contrário do comportamento imediato padrão. D está errado: constraints DEFERRABLE podem ter seu modo de verificação alternado dentro da sessão via SET CONSTRAINT ... IMMEDIATE/DEFERRED."
+    },
+    {
+      "id": 141,
+      "topic": "architecture",
+      "context": "",
+      "text": "Which two statements are true about Oracle Database background processes?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "DBWn writes modified (dirty) buffers from the database buffer cache to the datafiles."
+        },
+        {
+          "key": "B",
+          "text": "LGWR writes redo entries from the redo log buffer to the online redo log files."
+        },
+        {
+          "key": "C",
+          "text": "SMON is responsible for writing checkpoint information to every datafile header."
+        },
+        {
+          "key": "D",
+          "text": "PMON's main responsibility is to write dirty buffers to disk during a checkpoint."
+        },
+        {
+          "key": "E",
+          "text": "CKPT and DBWn are the same background process under different names."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "DBWn grava os buffers modificados (dirty) do buffer cache nos datafiles (A correta). LGWR grava as entradas de redo do buffer de redo log nos redo log files online (B correta). Quem atualiza os cabeçalhos dos datafiles com informação de checkpoint é o CKPT, não o SMON (C errada). PMON cuida da recuperação de processos falhos, não da escrita de buffers (D errada). CKPT e DBWn são processos distintos, com funções diferentes (E errada)."
+    },
+    {
+      "id": 142,
+      "topic": "instance",
+      "context": "A DBA issues STARTUP NOMOUNT for a database instance.",
+      "text": "Which statement is true about the state of the instance immediately after this command completes?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The SGA has been allocated and the background processes have started, but the control file has not yet been read."
+        },
+        {
+          "key": "B",
+          "text": "The control file, datafiles, and online redo logs have all been opened."
+        },
+        {
+          "key": "C",
+          "text": "The instance can already accept and execute user DML statements."
+        },
+        {
+          "key": "D",
+          "text": "No memory structures have been allocated yet; only the parameter file has been read into a temporary buffer."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "No estágio NOMOUNT, a instância aloca a SGA e inicia os processos de background com base no parameter file, mas o control file ainda NÃO foi lido (A correta). Abrir o control file só acontece no MOUNT, e datafiles/redo logs só no OPEN (B errada). Sem o banco montado e aberto não há como executar DML (C errada). A SGA já está alocada nesse ponto (D errada)."
+    },
+    {
+      "id": 143,
+      "topic": "users",
+      "context": "",
+      "text": "Which two statements are true about password-related parameters in an Oracle user profile?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "FAILED_LOGIN_ATTEMPTS specifies how many consecutive failed login attempts are allowed before the account is locked."
+        },
+        {
+          "key": "B",
+          "text": "PASSWORD_LIFE_TIME specifies the number of days a password remains valid before it expires and must be changed."
+        },
+        {
+          "key": "C",
+          "text": "PASSWORD_REUSE_MAX has no effect unless PASSWORD_REUSE_TIME is also set to UNLIMITED."
+        },
+        {
+          "key": "D",
+          "text": "PASSWORD_LOCK_TIME specifies how many days a password can be reused before being flagged as a security violation."
+        },
+        {
+          "key": "E",
+          "text": "A profile's password parameters take effect immediately for all users, even those not explicitly assigned that profile."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "FAILED_LOGIN_ATTEMPTS define quantas tentativas malsucedidas consecutivas são permitidas antes do bloqueio da conta (A correta). PASSWORD_LIFE_TIME define por quantos dias a senha permanece válida antes de expirar (B correta). PASSWORD_REUSE_MAX e PASSWORD_REUSE_TIME atuam em conjunto, mas cada um tem efeito próprio (C errada). PASSWORD_LOCK_TIME define por quantos dias a CONTA fica bloqueada, não sobre reutilização de senha (D errada). Parâmetros de um profile só se aplicam aos usuários atribuídos a ele (E errada)."
+    },
+    {
+      "id": 144,
+      "topic": "movedata",
+      "context": "",
+      "text": "Which two statements are true about running Data Pump Export (expdp) and Import (impdp)?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Data Pump requires a DIRECTORY object pointing to a server-side operating system path where the dump files will be written or read."
+        },
+        {
+          "key": "B",
+          "text": "The user running expdp or impdp needs READ and/or WRITE privileges on the directory object being used."
+        },
+        {
+          "key": "C",
+          "text": "Data Pump dump files are written to the client machine where the expdp command is typed, not to the database server."
+        },
+        {
+          "key": "D",
+          "text": "Data Pump can only export an entire database; exporting a single schema or table is not supported."
+        },
+        {
+          "key": "E",
+          "text": "expdp and impdp connect to the database exclusively through SQL*Plus."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O Data Pump exige um objeto DIRECTORY apontando para um caminho no servidor onde os dumps são gravados/lidos (A correta). O usuário precisa de privilégio READ e/ou WRITE nesse diretório (B correta). Os arquivos são gravados no SERVIDOR, não na máquina cliente (C errada). O Data Pump suporta granularidade por schema, tabela, tablespace etc. (D errada). expdp/impdp são utilitários próprios, não dependem do SQL*Plus (E errada)."
+    },
+    {
+      "id": 145,
+      "topic": "tools",
+      "context": "",
+      "text": "Which statement correctly distinguishes Oracle Enterprise Manager (EM) Express from SQL*Plus?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "EM Express provides a browser-based graphical interface for basic administration tasks, while SQL*Plus is a command-line tool for running SQL and PL/SQL."
+        },
+        {
+          "key": "B",
+          "text": "EM Express and SQL*Plus are two names for the exact same command-line utility."
+        },
+        {
+          "key": "C",
+          "text": "SQL*Plus can only be used to browse performance charts, while EM Express is used to run SQL statements."
+        },
+        {
+          "key": "D",
+          "text": "EM Express requires no listener or network configuration to be accessed, unlike SQL*Plus."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "EM Express é uma interface gráfica baseada em navegador para tarefas básicas de administração, enquanto SQL*Plus é uma ferramenta de linha de comando para SQL e PL/SQL (A correta). São ferramentas completamente diferentes (B errada). É o contrário do afirmado em C (errada). EM Express também depende de configuração de rede (porta HTTPS habilitada) (D errada)."
+    },
+    {
+      "id": 146,
+      "topic": "network",
+      "context": "",
+      "text": "Which two statements are true about Oracle Net Services naming methods?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "With Local Naming, connection information is resolved using entries stored in the tnsnames.ora file on the client."
+        },
+        {
+          "key": "B",
+          "text": "With Easy Connect Naming, a client can connect using a string such as host:port/service_name without any configuration file."
+        },
+        {
+          "key": "C",
+          "text": "Local Naming requires no configuration file and resolves names using a central LDAP directory instead."
+        },
+        {
+          "key": "D",
+          "text": "The listener.ora file on the client is what Local Naming uses to resolve a connect identifier."
+        },
+        {
+          "key": "E",
+          "text": "Easy Connect Naming cannot be used to connect to a Pluggable Database (PDB); it works only with non-CDB databases."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Local Naming resolve o identificador usando o tnsnames.ora armazenado no cliente (A correta). Easy Connect Naming permite conectar usando host:porta/service_name sem arquivo de configuração (B correta). Local Naming justamente USA um arquivo (tnsnames.ora); diretório central LDAP é a Directory Naming (C errada). listener.ora é do lado do SERVIDOR (D errada). Easy Connect funciona normalmente para PDBs, bastando o service_name correto (E errada)."
+    },
+    {
+      "id": 147,
+      "topic": "tablespaces",
+      "context": "",
+      "text": "Which two statements are true about BIGFILE tablespaces compared to the default SMALLFILE tablespaces?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A BIGFILE tablespace consists of a single, very large datafile."
+        },
+        {
+          "key": "B",
+          "text": "A BIGFILE tablespace simplifies datafile management because ALTER TABLESPACE operations for space no longer need to specify a datafile file name."
+        },
+        {
+          "key": "C",
+          "text": "A BIGFILE tablespace can contain multiple datafiles, just like a SMALLFILE tablespace."
+        },
+        {
+          "key": "D",
+          "text": "BIGFILE is the default tablespace type when CREATE TABLESPACE does not specify SMALLFILE or BIGFILE."
+        },
+        {
+          "key": "E",
+          "text": "A SMALLFILE tablespace is limited to a single datafile, while BIGFILE tablespaces support multiple datafiles."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Uma tablespace BIGFILE é composta por um ÚNICO datafile, porém muito grande (A correta). Isso simplifica a administração pois comandos de resize não precisam mais especificar o nome do arquivo (B correta). É o oposto: BIGFILE não pode ter múltiplos datafiles — quem pode é a SMALLFILE (C e E erradas). O tipo padrão é SMALLFILE, salvo configuração do banco (D errada)."
+    },
+    {
+      "id": 148,
+      "topic": "undo",
+      "context": "",
+      "text": "Which two statements are true about undo data in Oracle Database?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Undo data is used to provide read consistency for other sessions querying data that is being modified by an uncommitted transaction."
+        },
+        {
+          "key": "B",
+          "text": "If a transaction is rolled back, its undo data is used to restore the affected data blocks to their prior state."
+        },
+        {
+          "key": "C",
+          "text": "Undo data and redo data are stored in the same undo tablespace."
+        },
+        {
+          "key": "D",
+          "text": "UNDO_RETENTION guarantees that undo data will never be overwritten, even under heavy space pressure, regardless of the RETENTION GUARANTEE setting."
+        },
+        {
+          "key": "E",
+          "text": "Undo data is generated only for DDL statements, not for DML statements."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O undo mantém a imagem anterior dos dados, permitindo read consistency para outras sessões enquanto uma transação não commitada está em andamento (A correta). Em ROLLBACK, o undo é usado para restaurar os blocos ao estado anterior (B correta). Undo e redo são estruturas diferentes, em locais diferentes (C errada). UNDO_RETENTION é apenas uma meta; sem RETENTION GUARANTEE o undo pode ser sobrescrito sob pressão de espaço (D errada). Undo é gerado principalmente por DML, não é exclusivo de DDL (E errada)."
+    },
+    {
+      "id": 149,
+      "topic": "sql-select",
+      "context": "Examine:\n\nSELECT last_name, salary\nFROM employees\nORDER BY salary DESC\nOFFSET 5 ROWS FETCH NEXT 5 ROWS ONLY;",
+      "text": "Which two statements are true about this query?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "It skips the 5 highest-paid employees and returns the next 5 in descending salary order."
+        },
+        {
+          "key": "B",
+          "text": "The OFFSET clause must appear before the FETCH clause when both are used together."
+        },
+        {
+          "key": "C",
+          "text": "Without an ORDER BY clause, OFFSET and FETCH cannot be used at all."
+        },
+        {
+          "key": "D",
+          "text": "FETCH NEXT and FETCH FIRST behave differently; FETCH NEXT can only be used when OFFSET is also specified."
+        },
+        {
+          "key": "E",
+          "text": "Combining OFFSET with FETCH requires also specifying a PERCENT clause."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "OFFSET 5 ROWS pula as 5 linhas com maior salário e FETCH NEXT 5 ROWS ONLY traz as 5 seguintes (A correta). OFFSET vem antes de FETCH na sintaxe (B correta). ORDER BY não é sintaticamente obrigatório para usar OFFSET/FETCH (C errada). FIRST e NEXT são sinônimos na cláusula FETCH (D errada). PERCENT é opcional (E errada)."
+    },
+    {
+      "id": 150,
+      "topic": "sql-select",
+      "context": "",
+      "text": "In SQL*Plus, which statement is true about the difference between &dept_id and &&dept_id used in the same script?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "&&dept_id is defined the first time it is prompted and is reused for the rest of the session without prompting again, while &dept_id prompts again on every reference unless already defined."
+        },
+        {
+          "key": "B",
+          "text": "&&dept_id prompts the user every time it appears, while &dept_id is defined only once."
+        },
+        {
+          "key": "C",
+          "text": "Both forms behave identically; the number of ampersands has no effect on prompting behavior."
+        },
+        {
+          "key": "D",
+          "text": "&&dept_id can only be used for NUMBER columns, while &dept_id works for any data type."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "&& define a variável na primeira ocorrência e a reutiliza durante toda a sessão; & simples pede o valor novamente a cada referência, salvo se já definida (A correta). B inverte o comportamento real (errada). O número de & afeta sim o comportamento (C errada). Não há restrição de tipo ligada ao número de & (D errada)."
+    },
+    {
+      "id": 151,
+      "topic": "sql-functions",
+      "context": "",
+      "text": "Which two statements are true about the ROUND and TRUNC functions when applied to DATE values?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "ROUND(hire_date, 'MM') rounds to the nearest first day of the current or next month, based on the day of the month."
+        },
+        {
+          "key": "B",
+          "text": "TRUNC(hire_date, 'MM') always returns the first day of the month, regardless of the day portion of hire_date."
+        },
+        {
+          "key": "C",
+          "text": "ROUND(hire_date, 'MM') and TRUNC(hire_date, 'MM') always return the same value."
+        },
+        {
+          "key": "D",
+          "text": "ROUND and TRUNC applied to a DATE always return a NUMBER representing the Julian date."
+        },
+        {
+          "key": "E",
+          "text": "TRUNC(hire_date, 'MM') can return a date later than hire_date itself."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "ROUND(data,'MM') arredonda para o dia 1º do mês atual ou seguinte, conforme o dia (A correta). TRUNC(data,'MM') sempre trunca para o dia 1º do mês, independente do dia (B correta). Por isso podem diferir quando o dia é >= 16 (C errada). Ambas retornam DATE, não NUMBER (D errada). TRUNC nunca resulta em data posterior à original (E errada)."
+    },
+    {
+      "id": 152,
+      "topic": "sql-functions",
+      "context": "Examine:\n\nSELECT * FROM orders WHERE order_id = '100';\n\nORDER_ID é uma coluna NUMBER.",
+      "text": "Which two statements are true about this query?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Oracle implicitly converts the string literal '100' to the NUMBER 100 before comparing it to ORDER_ID."
+        },
+        {
+          "key": "B",
+          "text": "The query executes successfully and returns the row where ORDER_ID equals 100."
+        },
+        {
+          "key": "C",
+          "text": "The query fails with a data type mismatch error because ORDER_ID is a NUMBER and '100' is a string literal."
+        },
+        {
+          "key": "D",
+          "text": "Implicit conversion in this comparison always prevents Oracle from using an index defined on ORDER_ID."
+        },
+        {
+          "key": "E",
+          "text": "Comparing a NUMBER column to a string literal requires an explicit TO_NUMBER call, or the statement raises a compile-time error."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Como ORDER_ID é NUMBER e o literal é string, o Oracle converte implicitamente '100' para 100 antes de comparar (A correta). Por isso a consulta executa e traz a linha com ORDER_ID = 100 (B correta). Não há erro de tipo (C errada). Quando a conversão ocorre no literal, o índice sobre a coluna ainda pode ser usado; o problema de não usar índice ocorre ao aplicar função na PRÓPRIA coluna (D errada). A conversão implícita dispensa o TO_NUMBER explícito (E errada)."
+    },
+    {
+      "id": 153,
+      "topic": "sql-groups",
+      "context": "",
+      "text": "Which two statements are true about the difference between the WHERE and HAVING clauses in a GROUP BY query?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "WHERE filters individual rows before they are grouped, while HAVING filters groups after the grouping and aggregation have been performed."
+        },
+        {
+          "key": "B",
+          "text": "WHERE cannot reference a group function such as SUM or AVG directly in its condition."
+        },
+        {
+          "key": "C",
+          "text": "HAVING must always be used together with a WHERE clause in the same query."
+        },
+        {
+          "key": "D",
+          "text": "WHERE is evaluated after HAVING in the logical order of query processing."
+        },
+        {
+          "key": "E",
+          "text": "HAVING can only reference columns that also appear in the SELECT list."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "WHERE filtra linhas individuais ANTES do agrupamento; HAVING filtra os GRUPOS já formados (A correta). Por isso WHERE não pode referenciar diretamente uma função de grupo (B correta). HAVING pode ser usado sozinho, sem WHERE (C errada). WHERE é avaliado ANTES de HAVING (D errada). HAVING pode referenciar funções de grupo mesmo fora do SELECT (E errada)."
+    },
+    {
+      "id": 154,
+      "topic": "sql-groups",
+      "context": "",
+      "text": "Which two statements are true about nesting group functions, such as in the expression MAX(AVG(salary))?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "In MAX(AVG(salary)), the AVG is computed for each group first, and then MAX is applied to those group averages."
+        },
+        {
+          "key": "B",
+          "text": "Group functions can be nested to a maximum of two levels."
+        },
+        {
+          "key": "C",
+          "text": "A query using MAX(AVG(salary)) can include additional non-aggregated columns in the SELECT list without listing them in GROUP BY."
+        },
+        {
+          "key": "D",
+          "text": "Nested group functions like MAX(AVG(salary)) can be used directly in a WHERE clause."
+        },
+        {
+          "key": "E",
+          "text": "AVG(MAX(salary)) and MAX(AVG(salary)) always return the same result."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Em MAX(AVG(salary)), a AVG é calculada para CADA grupo primeiro, e o MAX é aplicado sobre esses valores médios (A correta). O Oracle permite aninhar funções de grupo em até DOIS níveis (B correta). Colunas não agregadas ainda precisam constar no GROUP BY (C errada). Funções de grupo não podem ser usadas em WHERE (D errada). MAX(AVG()) e AVG(MAX()) geralmente diferem (E errada)."
+    },
+    {
+      "id": 155,
+      "topic": "sql-joins",
+      "context": "Examine uma tabela EMPLOYEES(employee_id, last_name, manager_id), onde MANAGER_ID referencia EMPLOYEE_ID da mesma tabela.",
+      "text": "Which two statements are true about writing a self join to list each employee together with their manager's name?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The EMPLOYEES table must be referenced twice in the FROM clause, each time with a different alias."
+        },
+        {
+          "key": "B",
+          "text": "The join condition typically matches e.manager_id to m.employee_id, using two different aliases e and m for the same table."
+        },
+        {
+          "key": "C",
+          "text": "A self join requires the table to physically contain two separate copies of the same rows."
+        },
+        {
+          "key": "D",
+          "text": "Using an inner join for this self join guarantees that every employee, including those with no manager, appears in the result."
+        },
+        {
+          "key": "E",
+          "text": "Self joins are not supported by Oracle SQL; they require a PL/SQL loop instead."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Como as duas partes do join vêm da mesma tabela, é preciso referenciá-la duas vezes no FROM, com aliases diferentes (A correta). A condição típica compara e.manager_id com m.employee_id (B correta). Não é necessário haver cópias físicas dos dados (C errada). Um INNER JOIN excluiria funcionários sem gerente (manager_id NULL) (D errada). Self joins são um recurso padrão do SQL (E errada)."
+    },
+    {
+      "id": 156,
+      "topic": "sql-joins",
+      "context": "Examine:\n\nSELECT last_name, salary FROM employees\nWHERE salary > ALL (SELECT salary FROM employees WHERE department_id = 60);",
+      "text": "Which statement is true about this query?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It returns employees whose salary is greater than the highest salary among employees in department 60."
+        },
+        {
+          "key": "B",
+          "text": "It returns employees whose salary is greater than at least one salary among employees in department 60."
+        },
+        {
+          "key": "C",
+          "text": "It fails because ALL cannot be used with a subquery that returns more than one row."
+        },
+        {
+          "key": "D",
+          "text": "It returns employees whose salary is greater than the average salary of department 60."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "O operador > ALL exige que o salário seja MAIOR que TODOS os valores retornados pela subquery, ou seja, maior que o maior salário do departamento 60 (A correta). Maior que PELO MENOS UM valor é comportamento do > ANY (B errada). ALL trabalha normalmente com subqueries de múltiplas linhas (C errada). Não há cálculo de média envolvido (D errada)."
+    },
+    {
+      "id": 157,
+      "topic": "sql-setops",
+      "context": "",
+      "text": "Which two statements are true about combining set operators such as UNION, INTERSECT, and MINUS in the same compound query?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "When multiple set operators appear in the same statement without parentheses, INTERSECT is evaluated before UNION and MINUS."
+        },
+        {
+          "key": "B",
+          "text": "Parentheses can be used to override the default evaluation order of set operators in a compound query."
+        },
+        {
+          "key": "C",
+          "text": "MINUS and INTERSECT always have exactly the same evaluation precedence as UNION ALL."
+        },
+        {
+          "key": "D",
+          "text": "A compound query can use at most two set operators in total."
+        },
+        {
+          "key": "E",
+          "text": "Set operators evaluate strictly left to right, with no operator taking precedence over another."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Sem parênteses, o INTERSECT é avaliado antes de UNION, UNION ALL e MINUS, que seguem da esquerda para a direita entre si (A correta). Parênteses podem forçar uma ordem diferente (B correta). INTERSECT tem precedência maior que UNION ALL, não igual (C errada). Não há limite de dois operadores por instrução (D errada). Como o INTERSECT tem prioridade, não é puramente esquerda-direita (E errada)."
+    },
+    {
+      "id": 158,
+      "topic": "sql-dml",
+      "context": "Examine:\n\nMERGE INTO product_prices t\nUSING new_prices s\nON (t.product_id = s.product_id)\nWHEN MATCHED THEN\n  UPDATE SET t.price = s.price\n  DELETE WHERE (s.price = 0)\nWHEN NOT MATCHED THEN\n  INSERT (product_id, price) VALUES (s.product_id, s.price);",
+      "text": "Which two statements are true about this MERGE statement?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The DELETE clause removes only rows that were just updated by this same MERGE and that satisfy the DELETE condition."
+        },
+        {
+          "key": "B",
+          "text": "The DELETE condition (s.price = 0) is evaluated against the source row, not an arbitrary unrelated table."
+        },
+        {
+          "key": "C",
+          "text": "The DELETE clause deletes rows from the source table NEW_PRICES, not from the target table PRODUCT_PRICES."
+        },
+        {
+          "key": "D",
+          "text": "A DELETE clause can only appear inside a MERGE statement's WHEN NOT MATCHED clause."
+        },
+        {
+          "key": "E",
+          "text": "The DELETE clause is optional and independent, so it can delete rows regardless of whether they were touched by the UPDATE."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "A cláusula DELETE dentro do WHEN MATCHED só remove linhas que ACABARAM de ser atualizadas por esse MERGE e que satisfazem a condição do DELETE (A correta). Essa condição é avaliada com base na linha de origem (s.price) (B correta). As linhas removidas são da tabela ALVO (PRODUCT_PRICES) (C errada). O DELETE só pode aparecer dentro do WHEN MATCHED (D errada). O DELETE está condicionado a linhas que sofreram o UPDATE (E errada)."
+    },
+    {
+      "id": 159,
+      "topic": "sql-ddl",
+      "context": "",
+      "text": "Which two statements are true about the ON DELETE CASCADE option of a foreign key constraint?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "When a row in the parent table is deleted, all matching child rows are automatically deleted as well."
+        },
+        {
+          "key": "B",
+          "text": "ON DELETE CASCADE must be specified when the foreign key constraint is created; it cannot be added later without dropping and recreating the constraint."
+        },
+        {
+          "key": "C",
+          "text": "Without ON DELETE CASCADE, deleting a parent row that still has matching child rows always succeeds silently."
+        },
+        {
+          "key": "D",
+          "text": "ON DELETE CASCADE automatically deletes the parent row when a child row is deleted."
+        },
+        {
+          "key": "E",
+          "text": "ON DELETE CASCADE is the default behavior for every foreign key constraint unless explicitly disabled."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Com ON DELETE CASCADE, ao excluir uma linha pai, todas as linhas filhas correspondentes são automaticamente excluídas (A correta). Essa opção faz parte da definição da constraint; para mudar é preciso dropar e recriar a FK (B correta). Sem CASCADE, excluir um pai com filhos gera erro de integridade, não sucesso silencioso (C errada). O cascade funciona apenas pai para filho, nunca o contrário (D errada). O comportamento padrão é RESTRICT, não CASCADE (E errada)."
+    },
+    {
+      "id": 160,
+      "topic": "sql-ddl",
+      "context": "",
+      "text": "Which two statements are true about a sequence's NEXTVAL and CURRVAL pseudocolumns?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "CURRVAL can only be referenced in a session after NEXTVAL has already been referenced at least once in that same session."
+        },
+        {
+          "key": "B",
+          "text": "Calling NEXTVAL advances the sequence and returns the newly generated value, which then becomes available via CURRVAL for the rest of that session."
+        },
+        {
+          "key": "C",
+          "text": "NEXTVAL and CURRVAL always return the same value on every call, regardless of how many times NEXTVAL is invoked."
+        },
+        {
+          "key": "D",
+          "text": "CURRVAL generates a brand-new sequence value each time it is referenced, just like NEXTVAL."
+        },
+        {
+          "key": "E",
+          "text": "NEXTVAL and CURRVAL can be used freely in the WHERE clause of any SELECT statement without restriction."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "CURRVAL só pode ser referenciado numa sessão depois que NEXTVAL já tiver sido chamado nessa mesma sessão (A correta). Cada NEXTVAL avança a sequência e devolve o novo valor, disponível via CURRVAL pelo restante da sessão (B correta). Cada NEXTVAL gera um valor NOVO (C errada). CURRVAL apenas repete o último valor gerado (D errada). Há restrições de uso de NEXTVAL/CURRVAL (por exemplo em subqueries, DISTINCT, GROUP BY) (E errada)."
     }
   ]
 }

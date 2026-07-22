@@ -15144,6 +15144,688 @@
         "B"
       ],
       "explanation": "INTERVAL '18' MONTH é um YEAR TO MONTH interval; 18 meses equivalem a 1 ano e 6 meses (A correta). Somado a uma DATE, o Oracle ajusta por mês de calendário, respeitando a duração variável de cada mês, e o resultado permanece do tipo DATE (B correta). O valor 18 tem 2 dígitos e cabe perfeitamente na precisão padrão do campo líder, então a sintaxe é válida (C errado). ADD_MONTHS(hire_date, 18) produziria o mesmo resultado, pois 18 meses é um valor inteiro de meses, sem frações (D errado). INTERVAL '18' MONTH é um YEAR TO MONTH interval, não DAY TO SECOND — este último lida com dias, horas, minutos e segundos (E errado)."
+    },
+    {
+      "id": 520,
+      "topic": "select",
+      "context": "Examine this query:\n\nSELECT product_name, price\nFROM products\nORDER BY price DESC\nFETCH FIRST 3 ROWS ONLY;",
+      "text": "Which two statements are true about this query?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "It returns exactly the 3 rows with the highest PRICE, in descending order."
+        },
+        {
+          "key": "B",
+          "text": "Changing FETCH FIRST 3 ROWS ONLY to FETCH FIRST 3 ROWS WITH TIES could cause the query to return more than 3 rows."
+        },
+        {
+          "key": "C",
+          "text": "OFFSET must be specified whenever FETCH FIRST is used."
+        },
+        {
+          "key": "D",
+          "text": "FETCH FIRST 3 ROWS ONLY is equivalent to using ROWNUM <= 3 without an ORDER BY, guaranteeing the same 3 rows regardless of sort order."
+        },
+        {
+          "key": "E",
+          "text": "The FETCH FIRST clause can only be used together with the WHERE clause, never alone."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "FETCH FIRST n ROWS ONLY retorna exatamente n linhas conforme a ordenação do ORDER BY (A correta). Trocar para WITH TIES faz o Oracle incluir linhas extras cujo valor da coluna de ordenação empata com a última linha do corte, podendo retornar mais que n linhas (B correta). OFFSET é opcional, não obrigatório (C errada). ROWNUM sem ORDER BY não garante as mesmas linhas de FETCH FIRST com ORDER BY, pois ROWNUM é atribuído antes da ordenação (D errada). Não há restrição de uso exclusivo com WHERE (E errada)."
+    },
+    {
+      "id": 521,
+      "topic": "select",
+      "context": "",
+      "text": "Which two statements are true about substitution variables in SQL*Plus?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A variable referenced with && is defined after the first prompt and is not prompted again for the rest of the session."
+        },
+        {
+          "key": "B",
+          "text": "A variable referenced with a single & only is prompted again each time the statement containing it is re-executed, unless it has already been defined with DEFINE."
+        },
+        {
+          "key": "C",
+          "text": "SET VERIFY OFF stops the substitution from happening, so the literal value typed by the user is never substituted into the SQL statement."
+        },
+        {
+          "key": "D",
+          "text": "Substitution variables can only be used for string literals, never for table or column names."
+        },
+        {
+          "key": "E",
+          "text": "The DEFINE command with no arguments removes all currently defined substitution variables."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "&& define a variável na primeira vez que for solicitada e a reaproveita (sem novo prompt) pelo resto da sessão (A correta). O & simples volta a pedir o valor toda vez que a instrução é executada, a menos que a variável já tenha sido definida via DEFINE (B correta). SET VERIFY OFF apenas suprime a exibição \"old\"/\"new\", mas a substituição continua ocorrendo (C errada). Variáveis podem aparecer em qualquer parte do comando, inclusive nomes de tabela/coluna (D errada). DEFINE sem argumentos lista as variáveis definidas; quem remove é o UNDEFINE (E errada)."
+    },
+    {
+      "id": 522,
+      "topic": "functions",
+      "context": "",
+      "text": "Which two statements are true about the TRUNC function applied to DATE values?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "TRUNC(hire_date, 'YEAR') returns January 1st of the year of hire_date, with the time portion set to midnight."
+        },
+        {
+          "key": "B",
+          "text": "TRUNC(SYSDATE) removes the time component, setting it to 00:00:00 of the current date."
+        },
+        {
+          "key": "C",
+          "text": "TRUNC(hire_date, 'MM') returns the last day of the month of hire_date."
+        },
+        {
+          "key": "D",
+          "text": "TRUNC applied to a DATE always requires a format model as the second argument."
+        },
+        {
+          "key": "E",
+          "text": "TRUNC(hire_date, 'YEAR') and TRUNC(hire_date, 'YYYY') produce different results."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "TRUNC com formato 'YEAR' zera mês/dia para 1º de janeiro do ano, hora 00:00:00 (A correta). TRUNC(SYSDATE) sem segundo argumento usa 'DD' como padrão, removendo a hora (B correta). TRUNC(data,'MM') retorna o PRIMEIRO dia do mês, não o último (C errada). O segundo argumento é opcional, com 'DD' como padrão (D errada). 'YEAR' e 'YYYY' são modelos de formato equivalentes, produzindo o mesmo resultado (E errada)."
+    },
+    {
+      "id": 523,
+      "topic": "functions",
+      "context": "",
+      "text": "Which two statements are true about the NULLIF and NVL2 functions?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "NULLIF(expr1, expr2) returns NULL if expr1 equals expr2, otherwise it returns expr1."
+        },
+        {
+          "key": "B",
+          "text": "NVL2(expr1, expr2, expr3) returns expr2 if expr1 is not NULL, and expr3 if expr1 is NULL."
+        },
+        {
+          "key": "C",
+          "text": "NULLIF(expr1, expr2) returns NULL if expr1 is NULL, regardless of expr2."
+        },
+        {
+          "key": "D",
+          "text": "NVL2 accepts only two arguments, like NVL."
+        },
+        {
+          "key": "E",
+          "text": "NULLIF is equivalent to CASE WHEN expr1 IS NULL THEN expr2 ELSE expr1 END."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "NULLIF compara as duas expressões; se forem iguais, devolve NULL, caso contrário devolve a primeira (A correta). NVL2 avalia se a primeira expressão é NULL: se NÃO for, devolve a segunda; se for, devolve a terceira (B correta). NULLIF só devolve NULL quando expr1 = expr2 (C errada). NVL2 exige três argumentos, diferente do NVL (D errada). A lógica de E corresponde a um CASE diferente do comportamento real do NULLIF (E errada)."
+    },
+    {
+      "id": 524,
+      "topic": "groups",
+      "context": "Examine:\n\nSELECT AVG(salary)\nFROM employees\nHAVING AVG(salary) > 5000;",
+      "text": "Which statement is true about this query?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It fails because HAVING cannot be used without a GROUP BY clause."
+        },
+        {
+          "key": "B",
+          "text": "It executes successfully, treating the entire table as a single group."
+        },
+        {
+          "key": "C",
+          "text": "It fails because HAVING can only reference columns in the SELECT list."
+        },
+        {
+          "key": "D",
+          "text": "It executes successfully but ignores the HAVING clause since there is no GROUP BY."
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "HAVING pode ser usado sem GROUP BY; nesse caso, a tabela inteira é tratada como um único grupo e a função de grupo é avaliada sobre ele (B correta). Não há erro de sintaxe (A errada), HAVING pode referenciar funções de grupo mesmo que não estejam no SELECT (C errada), e a cláusula HAVING não é ignorada — ela filtra se o único grupo aparece no resultado (D errada)."
+    },
+    {
+      "id": 525,
+      "topic": "groups",
+      "context": "Examine uma coluna MANAGER_ID que contém alguns valores NULL.",
+      "text": "Which two statements are true about counting this column?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "COUNT(manager_id) counts only the rows where manager_id is NOT NULL."
+        },
+        {
+          "key": "B",
+          "text": "COUNT(DISTINCT manager_id) ignores NULL values when computing the distinct count."
+        },
+        {
+          "key": "C",
+          "text": "COUNT(*) ignores rows where manager_id is NULL."
+        },
+        {
+          "key": "D",
+          "text": "COUNT(DISTINCT manager_id) counts NULL as one distinct value if there is at least one NULL."
+        },
+        {
+          "key": "E",
+          "text": "COUNT(manager_id) and COUNT(*) always return the same result."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "COUNT(coluna) conta apenas as linhas em que a coluna NÃO é NULL (A correta). COUNT(DISTINCT coluna) também ignora os NULLs (B correta). COUNT(*) conta todas as linhas, independentemente de NULLs em qualquer coluna (C errada). NULL nunca é contado como valor distinto (D errada). COUNT(coluna) e COUNT(*) só coincidem se a coluna não tiver NULLs (E errada)."
+    },
+    {
+      "id": 526,
+      "topic": "joins",
+      "context": "Examine duas tabelas:\n\nEMPLOYEES(employee_id, salary)\nSALARY_GRADES(grade_id, min_salary, max_salary)",
+      "text": "Which two statements are true about writing a non-equijoin to find the salary grade of each employee?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The join condition can be written as e.salary BETWEEN sg.min_salary AND sg.max_salary."
+        },
+        {
+          "key": "B",
+          "text": "A non-equijoin uses an operator other than = to relate the tables, such as BETWEEN, >, or <."
+        },
+        {
+          "key": "C",
+          "text": "A non-equijoin cannot be combined with a WHERE clause that filters other columns."
+        },
+        {
+          "key": "D",
+          "text": "Non-equijoins require the USING clause."
+        },
+        {
+          "key": "E",
+          "text": "The ANSI syntax for a non-equijoin is JOIN ... USING (salary)."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "BETWEEN é uma forma comum de escrever um non-equijoin para encontrar a faixa salarial correspondente (A correta). Por definição, non-equijoin usa um operador diferente de = (B correta). Non-equijoins podem ser combinados livremente com outras condições no WHERE (C errada). USING exige coluna de nome idêntico e comparação de igualdade, não se aplica a non-equijoins (D e E erradas)."
+    },
+    {
+      "id": 527,
+      "topic": "joins",
+      "context": "Examine:\n\nSELECT department_name\nFROM departments d\nWHERE EXISTS (SELECT 1 FROM employees e WHERE e.department_id = d.department_id AND e.salary > 10000);",
+      "text": "Which three statements are true about this query?",
+      "type": "multiple",
+      "correctCount": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "The subquery is correlated because it references the outer query's department_id column."
+        },
+        {
+          "key": "B",
+          "text": "EXISTS returns TRUE as soon as the subquery finds at least one matching row, without needing to count all matches."
+        },
+        {
+          "key": "C",
+          "text": "The SELECT list of the subquery (SELECT 1) determines the columns returned by the outer query."
+        },
+        {
+          "key": "D",
+          "text": "Replacing EXISTS with NOT EXISTS would return departments that have no employee earning more than 10000."
+        },
+        {
+          "key": "E",
+          "text": "This query fails because a subquery cannot reference a column from the outer query."
+        }
+      ],
+      "correct": [
+        "A",
+        "B",
+        "D"
+      ],
+      "explanation": "A subquery é correlacionada porque usa d.department_id, coluna da consulta externa (A correta). EXISTS é curto-circuito: basta uma linha correspondente para retornar verdadeiro (B correta). A lista SELECT da subquery com EXISTS é irrelevante para o resultado (C errada). NOT EXISTS traria os departamentos SEM nenhum funcionário com salário acima de 10000 (D correta). Subqueries correlacionadas são padrão do SQL e não geram erro (E errada)."
+    },
+    {
+      "id": 528,
+      "topic": "set",
+      "context": "Examine:\n\nSELECT employee_id, salary FROM employees\nMINUS\nSELECT employee_id, department_id FROM employees;",
+      "text": "Which statement is true about this statement?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It executes successfully because both queries return two columns, even though SALARY and DEPARTMENT_ID have different meanings."
+        },
+        {
+          "key": "B",
+          "text": "It fails with an ORA error because column names must match exactly between the two queries in a set operator."
+        },
+        {
+          "key": "C",
+          "text": "It fails because MINUS requires both queries to reference the same table."
+        },
+        {
+          "key": "D",
+          "text": "It fails because SALARY and DEPARTMENT_ID have different data types."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Operadores de conjunto como MINUS exigem apenas que o número de colunas seja igual e os tipos compatíveis entre posições correspondentes — não exigem nomes de coluna iguais. Como SALARY e DEPARTMENT_ID são ambos NUMBER, a consulta executa (A correta). Não há exigência de nomes iguais (B errada), nem de tabelas iguais (C errada), e os tipos são compatíveis (D errada)."
+    },
+    {
+      "id": 529,
+      "topic": "set",
+      "context": "",
+      "text": "Which two statements are true about using ORDER BY with set operators such as UNION and UNION ALL?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "An ORDER BY clause can appear only once, at the end of the entire compound query."
+        },
+        {
+          "key": "B",
+          "text": "The ORDER BY clause must reference column names or aliases from the first SELECT, or use positional numbers."
+        },
+        {
+          "key": "C",
+          "text": "Each individual SELECT in the compound query can have its own ORDER BY clause."
+        },
+        {
+          "key": "D",
+          "text": "UNION ALL requires an ORDER BY clause to eliminate duplicate rows."
+        },
+        {
+          "key": "E",
+          "text": "UNION automatically sorts the result, so an explicit ORDER BY is never needed to guarantee row order."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Em consultas compostas, ORDER BY só pode aparecer UMA vez, ao final, ordenando o resultado combinado (A correta). Deve referenciar nomes/aliases da PRIMEIRA consulta, ou posição numérica (B correta). SELECTs individuais não podem ter seu próprio ORDER BY (C errada). UNION ALL não remove duplicatas (D errada). O comportamento de eliminação de duplicatas do UNION não garante ordenação documentada; não se deve confiar nisso sem ORDER BY explícito (E errada)."
+    },
+    {
+      "id": 530,
+      "topic": "dml",
+      "context": "Examine:\n\nMERGE INTO employees_bonus b\nUSING employees e\nON (b.employee_id = e.employee_id)\nWHEN MATCHED THEN\n  UPDATE SET b.bonus = e.salary * 0.1\nWHEN NOT MATCHED THEN\n  INSERT (employee_id, bonus) VALUES (e.employee_id, e.salary * 0.05);",
+      "text": "Which three statements are true about this MERGE statement?",
+      "type": "multiple",
+      "correctCount": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "If a row in EMPLOYEES has a matching EMPLOYEE_ID in EMPLOYEES_BONUS, its BONUS column is updated."
+        },
+        {
+          "key": "B",
+          "text": "If a row in EMPLOYEES has no matching EMPLOYEE_ID in EMPLOYEES_BONUS, a new row is inserted into EMPLOYEES_BONUS."
+        },
+        {
+          "key": "C",
+          "text": "The USING clause identifies the target table that will be modified."
+        },
+        {
+          "key": "D",
+          "text": "A MERGE statement can include both a WHEN MATCHED and a WHEN NOT MATCHED clause in the same statement."
+        },
+        {
+          "key": "E",
+          "text": "The ON clause condition can only compare primary key columns."
+        }
+      ],
+      "correct": [
+        "A",
+        "B",
+        "D"
+      ],
+      "explanation": "Para cada linha de EMPLOYEES com correspondência em EMPLOYEES_BONUS, o WHEN MATCHED atualiza o BONUS (A correta). Para as sem correspondência, o WHEN NOT MATCHED insere uma nova linha (B correta). O MERGE pode conter as duas cláusulas na mesma instrução (D correta). A tabela alvo é a que aparece após MERGE INTO; USING indica a origem dos dados (C errada). A condição do ON pode comparar quaisquer colunas apropriadas (E errada)."
+    },
+    {
+      "id": 531,
+      "topic": "dml",
+      "context": "",
+      "text": "Which two statements are true about SAVEPOINT and ROLLBACK TO SAVEPOINT in a transaction?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "ROLLBACK TO a savepoint undoes only the changes made after that savepoint, keeping earlier changes in the same transaction intact."
+        },
+        {
+          "key": "B",
+          "text": "After a ROLLBACK TO a savepoint, the transaction is still active and can continue with more statements."
+        },
+        {
+          "key": "C",
+          "text": "A COMMIT automatically preserves all savepoints defined earlier in the transaction for future rollbacks."
+        },
+        {
+          "key": "D",
+          "text": "Only one savepoint can be defined per transaction."
+        },
+        {
+          "key": "E",
+          "text": "ROLLBACK TO a savepoint always ends the current transaction."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "ROLLBACK TO savepoint desfaz apenas as alterações feitas APÓS aquele ponto, preservando o que foi feito antes (A correta). A transação continua ativa depois disso (B correta). O COMMIT finaliza a transação e libera todos os savepoints (C errada). É possível definir vários savepoints na mesma transação (D errada). ROLLBACK TO savepoint não encerra a transação, diferente de um ROLLBACK completo (E errada)."
+    },
+    {
+      "id": 532,
+      "topic": "ddl",
+      "context": "",
+      "text": "Which two statements are true about the CREATE TABLE ... AS SELECT (CTAS) statement?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The new table's column data types are derived automatically from the query's result set."
+        },
+        {
+          "key": "B",
+          "text": "NOT NULL constraints on source columns are copied to the new table, but other constraints such as primary keys and foreign keys are not."
+        },
+        {
+          "key": "C",
+          "text": "CTAS always copies all indexes and triggers defined on the source table."
+        },
+        {
+          "key": "D",
+          "text": "CTAS cannot include a WHERE clause to filter the rows copied into the new table."
+        },
+        {
+          "key": "E",
+          "text": "The new table is created without being populated; DML must be run afterward to copy the rows."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Numa CTAS, os tipos de dados das colunas são derivados automaticamente do resultado da consulta (A correta). NOT NULL das colunas de origem é copiado, mas chave primária, estrangeira, UNIQUE e CHECK não são copiadas automaticamente (B correta). Índices e triggers da tabela de origem NÃO são copiados (C errada). É possível usar WHERE para filtrar as linhas copiadas (D errada). A CTAS cria E popula a tabela na mesma instrução (E errada)."
+    },
+    {
+      "id": 533,
+      "topic": "ddl",
+      "context": "",
+      "text": "Which statement is true about an external table in Oracle?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Its data is stored in an operating system file outside the database, while its metadata is stored in the data dictionary like a regular table."
+        },
+        {
+          "key": "B",
+          "text": "It supports DML statements such as INSERT, UPDATE, and DELETE directly against the external file."
+        },
+        {
+          "key": "C",
+          "text": "It automatically converts into a regular heap-organized table the first time it is queried."
+        },
+        {
+          "key": "D",
+          "text": "It cannot be queried with a SELECT statement; it can only be used as a source for a CREATE TABLE AS SELECT."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Uma tabela externa tem dados armazenados em arquivo do sistema operacional fora do banco, mas sua definição fica no dicionário de dados, permitindo consultá-la como uma tabela comum (A correta). É somente leitura — não aceita INSERT/UPDATE/DELETE (B errada). Não há conversão automática (C errada). Pode ser consultada normalmente com SELECT, além de servir de origem para CTAS (D errada)."
+    },
+    {
+      "id": 534,
+      "topic": "access",
+      "context": "User A grants SELECT on a table to User B WITH GRANT OPTION. User B then grants that SELECT privilege to User C. Later, User A revokes the SELECT privilege from User B.",
+      "text": "Which two statements are true about this scenario?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The revoke cascades, so User C also loses the SELECT privilege that was granted through User B."
+        },
+        {
+          "key": "B",
+          "text": "Object privilege revokes in Oracle cascade automatically through the WITH GRANT OPTION chain of further grants."
+        },
+        {
+          "key": "C",
+          "text": "User C keeps the privilege because revokes never cascade in Oracle."
+        },
+        {
+          "key": "D",
+          "text": "User A must explicitly revoke the privilege from User C as a separate statement for User C to lose access."
+        },
+        {
+          "key": "E",
+          "text": "The WITH GRANT OPTION only applies to system privileges, not object privileges."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Quando um privilégio de objeto concedido WITH GRANT OPTION é revogado, o Oracle propaga (cascade) a revogação por toda a cadeia de concessões — por isso o Usuário C também perde o privilégio (A e B corretas). Revogações fazem cascade para privilégios de objeto (C errada), sem necessidade de revogar de cada usuário separadamente (D errada). WITH GRANT OPTION é de privilégios de OBJETO; para sistema é WITH ADMIN OPTION (E errada)."
+    },
+    {
+      "id": 535,
+      "topic": "access",
+      "context": "",
+      "text": "Which two statements are true about object privileges granted to a user through a role, as opposed to being granted directly to the user?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Roles cannot contain object privileges, only system privileges."
+        },
+        {
+          "key": "B",
+          "text": "Privileges received only through a role cannot be used to create a view that references the underlying object; the privilege must be granted directly to the user (or via PUBLIC)."
+        },
+        {
+          "key": "C",
+          "text": "A role's privileges are always available to a user's definer's-rights stored procedures, regardless of how the privilege was granted."
+        },
+        {
+          "key": "D",
+          "text": "WITH GRANT OPTION cannot be specified when granting an object privilege to a role."
+        },
+        {
+          "key": "E",
+          "text": "Every privilege granted to a role is automatically also granted to PUBLIC."
+        }
+      ],
+      "correct": [
+        "B",
+        "D"
+      ],
+      "explanation": "Privilégios recebidos apenas via role não podem ser usados para criar uma view sobre o objeto referenciado nem em procedures de definer's rights — é preciso concessão direta ao usuário ou via PUBLIC (B correta). O Oracle não permite WITH GRANT OPTION ao conceder um privilégio de objeto a uma role, apenas a um usuário diretamente (D correta). Roles PODEM conter privilégios de objeto (A errada). Procedures de definer's rights não usam privilégios obtidos apenas via role (C errada). Conceder a uma role não implica conceder a PUBLIC (E errada)."
+    },
+    {
+      "id": 536,
+      "topic": "dictionary",
+      "context": "",
+      "text": "Which two statements are true about the USER_CONSTRAINTS data dictionary view?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The CONSTRAINT_TYPE column uses single-letter codes such as P for primary key, R for foreign key (references), U for unique, and C for check."
+        },
+        {
+          "key": "B",
+          "text": "It shows constraints only for tables owned by the currently connected user."
+        },
+        {
+          "key": "C",
+          "text": "It includes a column listing every column involved in the constraint directly, without needing to join to another view."
+        },
+        {
+          "key": "D",
+          "text": "It shows constraints defined on tables owned by any user in the database."
+        },
+        {
+          "key": "E",
+          "text": "The STATUS column can never show DISABLED for a constraint that still exists in the view."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "USER_CONSTRAINTS usa códigos de uma letra em CONSTRAINT_TYPE: P (primary key), R (foreign key), U (unique), C (check, incluindo NOT NULL) (A correta). Como toda view USER_, mostra apenas objetos do usuário conectado (B correta). Para saber as colunas de cada constraint é preciso USER_CONS_COLUMNS (C errada). Ver constraints de outros usuários exige ALL_/DBA_CONSTRAINTS (D errada). STATUS pode mostrar DISABLED normalmente (E errada)."
+    },
+    {
+      "id": 537,
+      "topic": "timezone",
+      "context": "Examine:\n\nSELECT hire_date + INTERVAL '18' MONTH AS review_date\nFROM employees;",
+      "text": "Which two statements are true about this expression?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "As written, INTERVAL '18' MONTH raises an error, because a single-field INTERVAL literal for MONTH cannot exceed 11; the value must be expressed as INTERVAL '1-6' YEAR TO MONTH."
+        },
+        {
+          "key": "B",
+          "text": "Adding an INTERVAL YEAR TO MONTH value to a DATE column produces a result of data type DATE."
+        },
+        {
+          "key": "C",
+          "text": "INTERVAL literals can only be added to columns of data type TIMESTAMP, never to DATE."
+        },
+        {
+          "key": "D",
+          "text": "The corrected literal INTERVAL '1-6' YEAR TO MONTH represents 1 month and 6 years."
+        },
+        {
+          "key": "E",
+          "text": "Only INTERVAL DAY TO SECOND literals can be added to a DATE; INTERVAL YEAR TO MONTH cannot."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Um literal INTERVAL de campo único para MONTH não pode ultrapassar 11; '18' MONTH é inválido e deve ser escrito como INTERVAL '1-6' YEAR TO MONTH (A correta). Somar um INTERVAL YEAR TO MONTH a uma DATE resulta em DATE (B correta). INTERVALs também podem ser somados a DATE, não só TIMESTAMP (C errada). Em 'ano-mês' YEAR TO MONTH a ordem é ANO-MÊS, então '1-6' significa 1 ano e 6 meses (D errada). Ambos os tipos de INTERVAL podem ser somados a uma DATE (E errada)."
+    },
+    {
+      "id": 538,
+      "topic": "fundamentals",
+      "context": "Examine uma tabela ORDERS com colunas ORDER_ID, CUSTOMER_ID, CUSTOMER_NAME e CUSTOMER_ADDRESS, onde CUSTOMER_NAME e CUSTOMER_ADDRESS se repetem para cada pedido do mesmo cliente.",
+      "text": "Which statement is true about the design of this table with respect to normalization?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "CUSTOMER_NAME and CUSTOMER_ADDRESS depend only on CUSTOMER_ID, not on the full key ORDER_ID, which is a sign the table should be split into ORDERS and CUSTOMERS tables."
+        },
+        {
+          "key": "B",
+          "text": "The table is already properly normalized because every column has a defined data type."
+        },
+        {
+          "key": "C",
+          "text": "This design is required in a relational database to avoid the use of joins."
+        },
+        {
+          "key": "D",
+          "text": "Storing CUSTOMER_NAME and CUSTOMER_ADDRESS redundantly in ORDERS is necessary because SQL cannot join two tables together."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "CUSTOMER_NAME e CUSTOMER_ADDRESS dependem apenas de CUSTOMER_ID, não da chave completa do pedido — sintoma clássico que indica a necessidade de separar os dados em tabelas ORDERS e CUSTOMERS relacionadas por chave estrangeira (A correta). Ter tipos de dados definidos não garante normalização (B errada). O modelo relacional é baseado no uso de joins para recompor dados normalizados (C errada), e SQL suporta joins normalmente (D errada)."
+    },
+    {
+      "id": 539,
+      "topic": "select",
+      "context": "Examine uma tabela PRODUCTS onde alguns valores de PRODUCT_CODE contêm legitimamente um caractere underscore, como 'AB_123'.",
+      "text": "Which two statements are true about finding rows where PRODUCT_CODE contains a literal underscore using LIKE?",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "WHERE product_code LIKE '%\\_%' ESCAPE '\\' treats the underscore as a literal character instead of the single-character wildcard."
+        },
+        {
+          "key": "B",
+          "text": "Without an ESCAPE clause, '_' in a LIKE pattern matches any single character, not a literal underscore."
+        },
+        {
+          "key": "C",
+          "text": "The percent sign (%) must also be escaped whenever ESCAPE is specified in a LIKE clause."
+        },
+        {
+          "key": "D",
+          "text": "ESCAPE can only be used with the LIKE operator when comparing NUMBER columns."
+        },
+        {
+          "key": "E",
+          "text": "LIKE '%_%' without ESCAPE guarantees that only codes containing a literal underscore are returned."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Ao declarar ESCAPE '\\', o caractere seguinte à barra invertida no padrão é tratado como literal — '\\_' representa um underscore literal (A correta). Sem ESCAPE, '_' é sempre coringa de um caractere qualquer (B correta). Só é preciso escapar o(s) caractere(s) que se quer tratar como literais (C errada). ESCAPE não tem restrição a colunas NUMBER (D errada). Sem ESCAPE, '_' casa com QUALQUER caractere, trazendo falsos positivos (E errada)."
     }
   ]
 }
