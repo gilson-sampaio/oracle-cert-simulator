@@ -4024,6 +4024,690 @@
       ],
       "explanation": "Um sinônimo é um nome alternativo para uma tabela, view, sequence ou outro objeto de esquema (A); um sinônimo PUBLIC pode ser usado por qualquer usuário do banco, desde que ele tenha os privilégios necessários sobre o objeto referenciado (B). Criar um sinônimo NÃO copia dados — é apenas um apelido/ponteiro (C errado); remover o sinônimo não afeta o objeto original, que continua existindo normalmente (D errado); e um sinônimo PRIVADO só é visível/usável pelo esquema que o criou, ao contrário do PUBLIC (E errado).",
       "id": 120
+    },
+    {
+      "id": 121,
+      "topic": "architecture",
+      "context": "",
+      "text": "Which statement is true about the relationship between an Oracle instance and an Oracle database?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "A single instance can mount and open, at most, one database at a time in a standard (non-RAC) configuration."
+        },
+        {
+          "key": "B",
+          "text": "In every configuration, exactly one instance is associated with exactly one database, permanently."
+        },
+        {
+          "key": "C",
+          "text": "A database can exist without ever being mounted or opened by any instance."
+        },
+        {
+          "key": "D",
+          "text": "Background processes belong to the database, while memory structures (SGA/PGA) belong to the instance."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Em uma configuração padrão (não-RAC), uma instância monta e abre apenas um banco de dados por vez (A correta). B está errado porque em Oracle RAC múltiplas instâncias podem acessar o mesmo banco de dados simultaneamente. C está errado: o banco de dados é o conjunto de arquivos físicos, mas sua operação depende de ser montado/aberto por uma instância. D está invertido: processos em background e estruturas de memória (SGA/PGA) pertencem à instância; o banco de dados é o conjunto de arquivos físicos (datafiles, controlfiles, redo logs)."
+    },
+    {
+      "id": 122,
+      "topic": "instance",
+      "context": "",
+      "text": "Which two statements are true about dynamic performance views (the V$ views)? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "V$ views can be queried even when the instance is in NOMOUNT state, for the subset of information available at that stage (such as V$PARAMETER)."
+        },
+        {
+          "key": "B",
+          "text": "V$ views reflect the current state of the instance and database, continuously updated in memory."
+        },
+        {
+          "key": "C",
+          "text": "V$ views persist their historical data permanently in the SYSTEM tablespace across instance restarts."
+        },
+        {
+          "key": "D",
+          "text": "Only DBA_ prefixed views can show information about the current state of background processes; V$ views cannot."
+        },
+        {
+          "key": "E",
+          "text": "V$ views require the database to be OPEN; they are entirely unavailable in MOUNT or NOMOUNT states."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Algumas V$ views, como V$PARAMETER, já estão disponíveis em NOMOUNT, pois refletem informações da instância (memória, parâmetros) que existem antes mesmo do banco ser montado (A correta). As V$ views refletem o estado corrente da instância e do banco, sendo atualizadas continuamente (B correta). Dados de V$ views não persistem entre reinicializações — são reconstruídos a cada novo startup (C errado). São justamente as V$ views (como V$PROCESS, V$BGPROCESS) que mostram informações sobre processos em background em tempo real (D errado, invertido). Muitas V$ views funcionam em NOMOUNT e MOUNT, mostrando o que já é conhecido pela instância nessas fases (E errado)."
+    },
+    {
+      "id": 123,
+      "topic": "users",
+      "context": "Examine:\n\nCREATE PROFILE app_profile LIMIT\n  FAILED_LOGIN_ATTEMPTS 3\n  PASSWORD_LOCK_TIME 1\n  IDLE_TIME 30;\n\nALTER USER maria PROFILE app_profile;",
+      "text": "Which two statements are true about this configuration? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "After 3 consecutive failed login attempts, maria's account is locked, since password-related limits like FAILED_LOGIN_ATTEMPTS and PASSWORD_LOCK_TIME are always enforced by Oracle, regardless of the RESOURCE_LIMIT parameter."
+        },
+        {
+          "key": "B",
+          "text": "The IDLE_TIME 30 setting only disconnects maria's idle session if the RESOURCE_LIMIT initialization parameter is set to TRUE."
+        },
+        {
+          "key": "C",
+          "text": "PASSWORD_LOCK_TIME controls how many days maria's password remains valid before it must be changed."
+        },
+        {
+          "key": "D",
+          "text": "A profile can only limit password-related settings; it cannot limit resource usage such as idle time or CPU per session."
+        },
+        {
+          "key": "E",
+          "text": "FAILED_LOGIN_ATTEMPTS is a resource limit, so it also requires RESOURCE_LIMIT=TRUE to take effect."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Limites relacionados a senha (como FAILED_LOGIN_ATTEMPTS e PASSWORD_LOCK_TIME) são sempre aplicados pelo Oracle, independentemente do parâmetro RESOURCE_LIMIT (A correta). Já os limites de recurso do kernel (como IDLE_TIME, CPU_PER_SESSION, SESSIONS_PER_USER) só têm efeito se RESOURCE_LIMIT estiver definido como TRUE — por padrão esse parâmetro é FALSE (B correta). Quem controla por quantos dias a senha permanece válida antes de expirar é PASSWORD_LIFE_TIME, não PASSWORD_LOCK_TIME, que define por quanto tempo a conta fica bloqueada após atingir o número de tentativas falhas (C errado). Profiles limitam tanto configurações de senha quanto de uso de recursos (D errado). FAILED_LOGIN_ATTEMPTS é um limite de SENHA, não de recurso do kernel, por isso é sempre aplicado, mesmo com RESOURCE_LIMIT=FALSE (E errado)."
+    },
+    {
+      "id": 124,
+      "topic": "storage",
+      "context": "",
+      "text": "Which two statements are true about the relationship between segments, extents, and blocks in Oracle storage? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "An extent is a set of contiguous data blocks allocated together as a unit of space for a segment."
+        },
+        {
+          "key": "B",
+          "text": "A segment can span multiple datafiles if those datafiles belong to the same tablespace."
+        },
+        {
+          "key": "C",
+          "text": "Every table automatically has exactly one segment, regardless of partitioning."
+        },
+        {
+          "key": "D",
+          "text": "A block is the smallest logical unit of storage that a segment allocates directly, without going through extents."
+        },
+        {
+          "key": "E",
+          "text": "All blocks in a tablespace must be the same size, and this size cannot be set independently per tablespace."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Um extent é um conjunto de blocos de dados contíguos alocado de uma vez como unidade de espaço para um segmento (A correta). Um segmento pode se espalhar por vários datafiles, desde que pertençam à mesma tablespace (B correta). Uma tabela particionada tem um segmento POR PARTIÇÃO, não um único segmento para a tabela inteira (C errado). O segmento aloca espaço em unidades de extents, compostos por blocos — não aloca blocos individualmente (D errado). Cada tablespace pode ter seu próprio tamanho de bloco não padrão, desde que configurado explicitamente na criação (E errado)."
+    },
+    {
+      "id": 125,
+      "topic": "movedata",
+      "context": "A DBA runs:\n\nexpdp hr/password DIRECTORY=dpump_dir DUMPFILE=hr.dmp SCHEMAS=hr",
+      "text": "Which two statements are true about this Data Pump export? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "DIRECTORY refers to a directory object created in the database with CREATE DIRECTORY, not simply an operating system path typed inline."
+        },
+        {
+          "key": "B",
+          "text": "This export runs as a job that can be monitored, paused, and resumed independently of the client session that started it."
+        },
+        {
+          "key": "C",
+          "text": "Data Pump export always requires the exp (original Export) client to generate the dump file, then converts it to Data Pump format."
+        },
+        {
+          "key": "D",
+          "text": "The resulting hr.dmp file can be imported directly using SQL*Loader without needing impdp."
+        },
+        {
+          "key": "E",
+          "text": "If the client session that issued expdp is disconnected, the export job is immediately terminated."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "DIRECTORY em Data Pump referencia um objeto DIRECTORY do banco (criado via CREATE DIRECTORY e mapeado para um caminho do SO), não um caminho literal (A correta). Data Pump roda como um job de servidor, podendo ser monitorado, pausado (ATTACH, STOP_JOB) e retomado independentemente da sessão cliente original (B correta). Data Pump é tecnologia distinta do Export/Import original (exp/imp); não depende do exp para gerar o dump (C errado). Arquivos gerados por Data Pump só podem ser lidos por impdp (ou API DBMS_DATAPUMP), não por SQL*Loader (D errado). Como o job roda no servidor, desconectar o cliente não encerra o job — ele continua rodando e pode ser reconectado com ATTACH (E errado)."
+    },
+    {
+      "id": 126,
+      "topic": "tools",
+      "context": "",
+      "text": "A DBA needs to perform basic diagnostic and administrative tasks (viewing the alert log, checking tablespace usage, starting up the database) on a system where Enterprise Manager Cloud Control is not installed and no separate management server is available. Which tool is designed for exactly this scenario?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "EM Express (Enterprise Manager Database Express)"
+        },
+        {
+          "key": "B",
+          "text": "SQL Developer Data Modeler"
+        },
+        {
+          "key": "C",
+          "text": "EM Cloud Control's Management Repository"
+        },
+        {
+          "key": "D",
+          "text": "Oracle Universal Installer"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "EM Express é uma ferramenta web leve, embutida no próprio banco de dados (sem necessidade de Management Server ou repositório separado), voltada a tarefas básicas de administração e diagnóstico em uma única instância (A correta). SQL Developer Data Modeler é uma ferramenta de modelagem de dados, não de administração operacional (B errado). O Management Repository é parte da infraestrutura do EM Cloud Control, que o cenário diz não estar disponível (C errado). O Oracle Universal Installer é usado para instalar software, não para administração contínua do banco (D errado)."
+    },
+    {
+      "id": 127,
+      "topic": "network",
+      "context": "",
+      "text": "Which three statements are true about Oracle Net naming methods? (Choose three.)",
+      "type": "multiple",
+      "correctCount": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "With Easy Connect naming, a client can connect using a syntax like CONNECT user/pass@host:port/service_name, without any tnsnames.ora entry."
+        },
+        {
+          "key": "B",
+          "text": "With Local Naming, connection information is resolved by looking up an alias defined in the client's tnsnames.ora file."
+        },
+        {
+          "key": "C",
+          "text": "Directory Naming resolves connection information from an LDAP-compliant directory server, without needing any client-side alias file."
+        },
+        {
+          "key": "D",
+          "text": "Easy Connect requires a listener.ora entry that explicitly maps the service name used in the connect string."
+        },
+        {
+          "key": "E",
+          "text": "A client can only be configured to use one naming method at a time; combining methods is not supported."
+        }
+      ],
+      "correct": [
+        "A",
+        "B",
+        "C"
+      ],
+      "explanation": "Com Easy Connect, o cliente conecta direto usando host:port/service_name na própria connect string, sem precisar de entrada em tnsnames.ora (A correta). Com Local Naming, o cliente resolve o alias consultando entradas locais em tnsnames.ora (B correta). Directory Naming busca as informações em um servidor de diretório LDAP (como o Oracle Internet Directory), dispensando arquivo de alias local (C correta). Easy Connect não depende de nenhuma entrada específica em listener.ora — o listener descobre os serviços registrados dinamicamente (via PMON) ou por registro estático, independente do método usado pelo cliente (D errado). O parâmetro NAMES.DIRECTORY_PATH do sqlnet.ora permite configurar mais de um método de nomeação, em ordem de tentativa (E errado)."
+    },
+    {
+      "id": 128,
+      "topic": "undo",
+      "context": "",
+      "text": "Which two statements are true about undo data and undo tablespaces in Oracle Database? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Undo data is used to provide read consistency for other sessions reading data that a transaction has not yet committed."
+        },
+        {
+          "key": "B",
+          "text": "UNDO_RETENTION is a target (in seconds) that Oracle tries to honor for keeping already-committed undo data, but it can be overridden by space pressure unless guaranteed retention is configured."
+        },
+        {
+          "key": "C",
+          "text": "Undo data and redo data serve the same purpose and are stored in the same type of file."
+        },
+        {
+          "key": "D",
+          "text": "Rolling back a transaction is accomplished using redo data, not undo data."
+        },
+        {
+          "key": "E",
+          "text": "Temporary undo, when enabled, stores undo for changes to global temporary tables in the regular undo tablespace instead of a temporary tablespace."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O undo garante leitura consistente para outras sessões que leem dados que uma transação ainda não commitou (A correta). UNDO_RETENTION é um alvo em segundos que o Oracle tenta respeitar para reter undo já commitado, mas pode ser sobrescrito sob pressão de espaço, a menos que se configure retention garantida (B correta). Undo e redo têm propósitos diferentes e ficam em arquivos diferentes: undo em datafiles da undo tablespace, redo em online redo log files (C errado). ROLLBACK usa dados de UNDO para reverter mudanças, não redo (D errado). Temporary undo, quando habilitado, armazena o undo em um TEMP TABLESPACE, não na undo tablespace regular — essa é a vantagem de reduzir a geração de redo (E errado)."
+    },
+    {
+      "id": 129,
+      "topic": "sql-select",
+      "context": "Examine:\n\nSELECT last_name, salary\nFROM employees\nORDER BY salary DESC\nOFFSET 10 ROWS FETCH NEXT 5 ROWS ONLY;",
+      "text": "Which statement is true about this query?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It skips the 10 highest-paid employees and returns the next 5, ordered by salary descending."
+        },
+        {
+          "key": "B",
+          "text": "It returns the 10 highest-paid employees only, ignoring the FETCH NEXT clause."
+        },
+        {
+          "key": "C",
+          "text": "OFFSET must be used together with the WITH TIES keyword to work correctly."
+        },
+        {
+          "key": "D",
+          "text": "This syntax is invalid because OFFSET cannot be combined with ORDER BY."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "OFFSET 10 ROWS pula as 10 primeiras linhas do resultado já ordenado (os 10 salários mais altos), e FETCH NEXT 5 ROWS ONLY retorna as próximas 5 linhas depois disso (A correta). B ignora completamente o efeito do OFFSET (B errado). WITH TIES é opcional, usado só quando se quer incluir empates na fronteira do corte (C errado). OFFSET/FETCH funcionam justamente em conjunto com ORDER BY; a sintaxe é válida e comum (D errado)."
+    },
+    {
+      "id": 130,
+      "topic": "sql-functions",
+      "context": "Examine:\n\nSELECT TRUNC(SYSDATE, 'MM') AS start_of_month FROM dual;",
+      "text": "Which statement is true about this expression?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It returns the current date with the day component set to the 1st of the current month, and the time portion set to midnight."
+        },
+        {
+          "key": "B",
+          "text": "It returns the number of days elapsed since the start of the current month."
+        },
+        {
+          "key": "C",
+          "text": "TRUNC applied to a DATE with the 'MM' format model rounds to the nearest month, either up or down."
+        },
+        {
+          "key": "D",
+          "text": "TRUNC(SYSDATE, 'MM') returns a NUMBER, not a DATE."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "TRUNC em uma DATE com o modelo 'MM' trunca para o primeiro dia do mês corrente, zerando também a hora (meia-noite) — retorna sempre uma DATE (A correta). B está errado: TRUNC não calcula dias decorridos, retorna uma data truncada. C está errado: TRUNC sempre arredonda para baixo (trunca); quem arredonda para o valor mais próximo é ROUND. D está errado: o retorno de TRUNC sobre uma DATE continua sendo DATE."
+    },
+    {
+      "id": 131,
+      "topic": "sql-groups",
+      "context": "Examine:\n\nSELECT department_id, AVG(salary) AS avg_sal\nFROM employees\nGROUP BY department_id\nHAVING AVG(salary) > (\n  SELECT AVG(salary) FROM employees\n);",
+      "text": "Which two statements are true about this HAVING clause that compares to a subquery result? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The subquery in the HAVING clause computes a single overall average, independent of the outer query's grouping."
+        },
+        {
+          "key": "B",
+          "text": "This query returns departments whose average salary exceeds the company-wide average salary."
+        },
+        {
+          "key": "C",
+          "text": "The subquery in HAVING is a correlated subquery, re-executed once for each group produced by GROUP BY."
+        },
+        {
+          "key": "D",
+          "text": "HAVING can only compare a group function to a literal value, not to the result of a subquery."
+        },
+        {
+          "key": "E",
+          "text": "If the subquery returned more than one row, this query would still run successfully, using only the first row returned."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "A subquery interna (sem correlação com a consulta externa) calcula uma única média geral, sem depender do agrupamento externo (A correta); por isso a comparação na HAVING seleciona os departamentos cuja média supera essa média geral da empresa (B correta). Por não referenciar nenhuma coluna da consulta externa, essa subquery é não correlacionada — calculada uma única vez, não uma vez por grupo (C errado). HAVING aceita comparar uma função de grupo com qualquer expressão escalar, incluindo o resultado de uma subquery (D errado). Se a subquery retornasse mais de uma linha, o Oracle geraria erro de subquery de linha única retornando mais de uma linha, pois o operador > exige subquery de linha única — não usaria só a primeira linha (E errado)."
+    },
+    {
+      "id": 132,
+      "topic": "sql-groups",
+      "context": "Examine:\n\nSELECT department_id,\n  COUNT(*) AS total_emp,\n  COUNT(commission_pct) AS with_commission\nFROM employees\nGROUP BY department_id;",
+      "text": "Which two statements are true about COUNT(*) versus COUNT(commission_pct) in this query? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "COUNT(commission_pct) counts only the rows in each group where commission_pct is not NULL."
+        },
+        {
+          "key": "B",
+          "text": "For a department where no employee earns commission, with_commission returns 0, not NULL."
+        },
+        {
+          "key": "C",
+          "text": "COUNT(*) and COUNT(commission_pct) always return the same value for any given group."
+        },
+        {
+          "key": "D",
+          "text": "COUNT(commission_pct) counts every row in the group, treating NULL as a valid countable value."
+        },
+        {
+          "key": "E",
+          "text": "To count rows regardless of NULLs in a specific column, COUNT(*) must be used; COUNT(column_name) is not permitted in Oracle SQL."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "COUNT(coluna) conta apenas as linhas do grupo em que a coluna não é NULL, diferente de COUNT(*), que conta todas as linhas (A correta); consequentemente, se ninguém no departamento tiver comissão, o resultado é 0, não NULL (B correta). COUNT(*) e COUNT(commission_pct) só coincidem quando não há NULL em commission_pct no grupo (C errado). COUNT(coluna) ignora os NULLs da coluna especificada — o oposto do que D afirma (D errado). COUNT(nome_da_coluna) é sintaxe válida e muito usada em Oracle SQL (E errado)."
+    },
+    {
+      "id": 133,
+      "topic": "sql-joins",
+      "context": "Examine:\n\nSELECT e.last_name, e.salary, e2.salary AS peer_salary\nFROM employees e\nJOIN employees e2\n  ON e.department_id = e2.department_id\n  AND e.employee_id != e2.employee_id;",
+      "text": "Which two statements are true about this self join? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "For a department with 4 employees, each employee is paired with 3 peers (all other employees in the same department), producing multiple rows per employee."
+        },
+        {
+          "key": "B",
+          "text": "The condition e.employee_id != e2.employee_id prevents an employee from being paired with themselves."
+        },
+        {
+          "key": "C",
+          "text": "This query requires exactly one alias for the employees table, since it is only referenced once in the FROM clause."
+        },
+        {
+          "key": "D",
+          "text": "Removing the e.employee_id != e2.employee_id condition would cause the query to raise a syntax error."
+        },
+        {
+          "key": "E",
+          "text": "This is an outer join, since it compares rows from two different aliases of the same table."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Para um departamento com 4 empregados, cada um é pareado com os outros 3, gerando várias linhas de resultado por empregado (A correta); a condição de desigualdade impede um empregado de ser pareado consigo mesmo (B correta). Um self join exige duas referências (aliases) à mesma tabela na cláusula FROM — aqui, \"e\" e \"e2\" (C errado). Remover a condição de desigualdade não causaria erro de sintaxe; cada empregado também apareceria pareado consigo mesmo (D errado). O tipo de join é definido pela palavra-chave usada (JOIN simples = INNER JOIN); usar dois aliases da mesma tabela não torna, por si só, o join um outer join (E errado)."
+    },
+    {
+      "id": 134,
+      "topic": "sql-joins",
+      "context": "Examine:\n\nSELECT p.product_name\nFROM products p\nWHERE p.list_price > ALL (\n  SELECT list_price FROM products WHERE category_id = 20\n);",
+      "text": "Which three statements are true about this query? (Choose three.)",
+      "type": "multiple",
+      "correctCount": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "If the subquery returns no rows, the WHERE condition is considered TRUE for every row of the outer query, and all products are returned."
+        },
+        {
+          "key": "B",
+          "text": "The outer query returns products whose list_price is greater than the highest list_price found among category_id 20 products."
+        },
+        {
+          "key": "C",
+          "text": "This is a multiple-row subquery, since it can return more than one row from the products table."
+        },
+        {
+          "key": "D",
+          "text": "Using > ANY instead of > ALL would return products with list_price greater than the highest value in category_id 20."
+        },
+        {
+          "key": "E",
+          "text": "If a product with category_id = 20 has a NULL list_price, that NULL is silently ignored when evaluating > ALL."
+        }
+      ],
+      "correct": [
+        "A",
+        "B",
+        "C"
+      ],
+      "explanation": "Quando uma subquery em ALL não retorna nenhuma linha, a comparação é considerada verdadeira para toda linha externa, então todos os produtos seriam retornados (A correta). \"> ALL\" exige que o valor seja maior que todos os valores retornados pela subquery, ou seja, maior que o maior valor entre eles (B correta). Por poder retornar várias linhas, essa é uma subquery de múltiplas linhas, compatível com operadores como ALL/ANY/IN (C correta). \"> ANY\" exige ser maior que pelo menos um valor da lista, ou seja, maior que o MENOR valor da subquery, não o maior; D está invertido (errado). Se algum list_price entre os da categoria 20 for NULL, a comparação com esse valor específico resulta em desconhecido, o que impede que qualquer linha satisfaça \"> ALL\" de forma definitiva — não é silenciosamente ignorado, é um comportamento importante (E errado)."
+    },
+    {
+      "id": 135,
+      "topic": "sql-setops",
+      "context": "Examine:\n\nSELECT product_id, product_name FROM current_catalog\nUNION ALL\nSELECT product_id, product_name FROM discontinued_catalog;",
+      "text": "Which two statements are true about this UNION ALL query? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "If the same product_id and product_name appear in both catalogs, that row appears twice in the result."
+        },
+        {
+          "key": "B",
+          "text": "UNION ALL does not perform any sorting or duplicate elimination, making it generally faster than UNION."
+        },
+        {
+          "key": "C",
+          "text": "UNION ALL requires both SELECT statements to be free of any duplicate rows within themselves."
+        },
+        {
+          "key": "D",
+          "text": "The number and order of columns in each SELECT can differ, as long as the total column count matches."
+        },
+        {
+          "key": "E",
+          "text": "UNION ALL implicitly converts both result sets to use the column names of the second SELECT statement."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Como UNION ALL não elimina duplicatas, uma linha idêntica presente nas duas tabelas aparece duas vezes no resultado final (A correta); por não precisar comparar e eliminar duplicatas, UNION ALL é geralmente mais rápido que UNION (B correta). UNION ALL não exige que cada SELECT individual seja livre de duplicatas internas (C errado). As colunas correspondentes devem ser compatíveis em tipo e quantidade, na mesma ordem posicional (D errado). Os nomes de coluna exibidos vêm da PRIMEIRA SELECT do compound query, não da segunda (E errado)."
+    },
+    {
+      "id": 136,
+      "topic": "sql-setops",
+      "context": "Examine:\n\nSELECT customer_id FROM customers WHERE country = 'BR'\nINTERSECT\nSELECT customer_id FROM orders WHERE order_date >= DATE '2026-01-01';",
+      "text": "Which two statements are true about this INTERSECT query? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "It returns customer_ids that are both from Brazil and have placed at least one order on or after January 1, 2026."
+        },
+        {
+          "key": "B",
+          "text": "The data types and number of columns selected by both queries must be compatible for INTERSECT to be valid."
+        },
+        {
+          "key": "C",
+          "text": "INTERSECT returns duplicate customer_id values if a customer placed more than one qualifying order."
+        },
+        {
+          "key": "D",
+          "text": "INTERSECT is processed before evaluating either individual WHERE clause."
+        },
+        {
+          "key": "E",
+          "text": "Reversing the order of the two SELECT statements (orders first, then customers) would change which customer_ids are returned, though not necessarily how many rows are returned."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "INTERSECT retorna apenas os customer_id presentes em ambos os conjuntos: os do Brasil e os que aparecem em pedidos a partir de 2026-01-01 (A correta). As colunas selecionadas precisam ser compatíveis em tipo e quantidade entre as duas consultas (B correta). INTERSECT elimina duplicatas do resultado final, então mesmo com vários pedidos qualificados, o customer_id aparece uma única vez (C errado). Cada WHERE é avaliado dentro de sua própria SELECT antes de o Oracle combinar os dois conjuntos (D errado). INTERSECT é comutativo: o conjunto de valores presentes em ambos os resultados é o mesmo independentemente da ordem das SELECTs (E errado)."
+    },
+    {
+      "id": 137,
+      "topic": "sql-dml",
+      "context": "Examine:\n\nUPDATE employees\nSET salary = salary * 1.1\nWHERE department_id = 50;\n\nSAVEPOINT after_raise;\n\nDELETE FROM employees WHERE department_id = 50 AND salary > 20000;\n\nROLLBACK TO after_raise;",
+      "text": "Which three statements are true about this sequence of statements? (Choose three.)",
+      "type": "multiple",
+      "correctCount": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "After the ROLLBACK TO after_raise, the DELETE is undone, but the salary increases from the UPDATE remain in effect."
+        },
+        {
+          "key": "B",
+          "text": "The SAVEPOINT does not end the transaction; the transaction started by UPDATE is still active after the ROLLBACK TO statement."
+        },
+        {
+          "key": "C",
+          "text": "ROLLBACK TO after_raise undoes both the DELETE and the UPDATE, returning all rows to their original state."
+        },
+        {
+          "key": "D",
+          "text": "A SAVEPOINT automatically issues an implicit COMMIT for all changes made before it."
+        },
+        {
+          "key": "E",
+          "text": "After ROLLBACK TO after_raise, a subsequent COMMIT would make the salary increases from the UPDATE permanent."
+        }
+      ],
+      "correct": [
+        "A",
+        "B",
+        "E"
+      ],
+      "explanation": "ROLLBACK TO um savepoint desfaz apenas as instruções emitidas depois daquele savepoint — aqui, apenas o DELETE é desfeito, enquanto o UPDATE (antes do savepoint) permanece em efeito (A correta). SAVEPOINT não encerra a transação; a transação iniciada pelo UPDATE continua ativa após o ROLLBACK TO (B correta). Como a transação continua ativa e o UPDATE não foi desfeito, um COMMIT subsequente tornaria esse aumento salarial permanente (E correta). ROLLBACK TO um savepoint desfaz apenas o que veio depois dele, não a transação inteira — o UPDATE não é desfeito (C errado). SAVEPOINT não realiza nenhum COMMIT, implícito ou explícito (D errado)."
+    },
+    {
+      "id": 138,
+      "topic": "sql-dml",
+      "context": "Examine:\n\nDELETE FROM order_items\nWHERE order_id IN (\n  SELECT order_id FROM orders WHERE status = 'CANCELLED'\n);",
+      "text": "Which two statements are true about this statement? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "If the subquery returns no rows, no rows are deleted from order_items, and no error is raised."
+        },
+        {
+          "key": "B",
+          "text": "This DELETE can be rolled back with ROLLBACK, as long as no COMMIT has occurred since it ran."
+        },
+        {
+          "key": "C",
+          "text": "The subquery is evaluated once for every row in order_items, making this a correlated subquery."
+        },
+        {
+          "key": "D",
+          "text": "DELETE statements cannot use a subquery in the WHERE clause; only UPDATE and INSERT support this."
+        },
+        {
+          "key": "E",
+          "text": "Rows deleted by this statement are immediately visible to other sessions, even before a COMMIT is issued."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Se a subquery não retornar nenhum order_id, a condição IN nunca é satisfeita, e o DELETE não afeta nenhuma linha, sem gerar erro (A correta). Como toda DML, esse DELETE pode ser desfeito com ROLLBACK enquanto a transação não for commitada (B correta). A subquery não referencia nenhuma coluna da tabela externa, então é não correlacionada, executada uma única vez (C errado). DELETE aceita subqueries na cláusula WHERE normalmente, assim como SELECT, UPDATE e INSERT (D errado). Mudanças de uma transação não commitada só são visíveis para a própria sessão; outras sessões só veem os dados após o COMMIT (E errado)."
+    },
+    {
+      "id": 139,
+      "topic": "sql-ddl",
+      "context": "Examine:\n\nCREATE GLOBAL TEMPORARY TABLE staging_data (\n  batch_id NUMBER,\n  payload VARCHAR2(4000)\n)\nON COMMIT DELETE ROWS;",
+      "text": "Which two statements are true about this table? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "With ON COMMIT DELETE ROWS, rows are automatically removed from the table at the end of each transaction that inserted into it."
+        },
+        {
+          "key": "B",
+          "text": "The table definition (its structure) is visible to all sessions, but each session sees only its own data in the table."
+        },
+        {
+          "key": "C",
+          "text": "ON COMMIT DELETE ROWS makes the table's data visible to other concurrent sessions until they also commit."
+        },
+        {
+          "key": "D",
+          "text": "A global temporary table with ON COMMIT DELETE ROWS retains data for the duration of the session, clearing it only on logoff."
+        },
+        {
+          "key": "E",
+          "text": "Indexes cannot be created on a global temporary table."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Com ON COMMIT DELETE ROWS, as linhas são automaticamente removidas ao final de cada transação (COMMIT) que inseriu dados na tabela (A correta). Tabelas temporárias globais têm sua estrutura compartilhada e visível para todas as sessões, mas os dados de cada sessão são privados a ela (B correta). Os dados de uma tabela temporária nunca são visíveis a outras sessões, sejam concorrentes ou não (C errado). O comportamento de reter até o logoff é o de ON COMMIT PRESERVE ROWS, não ON COMMIT DELETE ROWS (D errado). É perfeitamente possível criar índices em tabelas temporárias globais (E errado)."
+    },
+    {
+      "id": 140,
+      "topic": "sql-ddl",
+      "context": "Examine:\n\nALTER TABLE employees\nADD CONSTRAINT emp_salary_ck CHECK (salary > 0) DEFERRABLE INITIALLY DEFERRED;",
+      "text": "Which three statements are true about this constraint? (Choose three.)",
+      "type": "multiple",
+      "correctCount": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "Because it is DEFERRABLE INITIALLY DEFERRED, Oracle does not check this CHECK constraint until COMMIT time, unless the session explicitly changes the mode."
+        },
+        {
+          "key": "B",
+          "text": "Violations of this constraint can still cause the transaction to fail, but only at COMMIT rather than immediately after the offending DML statement."
+        },
+        {
+          "key": "C",
+          "text": "DEFERRABLE constraints are checked immediately after each DML statement by default, exactly like NOT DEFERRABLE constraints, regardless of the INITIALLY setting."
+        },
+        {
+          "key": "D",
+          "text": "Once created as DEFERRABLE, a constraint can never be switched to IMMEDIATE checking within a session using SET CONSTRAINT."
+        },
+        {
+          "key": "E",
+          "text": "NOT DEFERRABLE is the default behavior for constraints if DEFERRABLE is not specified at all."
+        }
+      ],
+      "correct": [
+        "A",
+        "B",
+        "E"
+      ],
+      "explanation": "Como a constraint é DEFERRABLE INITIALLY DEFERRED, o Oracle só verifica essa CHECK constraint no momento do COMMIT, a menos que a sessão mude o modo explicitamente com SET CONSTRAINT (A correta). Isso significa que uma violação pode não ser detectada logo após o DML ofensivo, mas fará a transação falhar no COMMIT (B correta). Se DEFERRABLE/NOT DEFERRABLE não for especificado na criação, o padrão do Oracle é NOT DEFERRABLE — verificação imediata após cada DML (E correta). C está errado porque o INITIALLY DEFERRED muda o momento da verificação para o COMMIT, ao contrário do comportamento imediato padrão. D está errado: constraints DEFERRABLE podem ter seu modo de verificação alternado dentro da sessão via SET CONSTRAINT ... IMMEDIATE/DEFERRED."
     }
   ]
 }

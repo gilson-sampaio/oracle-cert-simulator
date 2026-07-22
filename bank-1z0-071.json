@@ -14462,6 +14462,688 @@
       ],
       "explanation": "INTERSECT retorna apenas as linhas que aparecem no resultado de AMBAS as consultas, eliminando duplicatas do resultado final (A). A descrição de retornar linhas da primeira que não estão na segunda é do MINUS, não do INTERSECT (B errado); as consultas de um compound query podem referenciar tabelas diferentes, desde que as listas de colunas sejam compatíveis em número e tipo (C errado); e assim como UNION, o INTERSECT elimina duplicatas — não as mantém (D errado).",
       "id": 499
+    },
+    {
+      "id": 500,
+      "topic": "fundamentals",
+      "context": "",
+      "text": "A table EMPLOYEES has a column EMAIL defined as UNIQUE but nullable. Which statement is true about this column?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Multiple rows can each store a NULL value in EMAIL, because Oracle does not consider NULL values duplicates for a UNIQUE constraint."
+        },
+        {
+          "key": "B",
+          "text": "Only one row in the table is allowed to have a NULL value in EMAIL."
+        },
+        {
+          "key": "C",
+          "text": "A UNIQUE constraint on a nullable column automatically makes the column NOT NULL."
+        },
+        {
+          "key": "D",
+          "text": "Oracle rejects the UNIQUE constraint definition because the column is nullable."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "NULL não é considerado igual a outro NULL para fins de UNIQUE, então múltiplas linhas podem ter EMAIL NULL simultaneamente (A correta). B está errado pois não existe limite de \"uma linha\" com NULL. C está errado: UNIQUE não implica NOT NULL, são constraints independentes. D está errado: Oracle aceita UNIQUE em coluna nullable normalmente."
+    },
+    {
+      "id": 501,
+      "topic": "select",
+      "context": "Examine this query:\n\nSELECT product_name, price\nFROM products\nORDER BY price DESC\nFETCH FIRST 5 ROWS WITH TIES;",
+      "text": "Which two statements are true about this FETCH FIRST ... WITH TIES query? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "If there are ties in price at the 5th highest value, additional rows with that same price are included in the result."
+        },
+        {
+          "key": "B",
+          "text": "WITH TIES can only be used together with an ORDER BY clause."
+        },
+        {
+          "key": "C",
+          "text": "WITH TIES returns exactly 5 rows every time, regardless of tied values."
+        },
+        {
+          "key": "D",
+          "text": "FETCH FIRST 5 ROWS WITH TIES is equivalent to using ROWNUM <= 5 in the WHERE clause."
+        },
+        {
+          "key": "E",
+          "text": "The OFFSET clause is mandatory when using FETCH FIRST ... WITH TIES."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "WITH TIES faz a consulta incluir linhas extras empatadas com o valor da última linha retornada, podendo o total ultrapassar 5 (A correta); e o Oracle exige ORDER BY para que o conceito de \"empate\" com a última posição faça sentido (B correta). C está errado porque justamente por causa do WITH TIES o total pode ser maior que 5. D está errado: ROWNUM <= 5 não considera empates, é diferente. E está errado: OFFSET é opcional, não obrigatório."
+    },
+    {
+      "id": 502,
+      "topic": "select",
+      "context": "A SQL*Plus script contains:\n\nSET VERIFY ON\nDEFINE dept_name = Sales\nSELECT * FROM departments WHERE department_name = '&dept_name';",
+      "text": "Which two statements are true about this script? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Because dept_name was already defined with DEFINE, SQL*Plus substitutes its value directly and does not prompt the user for input."
+        },
+        {
+          "key": "B",
+          "text": "With SET VERIFY ON, SQL*Plus displays the text of the line before and after the substitution occurs."
+        },
+        {
+          "key": "C",
+          "text": "DEFINE can only store NUMBER values, not character strings."
+        },
+        {
+          "key": "D",
+          "text": "The single-ampersand and double-ampersand substitution variables always behave identically, regardless of whether DEFINE was used."
+        },
+        {
+          "key": "E",
+          "text": "SET VERIFY OFF would cause the query to fail because the substitution variable could not be resolved."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Como dept_name já foi definida via DEFINE, o SQL*Plus usa esse valor diretamente e não pergunta novamente ao usuário (A correta); com SET VERIFY ON, o SQL*Plus mostra a linha antes e depois da substituição, útil para conferir o que foi trocado (B correta). DEFINE armazena valores de caracteres normalmente, não só números (C errado). O comportamento de reutilizar o valor sem redigitação em múltiplas referências é característica do \"&&\", diferente do \"&\" simples quando não previamente definido — não são idênticos (D errado). VERIFY controla apenas a exibição da substituição, não a resolução da variável; a query funcionaria normalmente com VERIFY OFF (E errado)."
+    },
+    {
+      "id": 503,
+      "topic": "functions",
+      "context": "Examine:\n\nSELECT customer_id,\n  CASE\n    WHEN credit_limit > 10000 THEN 'HIGH'\n    WHEN credit_limit > 5000 THEN 'MEDIUM'\n    ELSE 'LOW'\n  END AS credit_tier\nFROM customers;",
+      "text": "Which two statements are true about this CASE expression? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The WHEN conditions are evaluated in order, and the first one that is true determines the result."
+        },
+        {
+          "key": "B",
+          "text": "A customer with credit_limit = 12000 will be assigned 'HIGH'; a customer with credit_limit = 7000 will be assigned 'MEDIUM'."
+        },
+        {
+          "key": "C",
+          "text": "If a customer's credit_limit is NULL, the expression returns 'LOW' because NULL is treated as less than 5000."
+        },
+        {
+          "key": "D",
+          "text": "The ELSE clause is mandatory in a searched CASE expression."
+        },
+        {
+          "key": "E",
+          "text": "This CASE expression could equivalently be written using DECODE without any loss of behavior, because DECODE also supports range comparisons."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O CASE avalia as condições WHEN em ordem sequencial e usa a primeira verdadeira (A correta); logo, 12000 satisfaz \">10000\" (HIGH) e 7000 satisfaz \">5000\" mas não \">10000\" (MEDIUM) (B correta). Se credit_limit for NULL, nenhuma comparação (NULL > 10000, NULL > 5000) é verdadeira, então cai no ELSE 'LOW' — mas isso não é porque \"NULL é tratado como menor que 5000\"; é porque comparações com NULL retornam desconhecido, não porque NULL é menor (C errado, pela justificativa incorreta). O ELSE é opcional; se omitido e nenhuma condição for satisfeita, o CASE retorna NULL (D errado). DECODE testa igualdade, não suporta comparações de intervalo (>, <) diretamente, então não seria equivalente (E errado)."
+    },
+    {
+      "id": 504,
+      "topic": "functions",
+      "context": "Examine:\n\nSELECT TO_CHAR(1234.5, '9,999.99') AS formatted\nFROM dual;",
+      "text": "Which two statements are true about this TO_CHAR conversion? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The result is ' 1,234.50' (with a leading space reserved for the sign position)."
+        },
+        {
+          "key": "B",
+          "text": "If the number had more integer digits than the format model allows, TO_CHAR would return a string of pound signs (#)."
+        },
+        {
+          "key": "C",
+          "text": "The format model '9,999.99' requires the input to be an integer; decimal values raise an error."
+        },
+        {
+          "key": "D",
+          "text": "TO_CHAR(1234.5, '9,999.99') and TO_CHAR(1234.5) produce identical output."
+        },
+        {
+          "key": "E",
+          "text": "Removing the comma from the format model would cause the function to raise an error."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O modelo '9' reserva um espaço para o sinal, resultando em um espaço extra antes de \"1,234.50\" (A correta); quando o número não cabe no modelo (excede os dígitos definidos), o Oracle retorna uma sequência de \"#\" indicando formato insuficiente (B correta). O modelo aceita decimais normalmente, usando o \".\" para casas decimais — não exige valor inteiro (C errado). TO_CHAR sem formato usa a formatação padrão da sessão, que normalmente difere da formatação explícita com vírgulas de milhar (D errado). Remover a vírgula do modelo apenas tira a formatação de milhar visualmente; não causa erro (E errado)."
+    },
+    {
+      "id": 505,
+      "topic": "functions",
+      "context": "Examine:\n\nSELECT * FROM orders\nWHERE order_date = '15-JAN-24';",
+      "text": "Assuming ORDER_DATE is a DATE column and the session's NLS_DATE_FORMAT matches 'DD-MON-RR', which statement is true about this query?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Oracle implicitly converts the string literal '15-JAN-24' to a DATE value before comparing it to ORDER_DATE."
+        },
+        {
+          "key": "B",
+          "text": "The query raises an error because DATE columns cannot be compared to string literals under any circumstances."
+        },
+        {
+          "key": "C",
+          "text": "Oracle converts ORDER_DATE to a VARCHAR2 value to perform a character comparison with the literal."
+        },
+        {
+          "key": "D",
+          "text": "This comparison always evaluates to FALSE because dates and strings are never considered comparable."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Quando um valor DATE é comparado a uma string literal, o Oracle faz conversão implícita da string para DATE (usando o NLS_DATE_FORMAT da sessão) para realizar a comparação (A correta). B está errado pois a comparação é permitida via conversão implícita, não gera erro por si só. C está invertido: o Oracle converte a string para DATE, não a data para string, nesse contexto. D está errado, a comparação funciona normalmente."
+    },
+    {
+      "id": 506,
+      "topic": "groups",
+      "context": "Examine:\n\nSELECT department_id, COUNT(*) AS emp_count\nFROM employees\nWHERE salary > 3000\nGROUP BY department_id\nHAVING COUNT(*) > 5;",
+      "text": "Which two statements are true about this GROUP BY / HAVING query with a preceding WHERE clause? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The WHERE clause filters individual employee rows before grouping; HAVING then filters the grouped results."
+        },
+        {
+          "key": "B",
+          "text": "Only departments where more than 5 employees earn a salary above 3000 appear in the final result."
+        },
+        {
+          "key": "C",
+          "text": "HAVING COUNT(*) > 5 could be rewritten as a WHERE condition placed before GROUP BY with identical results."
+        },
+        {
+          "key": "D",
+          "text": "The COUNT(*) in HAVING counts all employees in the department, including those with salary <= 3000."
+        },
+        {
+          "key": "E",
+          "text": "If HAVING were removed, the query would raise an error because COUNT(*) requires a HAVING clause."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "WHERE atua linha a linha antes do agrupamento, filtrando quem ganha mais de 3000; depois disso, o GROUP BY agrupa por departamento e o HAVING filtra os grupos, mantendo só os departamentos com mais de 5 linhas restantes (A e B corretas). HAVING não pode ser substituído por WHERE porque WHERE não pode referenciar funções de grupo como COUNT(*) — isso só é permitido em HAVING (C errado). Como o WHERE já filtrou salary > 3000 antes do GROUP BY, o COUNT(*) do HAVING conta apenas as linhas restantes, não todos os empregados do departamento (D errado). COUNT(*) funciona perfeitamente sem HAVING; HAVING é opcional (E errado)."
+    },
+    {
+      "id": 507,
+      "topic": "groups",
+      "context": "Examine:\n\nSELECT department_id, job_id, SUM(salary) AS total_salary\nFROM employees\nGROUP BY department_id, job_id;",
+      "text": "Which two statements are true about this multi-column GROUP BY query? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A separate SUM(salary) is calculated for each distinct combination of department_id and job_id."
+        },
+        {
+          "key": "B",
+          "text": "Rows with a NULL department_id are excluded from every group by GROUP BY."
+        },
+        {
+          "key": "C",
+          "text": "The SELECT list may only contain columns that are also listed in the GROUP BY clause, or aggregate functions applied to other columns."
+        },
+        {
+          "key": "D",
+          "text": "Removing job_id from the GROUP BY clause while keeping it in the SELECT list would still produce valid, unambiguous results."
+        },
+        {
+          "key": "E",
+          "text": "The order in which department_id and job_id appear in GROUP BY affects the grouping granularity of the result."
+        }
+      ],
+      "correct": [
+        "A",
+        "C"
+      ],
+      "explanation": "O GROUP BY por múltiplas colunas cria um grupo para cada combinação distinta de valores, e o SUM é calculado por grupo (A correta). Toda coluna do SELECT que não seja função de grupo precisa estar no GROUP BY, senão o Oracle gera erro de \"not a GROUP BY expression\" (C correta). NULL é tratado como um valor de agrupamento válido — linhas com department_id NULL formam seu próprio grupo, não são excluídas (B errado). Remover job_id do GROUP BY mantendo-o no SELECT causaria erro, pois toda coluna não agregada do SELECT deve estar no GROUP BY (D errado). A ordem das colunas no GROUP BY não muda quais grupos são formados — o conjunto de combinações distintas é o mesmo (E errado)."
+    },
+    {
+      "id": 508,
+      "topic": "joins",
+      "context": "Examine:\n\nSELECT e.last_name\nFROM employees e\nWHERE EXISTS (\n  SELECT 1 FROM employees s\n  WHERE s.manager_id = e.employee_id\n);",
+      "text": "Which two statements are true about this correlated subquery? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The subquery is logically re-evaluated for each row of the outer query, using that row's employee_id."
+        },
+        {
+          "key": "B",
+          "text": "This query returns employees who manage at least one other employee."
+        },
+        {
+          "key": "C",
+          "text": "EXISTS returns TRUE only if the subquery returns more than one row."
+        },
+        {
+          "key": "D",
+          "text": "The literal \"1\" in SELECT 1 is evaluated and compared to values from the outer query."
+        },
+        {
+          "key": "E",
+          "text": "This query could not be rewritten using an equivalent join, because EXISTS has no join equivalent."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "É uma subquery correlacionada porque referencia e.employee_id da consulta externa, sendo reavaliada conceitualmente para cada linha externa (A correta); como resultado, retorna apenas os empregados que aparecem como manager_id de alguém, ou seja, que têm subordinados (B correta). EXISTS retorna TRUE assim que a subquery encontra pelo menos uma linha, não exige mais de uma (C errado). O \"1\" em SELECT 1 é apenas um placeholder — o Oracle nem avalia seu valor para o EXISTS, que só verifica a existência de linhas (D errado). É perfeitamente possível reescrever com um JOIN (com DISTINCT), então EXISTS não é a única forma (E errado)."
+    },
+    {
+      "id": 509,
+      "topic": "joins",
+      "context": "Examine:\n\nSELECT o.order_id, o.order_date\nFROM orders o\nJOIN order_items oi ON oi.order_id = o.order_id\nWHERE oi.quantity BETWEEN 5 AND 10;",
+      "text": "Which three statements are true about this query? (Choose three.)",
+      "type": "multiple",
+      "correctCount": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "BETWEEN 5 AND 10 includes rows where quantity equals exactly 5 or exactly 10."
+        },
+        {
+          "key": "B",
+          "text": "This is an equijoin because the join condition uses an equality operator, even though the WHERE clause uses BETWEEN."
+        },
+        {
+          "key": "C",
+          "text": "An order with multiple order_items rows meeting the quantity condition can appear multiple times in the result."
+        },
+        {
+          "key": "D",
+          "text": "BETWEEN 5 AND 10 is equivalent to writing quantity > 5 AND quantity < 10."
+        },
+        {
+          "key": "E",
+          "text": "Switching to WHERE oi.quantity BETWEEN 10 AND 5 (reversed bounds) would return the same rows."
+        }
+      ],
+      "correct": [
+        "A",
+        "B",
+        "C"
+      ],
+      "explanation": "BETWEEN é inclusivo nos dois limites, então quantity = 5 ou quantity = 10 satisfazem a condição (A correta). O JOIN em si usa \"=\" entre oi.order_id e o.order_id, o que caracteriza um equijoin — o BETWEEN está numa condição de filtro separada, no WHERE, e não muda a natureza do JOIN (B correta). Como é um join um-para-muitos, o mesmo order_id pode aparecer repetido uma vez por item que satisfaça a condição (C correta). BETWEEN 5 AND 10 equivale a >= 5 AND <= 10 (inclusivo), não a > 5 AND < 10 (exclusivo) (D errado). Se os limites forem invertidos (BETWEEN 10 AND 5), a condição nunca é satisfeita, pois o Oracle exige limite_inferior AND limite_superior nessa ordem — o resultado seria vazio, não o mesmo (E errado)."
+    },
+    {
+      "id": 510,
+      "topic": "joins",
+      "context": "Examine:\n\nSELECT d.department_name, e.last_name\nFROM departments d, employees e\nWHERE d.department_id = e.department_id (+);",
+      "text": "Which statement is true about this query, written using the Oracle-proprietary outer join syntax?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It returns every department, including those with no employees, with NULL in the last_name column for departments without employees."
+        },
+        {
+          "key": "B",
+          "text": "It returns every employee, including those not assigned to a department."
+        },
+        {
+          "key": "C",
+          "text": "The (+) operator can be applied to either side of the join condition without changing the result."
+        },
+        {
+          "key": "D",
+          "text": "This syntax is invalid because the (+) operator can only be used with the ANSI JOIN syntax, not with the older comma-based syntax."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "O (+) aparece do lado de e.department_id, indicando que essa é a tabela \"opcional\" — ou seja, é um LEFT OUTER JOIN em relação a DEPARTMENTS: todos os departamentos aparecem, mesmo sem empregados correspondentes, com last_name NULL nesses casos (A correta). B está invertido: quem pode faltar no resultado são os departamentos sem empregados, não o contrário. C está errado: colocar o (+) do lado oposto mudaria completamente qual tabela é \"preservada\" no resultado. D está errado: o (+) é justamente a sintaxe proprietária usada com a notação antiga baseada em vírgulas no FROM."
+    },
+    {
+      "id": 511,
+      "topic": "set",
+      "context": "Examine:\n\n(SELECT product_id FROM current_promotions)\nUNION\n(SELECT product_id FROM past_promotions)\nORDER BY product_id;",
+      "text": "Which two statements are true about this compound query? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The ORDER BY clause applies to the combined result of the UNION, not to either individual SELECT."
+        },
+        {
+          "key": "B",
+          "text": "UNION removes duplicate product_id values that appear in both current_promotions and past_promotions."
+        },
+        {
+          "key": "C",
+          "text": "ORDER BY must reference a column position number when used after UNION; column names are not allowed."
+        },
+        {
+          "key": "D",
+          "text": "The column list of each SELECT must use identical column names for UNION to work."
+        },
+        {
+          "key": "E",
+          "text": "If ORDER BY were placed inside the first parenthesized SELECT instead, the statement would still be valid Oracle syntax with the same overall meaning."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Em uma compound query, o ORDER BY só pode aparecer uma vez, ao final, e se aplica ao resultado combinado de todo o UNION, não a uma SELECT individual (A correta); UNION (sem ALL) elimina duplicatas do resultado combinado (B correta). ORDER BY pode referenciar nome de coluna ou posição, ambos são válidos (C errado). As colunas correspondentes só precisam ser compatíveis em tipo e quantidade, não precisam ter o mesmo nome — o nome exibido vem da primeira SELECT (D errado). Colocar ORDER BY dentro de uma das SELECTs individuais (exceto a última) de um compound query causa erro de sintaxe em Oracle (E errado)."
+    },
+    {
+      "id": 512,
+      "topic": "set",
+      "context": "Examine:\n\nSELECT employee_id FROM employees\nMINUS\nSELECT employee_id FROM employees WHERE commission_pct IS NULL;",
+      "text": "Which statement is true about the result of this query?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It returns the employee_id of employees whose commission_pct is not NULL."
+        },
+        {
+          "key": "B",
+          "text": "It returns the employee_id of employees whose commission_pct is NULL."
+        },
+        {
+          "key": "C",
+          "text": "It returns an empty result set, because MINUS with related subsets always returns no rows."
+        },
+        {
+          "key": "D",
+          "text": "It returns duplicate employee_id values for employees appearing in both queries."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "MINUS retorna as linhas da primeira consulta (todos os empregados) que NÃO aparecem na segunda (os que têm commission_pct NULL); logo, sobram exatamente os que têm commission_pct não nulo (A correta). B está invertido. C está errado, MINUS pode perfeitamente retornar linhas quando os conjuntos são diferentes, como aqui. D está errado: assim como UNION e INTERSECT, MINUS elimina duplicatas do resultado."
+    },
+    {
+      "id": 513,
+      "topic": "dml",
+      "context": "Examine:\n\nMERGE INTO accounts a\nUSING account_updates u\nON (a.account_id = u.account_id)\nWHEN MATCHED THEN\n  UPDATE SET a.balance = u.new_balance\n  DELETE WHERE (u.new_balance = 0)\nWHEN NOT MATCHED THEN\n  INSERT (account_id, balance) VALUES (u.account_id, u.new_balance);",
+      "text": "Which two statements are true about this MERGE statement? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The DELETE WHERE clause only removes rows that were just updated by this same MERGE and that also satisfy new_balance = 0."
+        },
+        {
+          "key": "B",
+          "text": "If an account_id in account_updates has no match in accounts, a new row is inserted into accounts."
+        },
+        {
+          "key": "C",
+          "text": "The DELETE clause deletes rows directly from account_updates, not from accounts."
+        },
+        {
+          "key": "D",
+          "text": "WHEN MATCHED and WHEN NOT MATCHED cannot both appear in the same MERGE statement."
+        },
+        {
+          "key": "E",
+          "text": "The DELETE WHERE clause runs independently of the UPDATE, potentially deleting rows that were never updated by this MERGE."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O DELETE dentro de um WHEN MATCHED do MERGE só remove as linhas que acabaram de ser atualizadas por esse mesmo MERGE e que também satisfazem a condição do WHERE — não afeta outras linhas da tabela (A correta). Quando não há correspondência, o WHEN NOT MATCHED insere uma nova linha em accounts (B correta). O DELETE opera sobre a tabela ALVO do MERGE (accounts), não sobre a tabela de origem (account_updates) (C errado). MERGE permite ter as duas cláusulas, MATCHED e NOT MATCHED, na mesma instrução — é o uso mais comum (D errado). O DELETE é condicionado ao UPDATE que acabou de ocorrer, não é independente (E errado)."
+    },
+    {
+      "id": 514,
+      "topic": "dml",
+      "context": "Examine:\n\nINSERT ALL\n  WHEN region = 'EAST' THEN\n    INTO east_sales VALUES (order_id, amount)\n  WHEN region = 'WEST' THEN\n    INTO west_sales VALUES (order_id, amount)\n  ELSE\n    INTO other_sales VALUES (order_id, amount)\nSELECT order_id, region, amount FROM staging_orders;",
+      "text": "Which two statements are true about this multitable INSERT? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A single row from staging_orders can be inserted into more than one target table if it satisfies more than one WHEN condition."
+        },
+        {
+          "key": "B",
+          "text": "Rows where region is neither 'EAST' nor 'WEST' are inserted into other_sales because of the ELSE clause."
+        },
+        {
+          "key": "C",
+          "text": "This is an INSERT FIRST statement, so only the first matching WHEN condition is applied per row."
+        },
+        {
+          "key": "D",
+          "text": "INSERT ALL requires that all target tables have identical column structures."
+        },
+        {
+          "key": "E",
+          "text": "Without the ELSE clause, rows matching neither WHEN condition would raise an error and abort the statement."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Com INSERT ALL, cada condição WHEN é avaliada independentemente para cada linha, então se uma linha satisfizesse mais de uma condição, ela seria inserida em mais de uma tabela (A correta); o ELSE cobre os casos que não satisfazem nenhum WHEN, direcionando-os a other_sales (B correta). O comportamento de parar na primeira condição satisfeita é do INSERT FIRST, não do INSERT ALL usado aqui (C errado). Cada tabela-alvo pode ter sua própria lista de colunas, não precisam ser idênticas entre si (D errado). Sem ELSE, linhas que não batem em nenhum WHEN são simplesmente ignoradas, não inseridas em lugar nenhum — não há erro (E errado)."
+    },
+    {
+      "id": 515,
+      "topic": "ddl",
+      "context": "Examine:\n\nCREATE VIEW high_value_orders AS\nSELECT order_id, customer_id, amount\nFROM orders\nWHERE amount > 10000\nWITH CHECK OPTION;",
+      "text": "Which two statements are true about this view? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "An UPDATE through this view that would change amount to 5000 is rejected, because the resulting row would no longer satisfy the view's WHERE condition."
+        },
+        {
+          "key": "B",
+          "text": "An INSERT through this view with amount = 20000 succeeds, since it satisfies the condition amount > 10000."
+        },
+        {
+          "key": "C",
+          "text": "WITH CHECK OPTION prevents any INSERT or UPDATE from being performed through the view at all."
+        },
+        {
+          "key": "D",
+          "text": "WITH CHECK OPTION has no effect unless the view is also created WITH READ ONLY."
+        },
+        {
+          "key": "E",
+          "text": "WITH CHECK OPTION restricts which rows a SELECT against the view can return, beyond what the view's own WHERE clause already restricts."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "WITH CHECK OPTION garante que nenhuma linha inserida ou atualizada através da view possa deixar de satisfazer a condição WHERE da view; mudar amount para 5000 (que não satisfaz > 10000) é rejeitado (A correta). Um INSERT com amount = 20000 satisfaz a condição, então é permitido normalmente (B correta). WITH CHECK OPTION não bloqueia todo INSERT/UPDATE, apenas os que violariam a condição da view (C errado). WITH CHECK OPTION e WITH READ ONLY são cláusulas independentes; READ ONLY bloquearia toda DML, enquanto CHECK OPTION apenas valida a condição em operações permitidas (D errado). WITH CHECK OPTION atua apenas sobre INSERT/UPDATE feitos através da view; ele não adiciona nenhuma restrição extra a SELECT — a filtragem do SELECT já vem apenas do WHERE da própria view (E errado)."
+    },
+    {
+      "id": 516,
+      "topic": "ddl",
+      "context": "Examine:\n\nCREATE SEQUENCE order_seq\n  START WITH 1000\n  INCREMENT BY 1\n  MAXVALUE 9999\n  NOCACHE\n  CYCLE;",
+      "text": "Which three statements are true about this sequence? (Choose three.)",
+      "type": "multiple",
+      "correctCount": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "NOCACHE means Oracle does not pre-allocate a block of sequence values in memory; each value is generated (and logged) individually."
+        },
+        {
+          "key": "B",
+          "text": "Because MINVALUE was not explicitly specified, the default MINVALUE for this ascending sequence is 1 - so CYCLE restarts the sequence at 1, not at 1000."
+        },
+        {
+          "key": "C",
+          "text": "CURRVAL can be used in the current session only after NEXTVAL has been called at least once for that sequence in that session."
+        },
+        {
+          "key": "D",
+          "text": "CYCLE means the sequence keeps growing past MAXVALUE, ignoring the MAXVALUE limit entirely."
+        },
+        {
+          "key": "E",
+          "text": "START WITH always defines both the first value returned and the value the sequence cycles back to."
+        }
+      ],
+      "correct": [
+        "A",
+        "B",
+        "C"
+      ],
+      "explanation": "NOCACHE faz o Oracle gerar (e gravar) cada valor individualmente, sem pré-alocar um bloco de valores em memória — mais seguro contra perda de valores, porém mais lento (A correta). Como MINVALUE não foi especificado, o padrão para uma sequence ascendente é 1; então, ao atingir MAXVALUE 9999 com CYCLE, ela reinicia em 1, não em 1000 — START WITH define só o valor inicial, não o valor de reinício do CYCLE (B correta). CURRVAL só pode ser usado na sessão depois que NEXTVAL foi chamado ao menos uma vez para aquela sequence nessa sessão; caso contrário, o Oracle retorna erro (C correta). CYCLE não ignora o MAXVALUE; pelo contrário, é justamente por respeitá-lo que ela reinicia ao atingi-lo (D errado). START WITH define apenas o primeiro valor retornado; o valor de reinício após CYCLE é o MINVALUE, que pode ser diferente de START WITH, como demonstrado nesta própria sequence (E errado)."
+    },
+    {
+      "id": 517,
+      "topic": "access",
+      "context": "A DBA runs:\n\nGRANT SELECT ON hr.employees TO analyst_role;\nGRANT analyst_role TO maria WITH ADMIN OPTION;",
+      "text": "Which two statements are true about these grants? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Maria can grant the analyst_role to other users, because she received it WITH ADMIN OPTION."
+        },
+        {
+          "key": "B",
+          "text": "Maria can query hr.employees, because she has been granted a role that includes SELECT on that table."
+        },
+        {
+          "key": "C",
+          "text": "WITH ADMIN OPTION allows Maria to select data from hr.employees with additional privileges beyond SELECT."
+        },
+        {
+          "key": "D",
+          "text": "The GRANT SELECT ON hr.employees TO analyst_role statement requires WITH GRANT OPTION to be usable by any role member."
+        },
+        {
+          "key": "E",
+          "text": "Revoking analyst_role from maria would automatically revoke it from any user Maria granted it to."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "WITH ADMIN OPTION concede a Maria o direito de administrar o papel, incluindo concedê-lo (ou revogá-lo) a outros usuários (A correta). Como analyst_role tem SELECT em hr.employees e Maria recebeu esse papel, ela pode consultar a tabela através dele (B correta). WITH ADMIN OPTION é sobre administrar o PAPEL em si, não concede privilégios adicionais sobre os objetos cobertos pelo papel (C errado). Privilégios de objeto concedidos a um papel são utilizáveis pelos membros do papel automaticamente, sem necessidade de WITH GRANT OPTION — essa cláusula é para privilégios concedidos diretamente a usuários (D errado). Revogar o papel de Maria não revoga automaticamente de quem ela concedeu; no modelo de papéis do Oracle essas concessões subsequentes permanecem independentes (E errado)."
+    },
+    {
+      "id": 518,
+      "topic": "dictionary",
+      "context": "",
+      "text": "A user SCOTT wants to know which columns have constraints defined on tables he owns, without needing DBA privileges. Which two data dictionary views can he query to get this information? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "USER_CONS_COLUMNS"
+        },
+        {
+          "key": "B",
+          "text": "USER_CONSTRAINTS"
+        },
+        {
+          "key": "C",
+          "text": "DBA_CONS_COLUMNS"
+        },
+        {
+          "key": "D",
+          "text": "ALL_CONSTRAINTS (but only for tables owned by other users)"
+        },
+        {
+          "key": "E",
+          "text": "V$CONSTRAINTS"
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "USER_CONSTRAINTS lista as constraints definidas nas tabelas do próprio usuário (nome, tipo, tabela), e USER_CONS_COLUMNS lista quais colunas participam de cada constraint — juntas respondem exatamente à pergunta, sem exigir privilégio de DBA (A e B corretas). DBA_CONS_COLUMNS exige privilégios de DBA para ser consultada (C errado, no contexto de \"sem privilégios de DBA\"). ALL_CONSTRAINTS mostra constraints de objetos aos quais o usuário tem acesso, não é restrita apenas a tabelas de outros usuários como a opção descreve (D errado). Não existe uma view V$CONSTRAINTS — views V$ são dynamic performance views sobre a instância, não sobre metadados de constraints de schema (E errado)."
+    },
+    {
+      "id": 519,
+      "topic": "timezone",
+      "context": "Examine:\n\nSELECT hire_date + INTERVAL '18' MONTH AS review_date\nFROM employees;",
+      "text": "Which two statements are true about this expression? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "INTERVAL '18' MONTH represents a year-to-month interval of 1 year and 6 months."
+        },
+        {
+          "key": "B",
+          "text": "Adding this interval to a DATE column returns a DATE value, with the interval added according to calendar months (accounting for varying month lengths)."
+        },
+        {
+          "key": "C",
+          "text": "INTERVAL '18' MONTH is invalid syntax because the leading field must not exceed a value expressible in two digits for MONTH."
+        },
+        {
+          "key": "D",
+          "text": "The same result could not be achieved using ADD_MONTHS(hire_date, 18), because ADD_MONTHS does not support fractional years."
+        },
+        {
+          "key": "E",
+          "text": "INTERVAL '18' MONTH is a DAY TO SECOND interval, since it specifies a numeric quantity applied to a date."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "INTERVAL '18' MONTH é um YEAR TO MONTH interval; 18 meses equivalem a 1 ano e 6 meses (A correta). Somado a uma DATE, o Oracle ajusta por mês de calendário, respeitando a duração variável de cada mês, e o resultado permanece do tipo DATE (B correta). O valor 18 tem 2 dígitos e cabe perfeitamente na precisão padrão do campo líder, então a sintaxe é válida (C errado). ADD_MONTHS(hire_date, 18) produziria o mesmo resultado, pois 18 meses é um valor inteiro de meses, sem frações (D errado). INTERVAL '18' MONTH é um YEAR TO MONTH interval, não DAY TO SECOND — este último lida com dias, horas, minutos e segundos (E errado)."
     }
   ]
 }
