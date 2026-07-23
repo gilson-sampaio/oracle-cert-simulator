@@ -5388,6 +5388,708 @@
         "B"
       ],
       "explanation": "CURRVAL só pode ser referenciado numa sessão depois que NEXTVAL já tiver sido chamado nessa mesma sessão (A correta). Cada NEXTVAL avança a sequência e devolve o novo valor, disponível via CURRVAL pelo restante da sessão (B correta). Cada NEXTVAL gera um valor NOVO (C errada). CURRVAL apenas repete o último valor gerado (D errada). Há restrições de uso de NEXTVAL/CURRVAL (por exemplo em subqueries, DISTINCT, GROUP BY) (E errada)."
+    },
+    {
+      "id": 161,
+      "topic": "architecture",
+      "context": "Examine this description of an Oracle Database 19c instance running in a traditional (non-CDB) architecture.",
+      "text": "Which two statements are true about how an Oracle instance relates to the database it mounts, in a non-CDB architecture? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "An instance is composed of a shared memory structure (the SGA) and a set of background processes, and it can exist temporarily without any database mounted."
+        },
+        {
+          "key": "B",
+          "text": "A single database can be mounted and opened by more than one instance at the same time when Oracle RAC is used."
+        },
+        {
+          "key": "C",
+          "text": "The SGA is deallocated and the background processes terminate automatically the moment the database is closed, without a separate instance shutdown."
+        },
+        {
+          "key": "D",
+          "text": "PGA (Program Global Area) memory is shared among all server processes connected to the instance."
+        },
+        {
+          "key": "E",
+          "text": "An instance can mount and open only one specific database during its entire lifetime, and this pairing can never change."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Um instance pode ser iniciado em modo NOMOUNT, existindo com SGA e processos em memória sem ainda ter um banco montado — por isso A está correta. Em um ambiente Oracle RAC, múltiplas instances podem montar e abrir simultaneamente o mesmo banco de dados, o que torna B correta. Fechar o banco não encerra automaticamente a instance nem libera a SGA; é necessário um SHUTDOWN explícito, invalidando C. A PGA é memória privada de cada processo servidor, não compartilhada, e a associação instance-banco pode mudar entre reinicializações com parâmetros diferentes."
+    },
+    {
+      "id": 162,
+      "topic": "instance",
+      "context": "Examine this sequence of instance states during a normal startup:\nSHUTDOWN → NOMOUNT → MOUNT → OPEN",
+      "text": "Which three statements are true about these instance states? (Choose three.)",
+      "type": "multiple",
+      "correctCount": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "In the NOMOUNT state, the instance has read the parameter file and allocated the SGA, but the control file has not yet been read."
+        },
+        {
+          "key": "B",
+          "text": "In the MOUNT state, the control file has been read and validated, but the online redo log files and datafiles have not yet been opened."
+        },
+        {
+          "key": "C",
+          "text": "Complete media recovery of the whole database can only be performed while the database is in the OPEN state."
+        },
+        {
+          "key": "D",
+          "text": "Renaming or relocating datafiles is typically performed while the database is in the MOUNT state, not OPEN."
+        },
+        {
+          "key": "E",
+          "text": "The alert log file is created only after the database reaches the OPEN state."
+        }
+      ],
+      "correct": [
+        "A",
+        "B",
+        "D"
+      ],
+      "explanation": "No estado NOMOUNT, a instância já leu o parameter file e alocou a SGA, mas ainda não abriu o control file. No estado MOUNT, o control file já foi lido e validado, mas os datafiles e redo logs online ainda não foram abertos — é justamente nesse estado que operações como renomear ou mover datafiles costumam ser feitas. A recuperação completa do banco (whole database recovery) exige o estado MOUNT, não OPEN, o que torna C incorreta. O alert log é criado no momento em que a instância é iniciada, antes mesmo de o banco ser montado, tornando E incorreta."
+    },
+    {
+      "id": 163,
+      "topic": "users",
+      "context": "Examine this statement:\nCREATE PROFILE analyst_profile LIMIT\n FAILED_LOGIN_ATTEMPTS 3\n PASSWORD_LOCK_TIME 1\n IDLE_TIME 30\n SESSIONS_PER_USER 2;\n\nALTER USER maria PROFILE analyst_profile;",
+      "text": "Which two statements are true about the effect of this profile on user MARIA? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "After 3 consecutive failed login attempts, MARIA's account is locked, and this password-related limit is enforced regardless of the RESOURCE_LIMIT initialization parameter."
+        },
+        {
+          "key": "B",
+          "text": "If RESOURCE_LIMIT is set to FALSE, the IDLE_TIME and SESSIONS_PER_USER limits defined in the profile are not enforced, even though the profile assigns values to them."
+        },
+        {
+          "key": "C",
+          "text": "SESSIONS_PER_USER limits the number of concurrent operating system processes MARIA can start, regardless of how many database sessions she opens."
+        },
+        {
+          "key": "D",
+          "text": "PASSWORD_LOCK_TIME defines how many days pass before automatic unlock, and like IDLE_TIME, its enforcement also depends on the RESOURCE_LIMIT parameter."
+        },
+        {
+          "key": "E",
+          "text": "IDLE_TIME is measured from the start of the session rather than from the last period of inactivity, so continuous activity does not reset the timer."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Parâmetros relacionados a senha, como FAILED_LOGIN_ATTEMPTS e PASSWORD_LOCK_TIME, são sempre aplicados pelo Oracle, independentemente do valor do parâmetro de inicialização RESOURCE_LIMIT. Já limites de recursos como IDLE_TIME e SESSIONS_PER_USER só são de fato impostos quando RESOURCE_LIMIT está TRUE; com FALSE, o perfil os ignora. SESSIONS_PER_USER conta sessões de banco de dados concorrentes, não processos do sistema operacional. PASSWORD_LOCK_TIME é um parâmetro de senha e, portanto, é sempre aplicado, independentemente de RESOURCE_LIMIT, o que torna D incorreta. IDLE_TIME é contado a partir do último período de inatividade entre chamadas do cliente, sendo reiniciado a cada atividade."
+    },
+    {
+      "id": 164,
+      "topic": "storage",
+      "context": "Examine this statement:\nALTER TABLE warehouse_stock MOVE TABLESPACE stock_data COMPRESS FOR OLTP;",
+      "text": "Which three statements are true about the effect of this statement? (Choose three.)",
+      "type": "multiple",
+      "correctCount": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "The table's rowids can change as a result of the MOVE, so dependent indexes become UNUSABLE until they are rebuilt."
+        },
+        {
+          "key": "B",
+          "text": "COMPRESS FOR OLTP applies compression only to data loaded afterward via direct-path INSERT, leaving conventional DML uncompressed."
+        },
+        {
+          "key": "C",
+          "text": "During the MOVE, the table is unavailable for DML unless the ONLINE keyword is also specified."
+        },
+        {
+          "key": "D",
+          "text": "COMPRESS FOR OLTP (Advanced Row Compression) also compresses data changed through conventional DML operations such as INSERT and UPDATE."
+        },
+        {
+          "key": "E",
+          "text": "MOVE TABLESPACE automatically rebuilds all local and global indexes on the table as part of the same statement."
+        }
+      ],
+      "correct": [
+        "A",
+        "C",
+        "D"
+      ],
+      "explanation": "Como o MOVE realoca fisicamente as linhas, os rowids mudam e os índices dependentes ficam UNUSABLE até serem reconstruídos. Sem a cláusula ONLINE (disponível a partir do 12c), a tabela fica indisponível para DML durante o MOVE. A grande diferença do OLTP (Advanced Row Compression) em relação à compressão básica é justamente comprimir também dados alterados por DML convencional, não somente cargas via direct-path — por isso B está errada e D está certa. O MOVE não reconstrói automaticamente os índices; isso deve ser feito manualmente com ALTER INDEX ... REBUILD."
+    },
+    {
+      "id": 165,
+      "topic": "movedata",
+      "context": "A DBA runs this Data Pump export:\nexpdp hr_admin/password DIRECTORY=dpump_dir DUMPFILE=hr_exp_%U.dmp PARALLEL=4 SCHEMAS=HR",
+      "text": "Which two statements are true about this Data Pump export job? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The %U substitution variable lets Data Pump generate multiple dump files automatically, which is needed to take full advantage of PARALLEL greater than 1."
+        },
+        {
+          "key": "B",
+          "text": "DIRECTORY must reference a database directory object that maps to an operating system path accessible by the Oracle server process, not necessarily the client machine."
+        },
+        {
+          "key": "C",
+          "text": "PARALLEL=4 guarantees the export completes in exactly one quarter of the time of a non-parallel export of the same schema."
+        },
+        {
+          "key": "D",
+          "text": "SCHEMAS=HR also automatically includes the full DDL of any tablespaces referenced by HR's objects, recreating them on import if missing."
+        },
+        {
+          "key": "E",
+          "text": "The dump file and log file are written to the client machine that invoked expdp, not to the database server."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Sem %U no nome do arquivo, Data Pump não pode dividir a saída entre múltiplos arquivos, o que é necessário para aproveitar PARALLEL > 1. O objeto DIRECTORY aponta para um caminho no sistema de arquivos acessível pelo processo servidor do Oracle, não pelo cliente que executa expdp. PARALLEL não garante um ganho de desempenho linear e exato, pois depende de fatores como I/O e quantidade de objetos exportáveis em paralelo. A exportação por SCHEMAS não recria tablespaces automaticamente durante o import. E os arquivos de dump e log são gravados no servidor, no diretório referenciado pelo objeto DIRECTORY, não na máquina cliente."
+    },
+    {
+      "id": 166,
+      "topic": "tools",
+      "context": "A junior DBA needs a lightweight, browser-based tool to monitor basic performance metrics and perform simple administrative tasks on a single Oracle Database instance, without installing Enterprise Manager Cloud Control's full multi-target repository.",
+      "text": "Which tool is designed specifically for this purpose?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "SQL Developer"
+        },
+        {
+          "key": "B",
+          "text": "Enterprise Manager Database Express (EM Express)"
+        },
+        {
+          "key": "C",
+          "text": "Data Pump"
+        },
+        {
+          "key": "D",
+          "text": "Oracle Net Manager"
+        },
+        {
+          "key": "E",
+          "text": "RMAN"
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "EM Express é uma interface web leve, embutida no próprio banco de dados, voltada para monitoramento e administração básica de uma única instância, sem exigir o repositório completo do Enterprise Manager Cloud Control. SQL Developer é uma ferramenta cliente para desenvolvimento e administração via instalação separada, Data Pump é voltado para movimentação de dados, Oracle Net Manager configura a rede, e RMAN é a ferramenta de backup e recuperação — nenhuma delas é a interface leve baseada em navegador descrita no cenário."
+    },
+    {
+      "id": 167,
+      "topic": "network",
+      "context": "Examine this tnsnames.ora entry:\nSALESDB =\n (DESCRIPTION =\n (ADDRESS = (PROTOCOL = TCP)(HOST = dbhost01)(PORT = 1521))\n (CONNECT_DATA =\n (SERVER = DEDICATED)\n (SERVICE_NAME = sales.example.com)\n )\n )",
+      "text": "Which two statements are true about how a client uses this entry to connect? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The client resolves the alias SALESDB using local naming, one of several naming methods supported by Oracle Net."
+        },
+        {
+          "key": "B",
+          "text": "SERVER = DEDICATED requests a dedicated server process for this connection, rather than a shared server dispatcher."
+        },
+        {
+          "key": "C",
+          "text": "SERVICE_NAME identifies the listener process itself, and must match a listener name configured in listener.ora."
+        },
+        {
+          "key": "D",
+          "text": "If the listener were configured only for shared server and no dispatcher were available, requesting SERVER=DEDICATED would always be rejected outright with a connection error."
+        },
+        {
+          "key": "E",
+          "text": "PORT = 1521 is only a convention (the common default), not a value reserved exclusively for Oracle Net Listener traffic."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "tnsnames.ora implementa o método de local naming, um dos métodos de resolução de nomes suportados pelo Oracle Net (junto com easy connect, directory naming, etc.). SERVER = DEDICATED solicita explicitamente um processo dedicado para a sessão, em vez de usar um dispatcher de shared server. SERVICE_NAME identifica o serviço de banco de dados ao qual conectar, não o próprio listener. Mesmo com shared server configurado, conexões dedicadas normalmente continuam disponíveis, então D exagera o comportamento. A porta 1521 é apenas a convenção padrão, podendo ser alterada pelo DBA — não é exclusiva nem reservada tecnicamente."
+    },
+    {
+      "id": 168,
+      "topic": "tablespaces",
+      "context": "Examine this statement:\nALTER TABLESPACE sales_data ADD DATAFILE '/u02/oradata/salesdb/sales_data02.dbf' SIZE 500M AUTOEXTEND ON NEXT 50M MAXSIZE 2G;",
+      "text": "What is the effect of AUTOEXTEND ON NEXT 50M MAXSIZE 2G on this new datafile?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The datafile starts at 500M and, when full, automatically grows in 50M increments until it reaches a maximum size of 2G."
+        },
+        {
+          "key": "B",
+          "text": "The datafile is immediately resized to 2G upon creation, with 50M reserved as free space for future extents."
+        },
+        {
+          "key": "C",
+          "text": "AUTOEXTEND requires the tablespace to be in dictionary-managed extent mode, otherwise the clause is silently ignored."
+        },
+        {
+          "key": "D",
+          "text": "MAXSIZE 2G limits the total size of the tablespace as a whole, not the individual datafile being added."
+        },
+        {
+          "key": "E",
+          "text": "NEXT 50M specifies how many extents, not how many megabytes, are added each time the datafile grows."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "AUTOEXTEND ON faz o datafile crescer automaticamente quando fica cheio, em incrementos definidos por NEXT (aqui, 50M), até o limite estabelecido em MAXSIZE (2G), partindo do tamanho inicial de 500M. O datafile não é imediatamente expandido para 2G na criação — esse é apenas o teto máximo. AUTOEXTEND funciona tanto em tablespaces com extent management local quanto dictionary-managed, não é uma exigência exclusiva de um modo. MAXSIZE nessa cláusula se aplica ao datafile específico sendo adicionado, não à tablespace inteira, e NEXT é expresso em unidades de tamanho (megabytes), não em número de extents."
+    },
+    {
+      "id": 169,
+      "topic": "sql-select",
+      "context": "Examine this query:\nSELECT product_name, unit_price\nFROM product\nWHERE unit_price BETWEEN 10 AND 50\nORDER BY unit_price DESC\nFETCH FIRST 3 ROWS ONLY;",
+      "text": "Which two statements are true about this row-limited query against PRODUCT? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "BETWEEN 10 AND 50 is inclusive, so rows with unit_price exactly equal to 10 or 50 are included."
+        },
+        {
+          "key": "B",
+          "text": "FETCH FIRST 3 ROWS ONLY is applied after the ORDER BY clause has sorted the filtered result set."
+        },
+        {
+          "key": "C",
+          "text": "If two products are tied for the 3rd highest unit_price, both are guaranteed to appear in the result together with the top 2."
+        },
+        {
+          "key": "D",
+          "text": "Replacing FETCH FIRST 3 ROWS ONLY with a WHERE ROWNUM <= 3 condition would produce an identical, guaranteed top-3-by-price result."
+        },
+        {
+          "key": "E",
+          "text": "ORDER BY unit_price DESC is optional here and does not influence which 3 rows FETCH FIRST returns, only their display order."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "BETWEEN é inclusivo nos dois limites, incluindo valores iguais a 10 ou 50. A cláusula FETCH FIRST n ROWS é aplicada depois que o ORDER BY já ordenou o conjunto de resultados filtrado pelo WHERE. Sem a cláusula WITH TIES, ONLY descarta qualquer empate além da posição de corte, tornando C incorreta. Filtrar com WHERE ROWNUM <= 3 sem um ORDER BY prévio nos dados já ordenados não garante o top 3 por preço, pois o ROWNUM seria atribuído antes da ordenação final ser considerada. E está errada porque a ordenação determina exatamente quais linhas são consideradas as 'primeiras'."
+    },
+    {
+      "id": 170,
+      "topic": "sql-select",
+      "context": "Examine this SQL*Plus session (no prior SET commands issued this session):\nSELECT customer_name, credit_limit\nFROM customer\nWHERE credit_limit > &min_limit;",
+      "text": "Which three statements are true about running this statement in SQL*Plus with default settings? (Choose three.)",
+      "type": "multiple",
+      "correctCount": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "SQL*Plus prompts the user to enter a value for min_limit each time the statement is executed."
+        },
+        {
+          "key": "B",
+          "text": "By default, SET VERIFY is ON, so SQL*Plus displays the line both before and after the substitution."
+        },
+        {
+          "key": "C",
+          "text": "Prefixing the variable with && instead of & would make SQL*Plus remember the value for the remainder of the session without prompting again."
+        },
+        {
+          "key": "D",
+          "text": "The substitution variable is textually resolved by the SQL*Plus client and replaced with its value before the statement is sent to the database for parsing."
+        },
+        {
+          "key": "E",
+          "text": "Using & instead of && causes SQL*Plus to permanently store the value in the data dictionary for use in future sessions."
+        }
+      ],
+      "correct": [
+        "A",
+        "B",
+        "D"
+      ],
+      "explanation": "Com uma variável de substituição simples (&), o SQL*Plus solicita o valor toda vez que a instrução é executada, a menos que ela já tenha sido definida com DEFINE ou com &&. Por padrão, SET VERIFY ON faz o SQL*Plus mostrar a linha 'old' e 'new'. A substituição é um mecanismo puramente do cliente SQL*Plus, feito por substituição textual antes de a instrução ser enviada ao banco para parsing — diferente de bind variables, que são processadas no servidor. && faz o SQL*Plus lembrar o valor apenas durante a sessão atual, não permanentemente, e nada é armazenado no data dictionary, o que torna E incorreta."
+    },
+    {
+      "id": 171,
+      "topic": "sql-functions",
+      "context": "Examine this query:\nSELECT ROUND(1547.876, -2) AS r1,\n TRUNC(1547.876, 1) AS r2,\n MOD(17, -5) AS r3\nFROM dual;",
+      "text": "Which two statements are true about the results of this query using ROUND, TRUNC, and MOD? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "R1 evaluates to 1500, because a negative second argument in ROUND rounds to the left of the decimal point."
+        },
+        {
+          "key": "B",
+          "text": "R2 evaluates to 1547.8, because TRUNC truncates without rounding, keeping only 1 digit after the decimal point."
+        },
+        {
+          "key": "C",
+          "text": "R3 evaluates to -3, because MOD always returns a result whose sign matches the sign of the divisor when it is negative."
+        },
+        {
+          "key": "D",
+          "text": "R1 evaluates to 1550, because ROUND always rounds to the nearest even number when the second argument is negative."
+        },
+        {
+          "key": "E",
+          "text": "MOD(17, -5) is computed as 17 - (-5) * TRUNC(17 / -5), which evaluates to 2."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "ROUND(1547.876, -2) arredonda para a casa das centenas, resultando em 1500, pois 1547 está mais próximo de 1500 que de 1600 — não existe arredondamento bancário/par mais próximo no ROUND do Oracle, o que invalida D. TRUNC(1547.876, 1) simplesmente corta a partir da primeira casa decimal, sem arredondar, resultando em 1547.8. MOD(n,m) no Oracle é definido como n - m*TRUNC(n/m); aplicando a fórmula, MOD(17,-5) = 17 - (-5)*TRUNC(-3.4) = 17 - (-5)*(-3) = 17 - 15 = 2, e não -3, o que torna C errada e confirma que a fórmula em E está certa, mas o resultado apresentado (2) contradiz a alegação de C."
+    },
+    {
+      "id": 172,
+      "topic": "sql-functions",
+      "context": "Examine this expression:\nCASE\n WHEN commission_pct IS NULL THEN 'No Commission'\n WHEN commission_pct = 0 THEN 'Zero Commission'\n ELSE 'Has Commission'\nEND",
+      "text": "For a row where commission_pct is NULL, what does this CASE expression return?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "'No Commission', because the first WHEN clause explicitly tests for NULL using IS NULL."
+        },
+        {
+          "key": "B",
+          "text": "'Zero Commission', because Oracle implicitly treats NULL as equivalent to 0 in numeric comparisons."
+        },
+        {
+          "key": "C",
+          "text": "NULL, because searched CASE expressions cannot evaluate IS NULL conditions."
+        },
+        {
+          "key": "D",
+          "text": "An error is raised, because ELSE must always be the final matched branch whenever a comparison involves NULL."
+        },
+        {
+          "key": "E",
+          "text": "'Has Commission', because the ELSE branch catches all values not explicitly matched, including NULL."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Um searched CASE avalia as condições WHEN em ordem, e a primeira condição, commission_pct IS NULL, é verdadeira para uma linha com commission_pct nulo, então o CASE retorna 'No Commission' imediatamente, sem avaliar as cláusulas seguintes. NULL nunca é igual a 0 em comparações (NULL = 0 resulta em UNKNOWN, não TRUE), searched CASE aceita perfeitamente condições IS NULL, e não há erro nem necessidade de cair no ELSE quando uma condição anterior já é satisfeita."
+    },
+    {
+      "id": 173,
+      "topic": "sql-groups",
+      "context": "Examine this query:\nSELECT department_id,\n COUNT(commission_pct) AS with_comm,\n COUNT(*) AS total_staff,\n SUM(salary) AS total_sal\nFROM staff\nGROUP BY department_id;",
+      "text": "Which two statements are true about this query using COUNT(commission_pct) and COUNT(*) against STAFF grouped by department? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "COUNT(commission_pct) counts only the rows where commission_pct is not null within each department."
+        },
+        {
+          "key": "B",
+          "text": "COUNT(*) counts all rows in each group, regardless of null values in any column."
+        },
+        {
+          "key": "C",
+          "text": "If a department has staff rows but every one of them has a NULL salary, SUM(salary) for that group returns 0."
+        },
+        {
+          "key": "D",
+          "text": "COUNT(commission_pct) and COUNT(*) will always return the same value for any department, since both count staff rows."
+        },
+        {
+          "key": "E",
+          "text": "GROUP BY department_id requires department_id to also appear in an ORDER BY clause, or the statement raises an error."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "COUNT de uma coluna específica ignora valores NULL, contando apenas as linhas em que commission_pct não é nulo, enquanto COUNT(*) sempre conta todas as linhas do grupo, nulos ou não. Quando todos os valores de salary em um grupo são NULL, SUM retorna NULL, não 0, tornando C incorreta. COUNT(commission_pct) só coincide com COUNT(*) quando não há nenhum valor nulo naquela coluna dentro do grupo — não é garantido sempre. E também está errada, pois GROUP BY não exige uma cláusula ORDER BY correspondente."
+    },
+    {
+      "id": 174,
+      "topic": "sql-groups",
+      "context": "Examine this query:\nSELECT job_id, department_id, MAX(salary) AS max_sal\nFROM staff\nWHERE department_id IS NOT NULL\nGROUP BY job_id, department_id\nHAVING MAX(salary) > 8000\nORDER BY job_id, department_id;",
+      "text": "Which three statements are true about this GROUP BY/HAVING query using MAX(salary) against STAFF? (Choose three.)",
+      "type": "multiple",
+      "correctCount": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "Rows are grouped by the combination of job_id and department_id, producing one result row per distinct pair."
+        },
+        {
+          "key": "B",
+          "text": "The WHERE clause excludes rows with a NULL department_id before any grouping takes place."
+        },
+        {
+          "key": "C",
+          "text": "The HAVING clause removes entire job_id/department_id groups whose maximum salary is 8000 or less."
+        },
+        {
+          "key": "D",
+          "text": "MAX(salary) treats a NULL salary as the highest possible value, so any group containing a NULL salary always shows NULL as its max."
+        },
+        {
+          "key": "E",
+          "text": "Because ORDER BY references columns that are already in the GROUP BY list, the ORDER BY clause is redundant and has no effect on the output order."
+        }
+      ],
+      "correct": [
+        "A",
+        "B",
+        "C"
+      ],
+      "explanation": "O GROUP BY agrupa por cada combinação distinta de job_id e department_id, gerando uma linha por grupo. O WHERE é aplicado antes do agrupamento, eliminando linhas com department_id nulo logo de início. O HAVING então descarta os grupos cujo salário máximo não ultrapassa 8000. MAX ignora valores NULL ao calcular o máximo — não os trata como o maior valor possível, o que torna D incorreta. E também está errada, pois o ORDER BY define a ordem de exibição das linhas resultantes e não é redundante nem sem efeito."
+    },
+    {
+      "id": 175,
+      "topic": "sql-joins",
+      "context": "Examine these tables:\nSTAFF (staff_id, last_name, manager_id)\n\nExamine this query:\nSELECT e.last_name AS employee, m.last_name AS manager\nFROM staff e\nLEFT JOIN staff m ON e.manager_id = m.staff_id;",
+      "text": "Which two statements are true about this self-join? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Staff members with a NULL manager_id appear in the result with NULL displayed in the manager column."
+        },
+        {
+          "key": "B",
+          "text": "This query returns every row from the e alias, regardless of whether a matching manager row exists in the m alias."
+        },
+        {
+          "key": "C",
+          "text": "A self-join always requires the ON clause to compare a column to itself, such as e.staff_id = m.staff_id."
+        },
+        {
+          "key": "D",
+          "text": "Because both aliases reference the same table, Oracle requires the query to use ANSI join syntax instead of the traditional comma-and-WHERE syntax."
+        },
+        {
+          "key": "E",
+          "text": "If manager_id contained a value that does not exist as any staff_id, that row would be excluded entirely from the result because of the LEFT JOIN."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Como se trata de um LEFT JOIN, toda linha do alias e é preservada, mesmo quando não há correspondência em m — nesse caso, o manager_id nulo (ou sem correspondência) simplesmente resulta em NULL na coluna manager. Um self-join não precisa comparar a mesma coluna consigo mesma; aqui compara-se manager_id com staff_id, colunas relacionadas mas diferentes. Não há exigência de usar sintaxe ANSI para self-joins; a sintaxe tradicional com vírgula e WHERE funciona igualmente. E está errada porque justamente o LEFT JOIN preserva a linha de e mesmo sem correspondência em m, ao contrário do que a alternativa afirma."
+    },
+    {
+      "id": 176,
+      "topic": "sql-joins",
+      "context": "Examine these tables:\nCUSTOMER (customer_id, customer_name)\nSUBSCRIPTION_PLAN (plan_id, customer_id, monthly_fee)\n\nYou want a list of every customer along with each of their subscription plans, including customers who have never subscribed to a plan.",
+      "text": "Which three of these queries correctly return every customer, including those without any subscription plan? (Choose three.)",
+      "type": "multiple",
+      "correctCount": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "SELECT c.customer_name, s.monthly_fee FROM customer c LEFT OUTER JOIN subscription_plan s ON c.customer_id = s.customer_id;"
+        },
+        {
+          "key": "B",
+          "text": "SELECT c.customer_name, s.monthly_fee FROM customer c, subscription_plan s WHERE c.customer_id = s.customer_id(+);"
+        },
+        {
+          "key": "C",
+          "text": "SELECT c.customer_name, s.monthly_fee FROM subscription_plan s RIGHT OUTER JOIN customer c ON s.customer_id = c.customer_id;"
+        },
+        {
+          "key": "D",
+          "text": "SELECT c.customer_name, s.monthly_fee FROM customer c JOIN subscription_plan s ON c.customer_id = s.customer_id;"
+        },
+        {
+          "key": "E",
+          "text": "SELECT c.customer_name, s.monthly_fee FROM customer c, subscription_plan s WHERE c.customer_id = s.customer_id;"
+        }
+      ],
+      "correct": [
+        "A",
+        "B",
+        "C"
+      ],
+      "explanation": "A e B são semanticamente equivalentes: um LEFT OUTER JOIN (ou a sintaxe antiga com (+) do lado de subscription_plan) preserva todas as linhas de customer. C também funciona, pois RIGHT OUTER JOIN preserva as linhas da tabela à direita da cláusula, que aqui é customer (c). D e E realizam junções internas — JOIN simples ou equi-join via WHERE sem (+) — que exigem correspondência em subscription_plan e por isso excluem clientes sem plano."
+    },
+    {
+      "id": 177,
+      "topic": "sql-setops",
+      "context": "Examine these queries:\nSELECT customer_id FROM customer WHERE region = 'EAST'\nINTERSECT\nSELECT customer_id FROM subscription_plan WHERE monthly_fee > 100;",
+      "text": "Which two statements are true about this compound query? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The result contains only customer_id values that appear in both individual result sets."
+        },
+        {
+          "key": "B",
+          "text": "INTERSECT automatically removes duplicate rows from the final combined result."
+        },
+        {
+          "key": "C",
+          "text": "The two SELECT statements must select columns with exactly the same names, not just the same number and compatible types."
+        },
+        {
+          "key": "D",
+          "text": "INTERSECT can only be used with exactly two SELECT statements; adding a third SELECT with another set operator raises an error."
+        },
+        {
+          "key": "E",
+          "text": "If the first query returns zero rows, Oracle raises an error, because INTERSECT requires both queries to return at least one row."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "INTERSECT retorna apenas os valores presentes nos dois conjuntos de resultado, e como qualquer operador de conjunto, elimina duplicatas do resultado final. Não é exigido que os nomes das colunas sejam idênticos entre as consultas, apenas que o número de colunas e seus tipos sejam compatíveis — os nomes exibidos vêm da primeira consulta. É perfeitamente possível encadear múltiplos operadores de conjunto (por exemplo, A INTERSECT B MINUS C), então D está errada. Se a primeira consulta retorna zero linhas, a intersecção resultante é simplesmente vazia — não há erro, tornando E incorreta."
+    },
+    {
+      "id": 178,
+      "topic": "sql-dml",
+      "context": "Examine this statement:\nINSERT ALL\n WHEN monthly_fee > 100 THEN\n INTO premium_customer (customer_id, monthly_fee)\n WHEN monthly_fee <= 100 THEN\n INTO standard_customer (customer_id, monthly_fee)\nSELECT customer_id, monthly_fee FROM subscription_plan;",
+      "text": "Which three statements are true about this multitable INSERT statement? (Choose three.)",
+      "type": "multiple",
+      "correctCount": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "This is a conditional multitable insert, so each source row is evaluated independently against each WHEN condition."
+        },
+        {
+          "key": "B",
+          "text": "A source row with monthly_fee = 150 is inserted into premium_customer only, not into standard_customer."
+        },
+        {
+          "key": "C",
+          "text": "Because there is no ELSE clause, a source row that matches no WHEN condition causes the entire statement to fail with an error."
+        },
+        {
+          "key": "D",
+          "text": "Using INSERT FIRST instead of INSERT ALL here would cause each row to be inserted based only on the first WHEN condition it matches, skipping the remaining conditions for that row."
+        },
+        {
+          "key": "E",
+          "text": "Multitable INSERT statements cannot be driven by a subquery; each INTO clause must be followed by its own VALUES clause."
+        }
+      ],
+      "correct": [
+        "A",
+        "B",
+        "D"
+      ],
+      "explanation": "No INSERT ALL condicional, cada linha da consulta-fonte é avaliada contra todas as cláusulas WHEN, de forma independente, podendo ser inserida em mais de uma tabela se satisfizer mais de uma condição. Uma linha com monthly_fee = 150 satisfaz apenas a primeira condição, indo só para premium_customer. Ao usar INSERT FIRST em vez de INSERT ALL, apenas a primeira condição WHEN satisfeita para cada linha é usada, e as demais são ignoradas para aquela linha — essa é justamente a diferença central entre as duas formas. A ausência de ELSE apenas faz com que a linha não seja inserida em nenhuma tabela, sem gerar erro. E está errada porque este exemplo usa exatamente uma subquery como fonte, o que é uma forma válida e comum de multitable insert."
+    },
+    {
+      "id": 179,
+      "topic": "sql-ddl",
+      "context": "Examine this statement:\nCREATE TABLE staging_orders (\n order_id NUMBER,\n order_date DATE,\n amount NUMBER\n)\nORGANIZATION EXTERNAL (\n TYPE ORACLE_LOADER\n DEFAULT DIRECTORY ext_dir\n ACCESS PARAMETERS (RECORDS DELIMITED BY NEWLINE FIELDS TERMINATED BY ',')\n LOCATION ('orders.csv')\n);",
+      "text": "Which two statements are true about this external table? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The data physically resides in an operating system file outside the database, and the table definition only describes how to read it."
+        },
+        {
+          "key": "B",
+          "text": "DML statements such as INSERT, UPDATE, and DELETE are not permitted against this table."
+        },
+        {
+          "key": "C",
+          "text": "An index can be created directly on the order_id column of this external table to speed up queries against it."
+        },
+        {
+          "key": "D",
+          "text": "DEFAULT DIRECTORY must reference a path accessible by the client tool used to query the table, not by the database server."
+        },
+        {
+          "key": "E",
+          "text": "Dropping this table with DROP TABLE also physically deletes the orders.csv file from the operating system."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Uma external table apenas descreve como ler um arquivo do sistema operacional; os dados continuam fora do banco de dados. Justamente por isso, não é possível executar INSERT, UPDATE ou DELETE contra ela — apenas leitura. Também não é possível criar índices sobre uma external table, o que torna C incorreta. O objeto DIRECTORY referencia um caminho acessível pelo processo servidor do Oracle, não pela máquina cliente. E dropar a tabela remove apenas a definição no dicionário de dados, sem apagar o arquivo orders.csv do sistema operacional."
+    },
+    {
+      "id": 180,
+      "topic": "sql-ddl",
+      "context": "Examine this statement:\nCREATE GLOBAL TEMPORARY TABLE session_cart (\n cart_id NUMBER,\n product_id NUMBER,\n qty NUMBER\n) ON COMMIT DELETE ROWS;",
+      "text": "What happens to the rows in SESSION_CART when the session that inserted them issues a COMMIT?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The rows are automatically deleted at the end of the transaction, because ON COMMIT DELETE ROWS was specified."
+        },
+        {
+          "key": "B",
+          "text": "The rows persist until the session explicitly issues a DELETE or the session disconnects."
+        },
+        {
+          "key": "C",
+          "text": "The rows are deleted only if no other session is concurrently querying the same temporary table."
+        },
+        {
+          "key": "D",
+          "text": "COMMIT has no special effect on temporary tables; ON COMMIT DELETE ROWS only applies when a ROLLBACK is issued instead."
+        },
+        {
+          "key": "E",
+          "text": "The rows are automatically moved to a permanent table that shares the same structure."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "ON COMMIT DELETE ROWS define uma temporary table cujos dados têm escopo de transação: ao emitir COMMIT, as linhas daquela sessão são automaticamente removidas. Isso não depende de outras sessões estarem ou não consultando a tabela — cada sessão só enxerga seus próprios dados em uma temporary table. O efeito é justamente sobre o COMMIT, não sobre o ROLLBACK, e não existe nenhuma movimentação automática de dados para uma tabela permanente."
     }
   ]
 }

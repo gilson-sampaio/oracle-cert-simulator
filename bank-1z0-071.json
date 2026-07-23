@@ -15826,6 +15826,705 @@
         "B"
       ],
       "explanation": "Ao declarar ESCAPE '\\', o caractere seguinte à barra invertida no padrão é tratado como literal — '\\_' representa um underscore literal (A correta). Sem ESCAPE, '_' é sempre coringa de um caractere qualquer (B correta). Só é preciso escapar o(s) caractere(s) que se quer tratar como literais (C errada). ESCAPE não tem restrição a colunas NUMBER (D errada). Sem ESCAPE, '_' casa com QUALQUER caractere, trazendo falsos positivos (E errada)."
+    },
+    {
+      "id": 540,
+      "topic": "fundamentals",
+      "context": "Examine estas afirmações sobre o modelo relacional implementado pelo Oracle Database.",
+      "text": "Which two statements are true about the relational model used by Oracle Database? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A relation (table) can contain duplicate rows unless a primary key or unique constraint is defined."
+        },
+        {
+          "key": "B",
+          "text": "Every column value in a relational table must be atomic; repeating groups are not permitted within a single column."
+        },
+        {
+          "key": "C",
+          "text": "The order of rows in a table is guaranteed by the database and can be relied upon without an ORDER BY clause."
+        },
+        {
+          "key": "D",
+          "text": "A foreign key value must always match a value in the referenced column, and can never be null."
+        },
+        {
+          "key": "E",
+          "text": "A candidate key must be composed of a single column; composite candidate keys are not permitted in the relational model."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Sem uma PRIMARY KEY ou UNIQUE constraint, o Oracle não impede linhas duplicadas — a unicidade é uma regra de integridade, não uma propriedade automática da tabela. A primeira forma normal (1NF) exige que cada coluna guarde um valor atômico, sem grupos repetitivos. A ordem física das linhas nunca é garantida sem ORDER BY, uma foreign key pode ser NULL (a menos que haja NOT NULL adicional), e chaves candidatas podem perfeitamente ser compostas por várias colunas."
+    },
+    {
+      "id": 541,
+      "topic": "select",
+      "context": "Examine the description of the HR_STAFF table:\nSTAFF_ID NUMBER\nLAST_NAME VARCHAR2(30)\nSALARY NUMBER\nCOMMISSION_PCT NUMBER",
+      "text": "Which two clauses correctly return the top 5 rows ranked by SALARY DESC while also including any additional rows tied with the value in the 5th row? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "ORDER BY SALARY DESC FETCH FIRST 5 ROWS WITH TIES"
+        },
+        {
+          "key": "B",
+          "text": "ORDER BY SALARY DESC FETCH FIRST 5 ROWS ONLY"
+        },
+        {
+          "key": "C",
+          "text": "ORDER BY SALARY DESC OFFSET 0 ROWS FETCH NEXT 5 ROWS WITH TIES"
+        },
+        {
+          "key": "D",
+          "text": "WHERE ROWNUM <= 5 ORDER BY SALARY DESC"
+        },
+        {
+          "key": "E",
+          "text": "ORDER BY SALARY DESC FETCH FIRST 5 ROWS WITH TIES ONLY"
+        }
+      ],
+      "correct": [
+        "A",
+        "C"
+      ],
+      "explanation": "A cláusula FETCH FIRST/NEXT n ROWS WITH TIES inclui linhas adicionais empatadas com o último valor do corte, e as formas FETCH FIRST e OFFSET 0 ROWS FETCH NEXT são equivalentes quando o offset é zero. FETCH ... ROWS ONLY (opção B) descarta os empates. WHERE ROWNUM <= 5 filtra as linhas antes da ordenação final ser aplicada ao conjunto completo, não garantindo o top 5 por salário. E é sintaticamente inválida: WITH TIES e ONLY não podem ser combinados na mesma cláusula."
+    },
+    {
+      "id": 542,
+      "topic": "select",
+      "context": "A SQL*Plus session has not changed any default settings. The following script is run:\nSET VERIFY ON\nDEFINE dept_name = SALES\nSELECT * FROM departments WHERE department_name = '&dept_name';",
+      "text": "Which three statements are true about the execution of this script? (Choose three.)",
+      "type": "multiple",
+      "correctCount": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "Because DEFINE has already assigned a value to dept_name, SQL*Plus will not prompt for a value when the SELECT statement runs."
+        },
+        {
+          "key": "B",
+          "text": "SQL*Plus will display the 'old' and 'new' versions of the line before and after substitution because VERIFY is ON."
+        },
+        {
+          "key": "C",
+          "text": "The substitution variable must be prefixed with && instead of & because it was defined with the DEFINE command."
+        },
+        {
+          "key": "D",
+          "text": "If SET VERIFY were OFF instead, SQL*Plus would substitute the value silently without showing the old/new lines."
+        },
+        {
+          "key": "E",
+          "text": "The DEFINE command has no effect on runtime substitution variables and only creates a PL/SQL bind variable."
+        }
+      ],
+      "correct": [
+        "A",
+        "B",
+        "D"
+      ],
+      "explanation": "DEFINE atribui previamente um valor à variável de substituição, então o SQL*Plus não pede o valor novamente ao encontrar &dept_name. Com SET VERIFY ON (o padrão), o SQL*Plus mostra a linha 'old' e 'new' antes e depois da substituição; com VERIFY OFF essa exibição é suprimida. Não é necessário usar && apenas porque a variável foi definida com DEFINE — && só é obrigatório quando se quer que o SQL*Plus lembre o valor a partir da primeira solicitação interativa. DEFINE cria uma variável de substituição textual do SQL*Plus, não um bind variable do PL/SQL."
+    },
+    {
+      "id": 543,
+      "topic": "functions",
+      "context": "Examine this query:\nSELECT NVL2(commission_pct, salary + salary*commission_pct, salary) AS total_pay,\n NULLIF(department_id, 90) AS dept_check\nFROM staff;",
+      "text": "Which two statements are true regarding the functions used in this query? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "NVL2 returns the second argument when commission_pct is not null."
+        },
+        {
+          "key": "B",
+          "text": "NULLIF returns NULL when department_id equals 90, and returns department_id otherwise."
+        },
+        {
+          "key": "C",
+          "text": "COALESCE-like short-circuiting does not apply to NVL2; both the second and third arguments are always evaluated regardless of commission_pct."
+        },
+        {
+          "key": "D",
+          "text": "NVL2 requires that the second and third arguments be of the same data type family as the first argument, commission_pct."
+        },
+        {
+          "key": "E",
+          "text": "If commission_pct is null, NVL2 returns NULL instead of evaluating the third argument."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "NVL2(expr, valor_se_nao_nulo, valor_se_nulo) retorna o segundo argumento quando a expressão não é nula, e o terceiro quando é nula — por isso E está errada, pois o resultado seria salary, não NULL. NULLIF(expr1, expr2) retorna NULL quando os dois são iguais, e expr1 caso contrário. O segundo e terceiro argumentos de NVL2 devem ser compatíveis entre si, não necessariamente com o tipo do primeiro argumento, o que torna D incorreta."
+    },
+    {
+      "id": 544,
+      "topic": "functions",
+      "context": "Examine this query:\nSELECT TO_CHAR(hire_date, 'YYYY-MM-DD') AS hired,\n TO_NUMBER('1,250.50', '9,999.99') AS amount,\n CAST('100' AS NUMBER) AS cast_val\nFROM staff;",
+      "text": "Which two statements are true about implicit and explicit conversions performed by this query? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "TO_CHAR explicitly converts the DATE value hire_date to a VARCHAR2 using the specified format model."
+        },
+        {
+          "key": "B",
+          "text": "TO_NUMBER requires the format model to match the structure of the string, so '9,999.99' correctly parses '1,250.50'."
+        },
+        {
+          "key": "C",
+          "text": "CAST('100' AS NUMBER) relies on implicit conversion because CAST itself cannot convert a character literal to a number."
+        },
+        {
+          "key": "D",
+          "text": "If the format model were omitted, TO_NUMBER('1,250.50') would still succeed, because Oracle always ignores thousands separators automatically."
+        },
+        {
+          "key": "E",
+          "text": "CAST is a form of implicit conversion because Oracle silently decides the target data type at parse time."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "TO_CHAR e TO_NUMBER são funções de conversão explícita: TO_CHAR converte a data para VARCHAR2 conforme o formato informado, e TO_NUMBER('1,250.50','9,999.99') interpreta corretamente a vírgula como separador de milhar porque o modelo de formato a especifica. CAST é sempre conversão explícita, não implícita — por isso C e E estão erradas. Sem o modelo de formato, TO_NUMBER('1,250.50') geraria ORA-01722 (invalid number), pois a vírgula não é reconhecida automaticamente sem um formato que a descreva."
+    },
+    {
+      "id": 545,
+      "topic": "groups",
+      "context": "Examine this query:\nSELECT department_id, COUNT(*) AS staff_count, AVG(salary) AS avg_sal\nFROM staff\nWHERE job_id != 'ST_CLERK'\nGROUP BY department_id\nHAVING COUNT(*) > 3\nORDER BY avg_sal DESC;",
+      "text": "Which two statements are true about the WHERE, GROUP BY, and HAVING clauses in this query against STAFF? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The WHERE clause filters out ST_CLERK rows before the grouping and aggregation occur."
+        },
+        {
+          "key": "B",
+          "text": "The HAVING clause filters groups after COUNT(*) has been computed for each department_id."
+        },
+        {
+          "key": "C",
+          "text": "The HAVING clause could be replaced with a WHERE clause condition on COUNT(*) with no change in behavior or error."
+        },
+        {
+          "key": "D",
+          "text": "AVG(salary) treats a NULL salary as zero when computing the average for each group."
+        },
+        {
+          "key": "E",
+          "text": "ORDER BY avg_sal DESC must reference the underlying expression AVG(salary) explicitly and cannot use the alias avg_sal."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O WHERE é aplicado linha a linha antes do agrupamento, removendo os ST_CLERK antes de qualquer agregação; o HAVING, por sua vez, filtra os grupos já formados, depois que COUNT(*) foi calculado. Não é possível mover COUNT(*) > 3 para o WHERE, pois funções de grupo não são permitidas nessa cláusula (geraria ORA-00934). AVG ignora valores NULL em vez de tratá-los como zero, e o ORDER BY pode perfeitamente referenciar o alias definido na lista SELECT."
+    },
+    {
+      "id": 546,
+      "topic": "groups",
+      "context": "Examine this query:\nSELECT department_id, job_id, SUM(salary)\nFROM staff\nGROUP BY department_id, job_id;",
+      "text": "What happens if a HAVING clause containing SUM(salary) > 20000 is added to this statement?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "An error occurs because HAVING cannot reference an aggregate function that is not in the SELECT list."
+        },
+        {
+          "key": "B",
+          "text": "Groups of department_id and job_id whose total salary is 20000 or less are excluded from the result."
+        },
+        {
+          "key": "C",
+          "text": "Only individual rows with a salary greater than 20000 are returned; grouping is ignored."
+        },
+        {
+          "key": "D",
+          "text": "The HAVING clause is evaluated before the GROUP BY clause, so it filters raw rows instead of groups."
+        },
+        {
+          "key": "E",
+          "text": "An error occurs because HAVING requires an alias to reference SUM(salary)."
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "HAVING filtra os grupos já formados pelo GROUP BY, mantendo apenas aqueles cuja soma de salário ultrapassa 20000. Não é necessário que a função apareça na lista SELECT nem que se use um alias — HAVING pode conter qualquer função de grupo válida sobre as colunas agrupadas. A avaliação ocorre depois do GROUP BY, nunca antes."
+    },
+    {
+      "id": 547,
+      "topic": "joins",
+      "context": "Examine these tables:\nSTAFF (staff_id, last_name, dept_id, manager_id)\nDEPT (dept_id, dept_name)\n\nExamine this query:\nSELECT s.last_name, d.dept_name\nFROM staff s, dept d\nWHERE s.dept_id = d.dept_id (+);",
+      "text": "Which two statements are true about this old-style (+) outer join between STAFF and DEPT? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "This is an outer join that returns every row from STAFF, including rows whose dept_id has no matching row in DEPT."
+        },
+        {
+          "key": "B",
+          "text": "This is equivalent to: SELECT s.last_name, d.dept_name FROM staff s LEFT OUTER JOIN dept d ON s.dept_id = d.dept_id;"
+        },
+        {
+          "key": "C",
+          "text": "The (+) operator could be moved to s.dept_id instead of d.dept_id and would still produce the identical result."
+        },
+        {
+          "key": "D",
+          "text": "This query fails with an error because the (+) syntax can only be used with the ANSI JOIN clause, not the WHERE clause."
+        },
+        {
+          "key": "E",
+          "text": "Because (+) is applied to d.dept_id, DEPT is the preserved table, and staff rows without a matching department are excluded."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O operador (+) do Oracle marca o lado 'opcional' do join; colocado em d.dept_id, ele torna DEPT o lado opcional, preservando todas as linhas de STAFF — equivalente a um LEFT OUTER JOIN de staff para dept. Mover o (+) para s.dept_id inverteria o sentido do join (passaria a preservar DEPT), por isso C está errada. A sintaxe de join externo com (+) na cláusula WHERE é válida e antiga do Oracle, não gera erro. E inverte a lógica: é STAFF que é preservado, não DEPT."
+    },
+    {
+      "id": 548,
+      "topic": "joins",
+      "context": "Examine this correlated subquery:\nSELECT last_name, salary, department_id\nFROM staff s\nWHERE salary > (SELECT AVG(salary) FROM staff WHERE department_id = s.department_id);",
+      "text": "Which two statements are true about this correlated subquery comparing salary to the department's own average? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The subquery is logically re-evaluated for each candidate row of the outer query because it references the outer row's department_id."
+        },
+        {
+          "key": "B",
+          "text": "This query returns staff members who earn more than the average salary of their own department."
+        },
+        {
+          "key": "C",
+          "text": "This is a multiple-row subquery, so it must use the IN or ANY operator instead of a plain comparison."
+        },
+        {
+          "key": "D",
+          "text": "The subquery could be rewritten as a non-correlated subquery without changing the result of the overall query."
+        },
+        {
+          "key": "E",
+          "text": "The alias s is used only for readability here and has no effect on how the subquery is correlated to the outer query."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Por ser uma subquery correlacionada, ela referencia s.department_id da linha externa, sendo logicamente reavaliada para cada linha candidata, retornando exatamente os funcionários cujo salário supera a média do próprio departamento. A subquery retorna um único valor (a média) por departamento, então uma comparação simples com > é válida, sem necessidade de IN/ANY. Trocá-la por uma subquery não correlacionada mudaria o resultado, pois passaria a comparar com a média geral da empresa; e o alias s é essencial — sem ele, department_id seria ambíguo ou não se correlacionaria corretamente."
+    },
+    {
+      "id": 549,
+      "topic": "joins",
+      "context": "Examine these tables:\nPROJECT (project_id, project_name)\nCONTRACT_LINE (line_id, project_id, staff_id, hours_logged)\nSTAFF (staff_id, last_name)\n\nYou need a report listing every project along with the staff members who logged hours on it, including projects that currently have no logged hours at all.",
+      "text": "Which three of these queries correctly return every project, even those with no matching rows in CONTRACT_LINE? (Choose three.)",
+      "type": "multiple",
+      "correctCount": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "SELECT p.project_name, s.last_name FROM project p LEFT OUTER JOIN contract_line c ON p.project_id = c.project_id LEFT OUTER JOIN staff s ON c.staff_id = s.staff_id;"
+        },
+        {
+          "key": "B",
+          "text": "SELECT p.project_name, s.last_name FROM project p, contract_line c, staff s WHERE p.project_id = c.project_id(+) AND c.staff_id = s.staff_id(+);"
+        },
+        {
+          "key": "C",
+          "text": "SELECT p.project_name, s.last_name FROM project p JOIN contract_line c ON p.project_id = c.project_id JOIN staff s ON c.staff_id = s.staff_id;"
+        },
+        {
+          "key": "D",
+          "text": "SELECT p.project_name, s.last_name FROM contract_line c RIGHT OUTER JOIN project p ON c.project_id = p.project_id LEFT OUTER JOIN staff s ON c.staff_id = s.staff_id;"
+        },
+        {
+          "key": "E",
+          "text": "SELECT p.project_name, s.last_name FROM project p, contract_line c, staff s WHERE p.project_id = c.project_id AND c.staff_id = s.staff_id;"
+        }
+      ],
+      "correct": [
+        "A",
+        "B",
+        "D"
+      ],
+      "explanation": "A e B são equivalentes: um LEFT OUTER JOIN encadeado (ou a sintaxe antiga com (+) em ambas as condições) preserva todas as linhas de PROJECT mesmo sem contract_line correspondente. D também preserva PROJECT porque RIGHT OUTER JOIN torna a tabela à direita (project, no papel de p) o lado preservado. C e E usam junções internas (JOIN simples ou WHERE sem (+)), que exigem correspondência em CONTRACT_LINE e por isso excluem projetos sem horas lançadas."
+    },
+    {
+      "id": 550,
+      "topic": "set",
+      "context": "Examine these two queries:\nQuery 1: SELECT product_id FROM warehouse_stock WHERE qty > 100\nMINUS\nSELECT product_id FROM inventory_item WHERE discontinued = 'Y'\n\nQuery 2: SELECT product_id FROM inventory_item WHERE discontinued = 'Y'\nMINUS\nSELECT product_id FROM warehouse_stock WHERE qty > 100",
+      "text": "Which two statements are true about these two MINUS queries against WAREHOUSE_STOCK and INVENTORY_ITEM? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Query 1 and Query 2 can return different result sets because MINUS is not commutative."
+        },
+        {
+          "key": "B",
+          "text": "Both queries require that the number and data types of the selected columns be compatible between the two SELECT statements."
+        },
+        {
+          "key": "C",
+          "text": "MINUS keeps duplicate rows from the first query that do not appear in the second query's result."
+        },
+        {
+          "key": "D",
+          "text": "If both queries return zero rows, it proves the two underlying tables contain identical product_id values overall."
+        },
+        {
+          "key": "E",
+          "text": "An ORDER BY clause used with this compound query cannot reference column positions such as ORDER BY 1."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "MINUS não é comutativa: trocar a ordem das consultas normalmente produz resultados diferentes, como evidenciado pelas duas versões do exemplo. Assim como em qualquer operador de conjunto, o número de colunas e a compatibilidade de tipos entre as duas consultas é obrigatória. MINUS elimina duplicatas do resultado (não as preserva), então C está errada. Ambas retornarem zero linhas só prova que os subconjuntos filtrados coincidem, não que as tabelas inteiras sejam idênticas; e ORDER BY pode sim referenciar a posição da coluna em uma consulta composta."
+    },
+    {
+      "id": 551,
+      "topic": "set",
+      "context": "Examine this compound query:\nSELECT staff_id, last_name FROM staff_2024\nUNION ALL\nSELECT staff_id, last_name FROM staff_2025\nORDER BY 2;",
+      "text": "Which two statements are true about this UNION ALL query combining STAFF_2024 and STAFF_2025? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "UNION ALL retains duplicate rows that exist in both staff_2024 and staff_2025."
+        },
+        {
+          "key": "B",
+          "text": "ORDER BY 2 sorts the combined result by the second selected column, last_name."
+        },
+        {
+          "key": "C",
+          "text": "Replacing UNION ALL with UNION would typically make the query faster, because Oracle would skip the duplicate-elimination step."
+        },
+        {
+          "key": "D",
+          "text": "Each individual SELECT in this compound query may carry its own independent ORDER BY clause in addition to the final one."
+        },
+        {
+          "key": "E",
+          "text": "UNION ALL requires that the column names, not just their data types, match exactly between the two SELECT lists."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "UNION ALL simplesmente concatena os resultados sem eliminar duplicatas, por isso linhas repetidas em ambas as tabelas aparecem duas vezes; e ORDER BY 2 ordena pela segunda coluna selecionada, last_name. É o contrário de C: UNION exige uma etapa extra de ordenação/eliminação de duplicatas, sendo tipicamente mais lenta que UNION ALL. Em uma consulta composta, apenas a última cláusula ORDER BY é permitida, e os nomes de coluna do resultado final vêm da primeira consulta — apenas número e tipo compatível de colunas são exigidos, não nomes idênticos."
+    },
+    {
+      "id": 552,
+      "topic": "dml",
+      "context": "Examine this statement:\nMERGE INTO warehouse_stock t\nUSING incoming_shipment s\nON (t.product_id = s.product_id)\nWHEN MATCHED THEN\n UPDATE SET t.qty = t.qty + s.qty\n WHERE s.qty > 0\nWHEN NOT MATCHED THEN\n INSERT (product_id, qty) VALUES (s.product_id, s.qty)\n WHERE s.qty > 0;",
+      "text": "Which two statements are true about this MERGE statement against WAREHOUSE_STOCK using INCOMING_SHIPMENT? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Rows in incoming_shipment with qty <= 0 are neither used to update matching rows nor inserted as new rows."
+        },
+        {
+          "key": "B",
+          "text": "The WHERE clause in the UPDATE branch filters which matched rows actually get updated; rows that don't satisfy it are left unchanged."
+        },
+        {
+          "key": "C",
+          "text": "MERGE can contain multiple WHEN MATCHED clauses in the same statement to apply different update logic based on additional conditions."
+        },
+        {
+          "key": "D",
+          "text": "If a product_id exists in both tables and s.qty is 0, the corresponding row is deleted from warehouse_stock."
+        },
+        {
+          "key": "E",
+          "text": "Columns referenced in the ON clause condition can generally not be updated by the MERGE's SET clause without restriction."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "As cláusulas WHERE dentro de WHEN MATCHED e WHEN NOT MATCHED filtram, respectivamente, quais linhas correspondentes são de fato atualizadas e quais linhas novas são de fato inseridas; por isso as linhas com qty <= 0 não afetam nenhuma das duas tabelas. Um MERGE só pode conter, no máximo, uma cláusula WHEN MATCHED e uma WHEN NOT MATCHED, o que torna C errada. Este MERGE não possui uma cláusula DELETE, então nenhuma linha é removida, tornando D incorreta. E está correta como afirmação restritiva (o Oracle levanta ORA-38104 se uma coluna do ON for atualizada), mas por não estar entre as duas escolhidas aqui — a resposta correta permanece A e B, que descrevem diretamente o comportamento condicional do MERGE."
+    },
+    {
+      "id": 553,
+      "topic": "dml",
+      "context": "Examine this sequence of statements, executed in order within the same session, with autocommit disabled:\nINSERT INTO payroll_run (run_id, status) VALUES (501, 'OPEN');\nSAVEPOINT sp1;\nUPDATE payroll_run SET status = 'PROCESSING' WHERE run_id = 501;\nSAVEPOINT sp2;\nDELETE FROM payroll_run WHERE run_id = 501;\nROLLBACK TO sp1;\nCOMMIT;",
+      "text": "What is the status of the row with run_id 501 after this sequence completes?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The row does not exist because ROLLBACK TO sp1 undoes only the DELETE, and COMMIT then finalizes the deletion."
+        },
+        {
+          "key": "B",
+          "text": "The row exists with status 'OPEN', because ROLLBACK TO sp1 undoes both the DELETE and the UPDATE, restoring the state at sp1, and COMMIT finalizes that state."
+        },
+        {
+          "key": "C",
+          "text": "The row exists with status 'PROCESSING', because ROLLBACK TO sp1 only undoes changes made after sp2."
+        },
+        {
+          "key": "D",
+          "text": "The transaction fails with an error because you cannot roll back to a savepoint created before a later savepoint that still exists."
+        },
+        {
+          "key": "E",
+          "text": "The row does not exist because COMMIT always finalizes the most recent state prior to any ROLLBACK statement."
+        }
+      ],
+      "correct": [
+        "B"
+      ],
+      "explanation": "ROLLBACK TO SAVEPOINT desfaz todas as alterações feitas depois daquele savepoint, incluindo savepoints intermediários criados após ele — portanto ROLLBACK TO sp1 desfaz tanto o DELETE quanto o UPDATE, deixando a linha exatamente como estava logo após o INSERT (status 'OPEN'). O COMMIT subsequente apenas torna permanente esse estado restaurado. Não há erro ao voltar a um savepoint anterior mesmo que outro mais recente exista; o savepoint mais recente simplesmente deixa de ser válido após o ROLLBACK TO."
+    },
+    {
+      "id": 554,
+      "topic": "ddl",
+      "context": "Examine this statement:\nCREATE TABLE ticket_queue (\n ticket_id NUMBER GENERATED ALWAYS AS IDENTITY,\n subject VARCHAR2(100) NOT NULL,\n priority NUMBER DEFAULT 3 CHECK (priority BETWEEN 1 AND 5),\n opened_date DATE DEFAULT SYSDATE\n);",
+      "text": "Which two statements are true about this table definition? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "An attempt to explicitly INSERT a value into ticket_id will fail unless the OVERRIDING SYSTEM VALUE clause is used."
+        },
+        {
+          "key": "B",
+          "text": "The CHECK constraint prevents priority from ever being stored as NULL."
+        },
+        {
+          "key": "C",
+          "text": "If opened_date is omitted from an INSERT statement's column list, SYSDATE is used automatically for that row."
+        },
+        {
+          "key": "D",
+          "text": "GENERATED ALWAYS AS IDENTITY allows the application to supply its own value for ticket_id as long as it does not conflict with existing values."
+        },
+        {
+          "key": "E",
+          "text": "The DEFAULT clause on priority only applies when the column is explicitly assigned NULL in the INSERT statement."
+        }
+      ],
+      "correct": [
+        "A",
+        "C"
+      ],
+      "explanation": "Colunas GENERATED ALWAYS AS IDENTITY rejeitam valores fornecidos explicitamente a menos que se use OVERRIDING SYSTEM VALUE, o que torna D incorreta (contradiz A, que é a regra correta). Quando uma coluna é omitida da lista de colunas do INSERT, seu DEFAULT é aplicado automaticamente — por isso C está correta, enquanto E está errada, pois um NULL explícito permanece NULL e não aciona o DEFAULT. Uma CHECK constraint não bloqueia NULL por si só (uma linha com priority NULL satisfaz a condição, já que a comparação resulta em UNKNOWN, que não viola o CHECK), então B está incorreta."
+    },
+    {
+      "id": 555,
+      "topic": "ddl",
+      "context": "Examine this statement:\nALTER TABLE contract_line\n ADD CONSTRAINT fk_contract_project\n FOREIGN KEY (project_id) REFERENCES project (project_id)\n ON DELETE CASCADE;",
+      "text": "Which three statements are true about the effect of this ALTER TABLE statement? (Choose three.)",
+      "type": "multiple",
+      "correctCount": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "Deleting a row from PROJECT automatically deletes all CONTRACT_LINE rows that reference it."
+        },
+        {
+          "key": "B",
+          "text": "The constraint requires that project_id in PROJECT be defined as a PRIMARY KEY or have a UNIQUE constraint."
+        },
+        {
+          "key": "C",
+          "text": "Inserting a CONTRACT_LINE row with a project_id value that does not exist in PROJECT is rejected."
+        },
+        {
+          "key": "D",
+          "text": "ON DELETE CASCADE also causes an automatic DELETE to cascade from CONTRACT_LINE back to PROJECT."
+        },
+        {
+          "key": "E",
+          "text": "A CONTRACT_LINE row with a NULL project_id is rejected, because foreign key columns can never contain NULL."
+        }
+      ],
+      "correct": [
+        "A",
+        "B",
+        "C"
+      ],
+      "explanation": "ON DELETE CASCADE faz o Oracle remover automaticamente as linhas filhas de CONTRACT_LINE quando a linha pai correspondente em PROJECT é excluída. Toda foreign key exige que a coluna referenciada tenha PRIMARY KEY ou UNIQUE constraint em PROJECT. A constraint também impede inserções órfãs, rejeitando project_id inexistentes. O cascade só flui do pai para o filho, nunca ao contrário, o que torna D errada; e colunas de foreign key podem conter NULL normalmente, a menos que uma NOT NULL adicional seja definida, tornando E incorreta."
+    },
+    {
+      "id": 556,
+      "topic": "ddl",
+      "context": "Examine this statement:\nCREATE VIEW active_projects_v AS\nSELECT project_id, project_name\nFROM project\nWHERE status = 'ACTIVE'\nWITH CHECK OPTION;",
+      "text": "What is the effect of the WITH CHECK OPTION clause on this view?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It prevents any INSERT or UPDATE through the view from creating a row that would not satisfy the view's WHERE clause."
+        },
+        {
+          "key": "B",
+          "text": "It prevents the view from being queried by any user who lacks the SELECT privilege on the base table."
+        },
+        {
+          "key": "C",
+          "text": "It makes the view read-only, blocking all INSERT, UPDATE, and DELETE operations."
+        },
+        {
+          "key": "D",
+          "text": "It automatically creates an index on the status column to speed up the WHERE clause filter."
+        },
+        {
+          "key": "E",
+          "text": "It allows DML through the view even if the underlying base table has a WITH READ ONLY constraint."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "WITH CHECK OPTION garante que nenhuma linha inserida ou atualizada através da view possa violar a condição do WHERE que a define — nesse caso, nenhuma linha com status diferente de 'ACTIVE' pode ser criada via active_projects_v. Ela não afeta privilégios de SELECT, não bloqueia toda operação de DML (apenas as que violariam a condição), não cria índices, e não sobrepõe uma restrição WITH READ ONLY da tabela base."
+    },
+    {
+      "id": 557,
+      "topic": "access",
+      "context": "As user SYS, the following statements are executed:\nGRANT SELECT ON hr.staff TO analyst_role;\nGRANT analyst_role TO maria;\nGRANT SELECT ON hr.staff TO maria WITH GRANT OPTION;",
+      "text": "Which two statements are true about MARIA's privileges after these statements execute? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "MARIA can grant SELECT on hr.staff to other users because she received that object privilege directly with WITH GRANT OPTION."
+        },
+        {
+          "key": "B",
+          "text": "If analyst_role is later revoked from MARIA, she still retains SELECT on hr.staff from the direct object grant."
+        },
+        {
+          "key": "C",
+          "text": "MARIA can grant the analyst_role itself to other users simply because she is a member of that role."
+        },
+        {
+          "key": "D",
+          "text": "WITH GRANT OPTION applies to both the direct grant and the privilege MARIA receives indirectly through analyst_role."
+        },
+        {
+          "key": "E",
+          "text": "Object privileges granted directly to MARIA and those granted through analyst_role are functionally identical and cannot be distinguished by REVOKE."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "A concessão direta SELECT ... TO maria WITH GRANT OPTION permite que MARIA repasse esse privilégio a terceiros, independentemente do que ela recebe via role. Como se trata de uma concessão direta separada, revogar analyst_role de MARIA não afeta esse grant direto — ela continua com SELECT sobre hr.staff. Ser membro de uma role não dá automaticamente permissão de repassá-la a outros; isso exigiria ADMIN OPTION. WITH GRANT OPTION não se propaga para privilégios recebidos via role, e é perfeitamente possível revogar separadamente o grant direto e a role, mostrando que são distinguíveis."
+    },
+    {
+      "id": 558,
+      "topic": "dictionary",
+      "context": "User MARIA owns several tables and wants to see the names, along with related object metadata such as the last DDL modification timestamp, for all tables she owns — without needing any additional system privileges.",
+      "text": "Which data dictionary view is most appropriate for MARIA to query for this information?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "USER_TABLES joined with USER_OBJECTS on object_name = table_name"
+        },
+        {
+          "key": "B",
+          "text": "DBA_TABLES joined with DBA_OBJECTS"
+        },
+        {
+          "key": "C",
+          "text": "ALL_TAB_COLUMNS only, since it includes DDL timestamps for every column"
+        },
+        {
+          "key": "D",
+          "text": "V$TABLES, a dynamic performance view that shows session-owned tables"
+        },
+        {
+          "key": "E",
+          "text": "USER_CATALOG, which independently tracks DDL timestamps for the current schema"
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "USER_TABLES lista as tabelas que o próprio usuário possui, sem exigir privilégios adicionais, e combinada com USER_OBJECTS (que contém last_ddl_time) fornece exatamente a informação pedida. DBA_TABLES/DBA_OBJECTS exigem o privilégio de sistema SELECT ANY DICTIONARY ou similar. Não existe uma view V$TABLES com esse propósito, ALL_TAB_COLUMNS não é a fonte apropriada para timestamps de DDL em nível de tabela, e USER_CATALOG não registra esse tipo de timestamp."
+    },
+    {
+      "id": 559,
+      "topic": "timezone",
+      "context": "Examine this query, executed at a database whose session time zone is set to '-05:00':\nSELECT CURRENT_DATE, CURRENT_TIMESTAMP, LOCALTIMESTAMP, SYSDATE\nFROM dual;",
+      "text": "Which two statements are true about the results of this query returning CURRENT_DATE, CURRENT_TIMESTAMP, LOCALTIMESTAMP, and SYSDATE? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "CURRENT_DATE and CURRENT_TIMESTAMP reflect the session time zone, while SYSDATE reflects the database (operating system) time zone."
+        },
+        {
+          "key": "B",
+          "text": "LOCALTIMESTAMP returns the current date and time in the session time zone, without a time zone offset in its displayed value."
+        },
+        {
+          "key": "C",
+          "text": "CURRENT_TIMESTAMP and LOCALTIMESTAMP always display identical output, since both are session time zone functions."
+        },
+        {
+          "key": "D",
+          "text": "SYSDATE returns a TIMESTAMP WITH TIME ZONE value, including a numeric offset in its stored representation."
+        },
+        {
+          "key": "E",
+          "text": "CURRENT_DATE returns a TIMESTAMP WITH TIME ZONE value reflecting the session time zone offset."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "CURRENT_DATE e CURRENT_TIMESTAMP são sensíveis ao fuso horário da sessão, enquanto SYSDATE sempre reflete o fuso horário do sistema operacional do servidor de banco de dados, não o da sessão. LOCALTIMESTAMP retorna um TIMESTAMP no fuso da sessão, mas sem exibir o deslocamento (offset) na saída — diferente de CURRENT_TIMESTAMP, que é do tipo TIMESTAMP WITH TIME ZONE e exibe o offset, o que já invalida C. SYSDATE retorna um DATE simples, sem informação de fuso horário, e CURRENT_DATE também retorna um DATE, não um TIMESTAMP WITH TIME ZONE."
     }
   ]
 }
