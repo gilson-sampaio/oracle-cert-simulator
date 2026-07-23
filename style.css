@@ -91,6 +91,22 @@ body {
   outline: none;
   border-color: var(--accent);
 }
+.setup-row select {
+  max-width: 62%;
+  padding: 7px 8px;
+  font-size: 13px;
+  font-family: var(--mono);
+  background: var(--surface-alt);
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  color: var(--text);
+  cursor: pointer;
+}
+.setup-row select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.setup-row select:disabled { opacity: 0.4; }
 
 .bank-info {
   font-size: 13px;

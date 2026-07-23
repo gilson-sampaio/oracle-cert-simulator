@@ -74,29 +74,77 @@ function selectExam(ex) {
   const minutesInput = document.getElementById('input-minutes');
   const startBtn = document.getElementById('btn-start');
   const generateBtn = document.getElementById('btn-generate');
+  const topicSelect = document.getElementById('input-topic');
   const bankInfo = document.getElementById('bank-info');
 
   minutesInput.value = ex.defaultMinutes || 120;
+  populateTopics(ex);
 
   if (allQuestions.length === 0) {
     // Exame ainda sem questões: interface pronta, mas sem simulado disponível.
     quantityInput.value = 0;
     quantityInput.disabled = true;
+    topicSelect.disabled = true;
     startBtn.disabled = true;
     generateBtn.disabled = true;
     bankInfo.textContent = `O exame ${ex.code} ainda não possui questões cadastradas. Em breve!`;
     questions = [];
   } else {
     quantityInput.disabled = false;
+    topicSelect.disabled = false;
     startBtn.disabled = false;
     generateBtn.disabled = false;
-    quantityInput.max = allQuestions.length;
-    const desired = Math.min(ex.defaultQuantity || 60, allQuestions.length);
-    quantityInput.value = desired;
+    // "Todos os tópicos" selecionado por padrão; ajusta quantidade e gera.
+    adjustQuantityForTopic(ex.defaultQuantity || 60);
     generateQuiz(false);
   }
 
   showScreen(screenStart);
+}
+
+// Popula o seletor de assunto com "Todos" + cada tópico que tenha questões (com contagem).
+function populateTopics(ex) {
+  const sel = document.getElementById('input-topic');
+  sel.innerHTML = '';
+  const labels = (ex.bankData && ex.bankData.topicLabels) || {};
+  const counts = {};
+  allQuestions.forEach(q => { counts[q.topic] = (counts[q.topic] || 0) + 1; });
+
+  const optAll = document.createElement('option');
+  optAll.value = '__all__';
+  optAll.textContent = `Todos os tópicos (${allQuestions.length})`;
+  sel.appendChild(optAll);
+
+  Object.keys(labels)
+    .filter(key => (counts[key] || 0) > 0)
+    .sort((a, b) => labels[a].localeCompare(labels[b]))
+    .forEach(key => {
+      const opt = document.createElement('option');
+      opt.value = key;
+      opt.textContent = `${labels[key]} (${counts[key]})`;
+      sel.appendChild(opt);
+    });
+}
+
+// Retorna a chave do tópico selecionado, ou null quando é "Todos os tópicos".
+function getSelectedTopic() {
+  const v = document.getElementById('input-topic').value;
+  return (!v || v === '__all__') ? null : v;
+}
+
+// Quantas questões existem no escopo atual (tópico selecionado ou banco todo).
+function poolSize() {
+  const t = getSelectedTopic();
+  return t ? allQuestions.filter(q => q.topic === t).length : allQuestions.length;
+}
+
+// Ajusta o max/valor do campo quantidade conforme o escopo (tópico ou todos).
+function adjustQuantityForTopic(desired) {
+  const max = poolSize();
+  const quantityInput = document.getElementById('input-quantity');
+  quantityInput.max = max;
+  const target = desired != null ? desired : Number(quantityInput.value) || max;
+  quantityInput.value = Math.min(Math.max(1, target), max);
 }
 
 function shuffle(arr) {
@@ -120,9 +168,21 @@ function saveUsedIds(ids) {
   localStorage.setItem(usedStorageKey, JSON.stringify([...ids]));
 }
 
-// Seleciona N questões, proporcionalmente distribuídas pelos tópicos do banco,
-// priorizando questões ainda não usadas recentemente (reseta quando o banco se esgota).
-function pickQuestions(quantity) {
+// Seleciona N questões. Se topicFilter for informado, sorteia apenas daquele tópico;
+// caso contrário, distribui proporcionalmente por todos os tópicos do banco.
+// Sempre prioriza questões ainda não vistas (reseta o ciclo quando o pool se esgota).
+function pickQuestions(quantity, topicFilter) {
+  // Modo "por assunto": pool restrito a um tópico, sem distribuição proporcional.
+  if (topicFilter) {
+    const pool = allQuestions.filter(q => q.topic === topicFilter);
+    let used = getUsedIds();
+    const unusedCount = pool.filter(q => !used.has(q.id)).length;
+    if (unusedCount < quantity) used = new Set();
+    const unused = shuffle(pool.filter(q => !used.has(q.id)));
+    const usedOnes = shuffle(pool.filter(q => used.has(q.id)));
+    return [...unused, ...usedOnes].slice(0, quantity);
+  }
+
   const byTopic = {};
   allQuestions.forEach(q => {
     if (!byTopic[q.topic]) byTopic[q.topic] = [];
@@ -171,33 +231,48 @@ function markQuestionsAsUsed(qs) {
 }
 
 function generateQuiz(isManual) {
+  const topicFilter = getSelectedTopic();
+  const available = poolSize();
   const quantity = Math.min(
-    Math.max(1, Number(document.getElementById('input-quantity').value) || 63),
-    allQuestions.length
+    Math.max(1, Number(document.getElementById('input-quantity').value) || 60),
+    available
   );
   timeMinutes = Math.max(1, Number(document.getElementById('input-minutes').value) || 120);
 
-  questions = shuffle(pickQuestions(quantity));
+  questions = shuffle(pickQuestions(quantity, topicFilter));
   const examCode = currentExam ? currentExam.code : (bank.examCode || '');
-  document.getElementById('start-title').textContent =
-    `-- ${examCode} · ${questions.length} questões`;
+  const topicLabel = topicFilter && bank.topicLabels ? bank.topicLabels[topicFilter] : null;
+  document.getElementById('start-title').textContent = topicLabel
+    ? `-- ${examCode} · ${questions.length} questões · ${topicLabel.split('(')[0].trim()}`
+    : `-- ${examCode} · ${questions.length} questões`;
+
+  const escopo = topicLabel
+    ? `assunto "${topicLabel.split('(')[0].trim()}" (${available} no banco)`
+    : `${available} questões no banco`;
 
   const bankInfo = document.getElementById('bank-info');
   if (isManual) {
     bankInfo.textContent =
-      `✅ Novo simulado gerado! ${questions.length} questões sorteadas (de ${allQuestions.length} no banco), embaralhadas. Tempo: ${timeMinutes} minutos.`;
+      `✅ Novo simulado gerado! ${questions.length} questões sorteadas — ${escopo}. Tempo: ${timeMinutes} minutos.`;
     bankInfo.classList.remove('flash');
     void bankInfo.offsetWidth; // força reflow para reiniciar a animação
     bankInfo.classList.add('flash');
   } else {
     bankInfo.textContent =
-      `Banco de questões disponível: ${allQuestions.length} questões. Clique em "Gerar novo simulado" para sortear um novo conjunto.`;
+      `Escopo: ${escopo}. Clique em "Gerar novo simulado" para sortear um novo conjunto.`;
   }
+}
+
+// Ao trocar o assunto: reajusta a quantidade ao novo escopo e regera o preview.
+function onTopicChange() {
+  adjustQuantityForTopic(null);
+  generateQuiz(false);
 }
 
 document.getElementById('btn-generate').addEventListener('click', () => generateQuiz(true));
 document.getElementById('btn-start').addEventListener('click', startQuiz);
 document.getElementById('btn-change-exam').addEventListener('click', () => showScreen(screenExam));
+document.getElementById('input-topic').addEventListener('change', onTopicChange);
 document.getElementById('btn-prev').addEventListener('click', () => navigate(-1));
 document.getElementById('btn-next').addEventListener('click', () => navigate(1));
 document.getElementById('btn-finish').addEventListener('click', attemptFinish);
