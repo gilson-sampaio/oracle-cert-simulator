@@ -16525,6 +16525,703 @@
         "B"
       ],
       "explanation": "CURRENT_DATE e CURRENT_TIMESTAMP são sensíveis ao fuso horário da sessão, enquanto SYSDATE sempre reflete o fuso horário do sistema operacional do servidor de banco de dados, não o da sessão. LOCALTIMESTAMP retorna um TIMESTAMP no fuso da sessão, mas sem exibir o deslocamento (offset) na saída — diferente de CURRENT_TIMESTAMP, que é do tipo TIMESTAMP WITH TIME ZONE e exibe o offset, o que já invalida C. SYSDATE retorna um DATE simples, sem informação de fuso horário, e CURRENT_DATE também retorna um DATE, não um TIMESTAMP WITH TIME ZONE."
+    },
+    {
+      "id": 560,
+      "topic": "fundamentals",
+      "context": "Examine this SQL*Plus session:\nSET DEFINE '#'\nSET VERIFY OFF\nSELECT last_name, salary FROM hr.contractors WHERE dept_id = &dept_id;",
+      "text": "Which two statements are true about running this script in SQL*Plus? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Because the substitution character was changed to '#', SQL*Plus does not treat &dept_id as a substitution variable and attempts to parse it literally as part of the SQL text."
+        },
+        {
+          "key": "B",
+          "text": "To have the value substituted correctly under this setting, the WHERE clause would need to reference #dept_id instead of &dept_id."
+        },
+        {
+          "key": "C",
+          "text": "SET VERIFY OFF causes SQL*Plus to run the query without applying any filter on dept_id."
+        },
+        {
+          "key": "D",
+          "text": "SET DEFINE '#' adds '#' as an additional substitution character while '&' continues to work as before."
+        },
+        {
+          "key": "E",
+          "text": "Because VERIFY is OFF, SQL*Plus automatically reuses the value from the most recent DEFINE command for dept_id."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "SET DEFINE '#' troca o caractere de substituição padrão (&) por #, então o SQL*Plus deixa de reconhecer &dept_id como variável de substituição e tenta interpretá-lo literalmente como texto SQL, o que tende a gerar erro de sintaxe/identificador inválido. Para que a substituição volte a funcionar, o script precisaria usar #dept_id. SET VERIFY OFF apenas suprime as mensagens \"old value/new value\" quando uma substituição realmente ocorre — não remove o filtro da consulta. SET DEFINE '#' substitui o caractere de definição, não mantém & funcionando simultaneamente, e VERIFY não tem relação com reaproveitar valores de DEFINE anteriores."
+    },
+    {
+      "id": 561,
+      "topic": "select",
+      "context": "Examine this query:\nSELECT product_name, price\nFROM inventory.parts\nORDER BY price DESC\nFETCH FIRST 3 ROWS WITH TIES;\nAssume the price column contains ties among rows ranked near the third position.",
+      "text": "Which two statements are true about the result of this query? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "If more than one row shares the same price as the third-ranked row, all of those rows are included in the result, so the output could contain more than 3 rows."
+        },
+        {
+          "key": "B",
+          "text": "WITH TIES cannot be used together with FETCH FIRST unless an OFFSET clause is also specified."
+        },
+        {
+          "key": "C",
+          "text": "ORDER BY is optional for FETCH ... WITH TIES; without it, ties are determined by insertion order."
+        },
+        {
+          "key": "D",
+          "text": "If no rows share the price of the third-ranked row, exactly 3 rows are returned."
+        },
+        {
+          "key": "E",
+          "text": "WITH TIES is ignored whenever ROWS (rather than ROW) is specified, causing exactly 3 rows to be returned regardless of ties."
+        }
+      ],
+      "correct": [
+        "A",
+        "D"
+      ],
+      "explanation": "Com FETCH FIRST n ROWS WITH TIES, se houver empate de valor no critério de ORDER BY na posição de corte, todas as linhas empatadas com a última linha selecionada são incluídas, podendo retornar mais que n linhas. Se não houver empate na posição de corte, o resultado tem exatamente n linhas, aqui 3. WITH TIES não depende de OFFSET. ORDER BY é obrigatório sintaticamente para usar WITH TIES — sem ele, a cláusula gera erro, não uma ordenação por inserção. ROW e ROWS são apenas variações singular/plural da mesma sintaxe, sem diferença de comportamento para WITH TIES."
+    },
+    {
+      "id": 562,
+      "topic": "select",
+      "context": "Examine this SQL*Plus session:\nVARIABLE g_dept NUMBER\nEXEC :g_dept := 20\nSELECT last_name FROM hr.contractors WHERE department_id = :g_dept;",
+      "text": "What kind of variable is g_dept, and what is true about its scope?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It is a bind variable declared in SQL*Plus; it persists for the duration of the SQL*Plus session and can be referenced by multiple statements."
+        },
+        {
+          "key": "B",
+          "text": "It is a substitution variable; SQL*Plus will prompt for its value every time the SELECT statement runs."
+        },
+        {
+          "key": "C",
+          "text": "It is a PL/SQL local variable that only exists inside the anonymous block where EXEC assigns its value."
+        },
+        {
+          "key": "D",
+          "text": "It is a session parameter that must be set with ALTER SESSION before it can be used in a query."
+        },
+        {
+          "key": "E",
+          "text": "It is a substitution variable defined by DEFINE, since VARIABLE is only an alias for DEFINE in SQL*Plus."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "VARIABLE declara uma bind variable no SQL*Plus, que existe durante toda a sessão e pode ser referenciada por múltiplos comandos, inclusive em blocos PL/SQL (via EXEC) e em SELECTs subsequentes usando o prefixo dois-pontos. Diferente de uma substitution variable (&/&&), ela não provoca prompt a cada execução. Não é uma variável PL/SQL local — sua vida é a sessão SQL*Plus, não o bloco anônimo. Não precisa de ALTER SESSION, e VARIABLE não é sinônimo de DEFINE — são mecanismos distintos."
+    },
+    {
+      "id": 563,
+      "topic": "functions",
+      "context": "Examine this query:\nSELECT employee_name,\n       NULLIF(bonus, 0) AS adj_bonus,\n       COALESCE(NULLIF(bonus, 0), commission, 0) AS final_amt\nFROM payroll.employees;\nAssume bonus and commission are nullable NUMBER columns, and for a given row bonus = 0 and commission = 150.",
+      "text": "Which two statements are true about the result for this row? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "adj_bonus is returned as NULL, because NULLIF returns NULL when its two arguments are equal."
+        },
+        {
+          "key": "B",
+          "text": "final_amt is returned as 150, because COALESCE moves on to the next expression once NULLIF evaluates to NULL."
+        },
+        {
+          "key": "C",
+          "text": "final_amt is returned as 0, because bonus is evaluated first regardless of the NULLIF result."
+        },
+        {
+          "key": "D",
+          "text": "adj_bonus is returned as 0, since NULLIF only returns NULL when both arguments are NULL, not when they are merely equal."
+        },
+        {
+          "key": "E",
+          "text": "The query raises an error because NULLIF cannot be nested inside COALESCE."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "NULLIF(bonus, 0) compara os dois argumentos; como bonus é 0, iguais, a função retorna NULL — NULLIF compara igualdade de valores, não exige que ambos sejam NULL. COALESCE retorna a primeira expressão não nula da lista; como o primeiro argumento (o resultado do NULLIF) é NULL, ele avança para commission, que é 150. Não há restrição contra aninhar NULLIF dentro de COALESCE — é uma combinação válida e comum."
+    },
+    {
+      "id": 564,
+      "topic": "functions",
+      "context": "Examine this query:\nSELECT order_id,\n       TO_CHAR(order_date, 'FMDD \"de\" Month YYYY') AS formatted_date,\n       ROUND(total_amt, -2) AS rounded_amt,\n       TRUNC(total_amt, -2) AS truncated_amt\nFROM sales.invoices\nWHERE order_id = 501;\nAssume total_amt for order 501 is 1250.75.",
+      "text": "Which three statements are true about the formatted_date, rounded_amt, and truncated_amt values returned by this query? (Choose three.)",
+      "type": "multiple",
+      "correctCount": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "rounded_amt evaluates to 1300, since ROUND with a negative second argument rounds to the nearest hundred."
+        },
+        {
+          "key": "B",
+          "text": "truncated_amt evaluates to 1200, since TRUNC with a negative second argument truncates at the hundreds place, discarding the remainder without rounding."
+        },
+        {
+          "key": "C",
+          "text": "The FM format modifier suppresses leading/trailing blank-padding that TO_CHAR would otherwise insert around the numeric day and month name."
+        },
+        {
+          "key": "D",
+          "text": "rounded_amt and truncated_amt always return the same value whenever the second argument is negative."
+        },
+        {
+          "key": "E",
+          "text": "ROUND and TRUNC without a second argument both operate at the nearest integer, so they always return identical results for this row."
+        }
+      ],
+      "correct": [
+        "A",
+        "B",
+        "C"
+      ],
+      "explanation": "ROUND(1250.75, -2) arredonda para a centena mais próxima, resultando em 1300. TRUNC(1250.75, -2) apenas descarta os dígitos abaixo da centena sem arredondar, resultando em 1200. O modificador de formato FM remove os espaços de preenchimento que TO_CHAR normalmente adiciona antes de números e nomes de mês. ROUND e TRUNC com o mesmo argumento negativo não retornam necessariamente o mesmo valor — aqui já diferem (1300 vs 1200). Sem segundo argumento, ROUND arredondaria 1250.75 para 1251 enquanto TRUNC cortaria para 1250, então não são garantidamente idênticos."
+    },
+    {
+      "id": 565,
+      "topic": "groups",
+      "context": "Examine this query:\nSELECT department_id, COUNT(*) AS staff_count, AVG(salary) AS avg_sal\nFROM payroll.employees\nWHERE commission IS NOT NULL\nGROUP BY department_id\nHAVING COUNT(*) > 3\nORDER BY avg_sal DESC;",
+      "text": "Which two statements are true about how this query is evaluated? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The WHERE clause filters individual rows before grouping, so employees with a NULL commission never contribute to the group counts."
+        },
+        {
+          "key": "B",
+          "text": "HAVING COUNT(*) > 3 filters out entire groups after aggregation, keeping only departments with more than three qualifying employees."
+        },
+        {
+          "key": "C",
+          "text": "ORDER BY avg_sal DESC is invalid because avg_sal is a column alias defined in the SELECT list."
+        },
+        {
+          "key": "D",
+          "text": "The HAVING clause is evaluated before the WHERE clause, since HAVING always takes logical precedence over row-level filters."
+        },
+        {
+          "key": "E",
+          "text": "COUNT(*) inside HAVING counts all rows in the table, ignoring the WHERE filter applied earlier."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "O WHERE é aplicado linha a linha antes do agrupamento, então funcionários com commission NULA são excluídos antes mesmo de formar os grupos. HAVING atua depois da agregação, eliminando grupos inteiros que não satisfaçam a condição — aqui, departamentos com 3 ou menos funcionários qualificados. ORDER BY pode perfeitamente referenciar um alias definido no SELECT. A ordem lógica de avaliação é FROM/WHERE, depois GROUP BY, depois HAVING — WHERE sempre vem antes. COUNT(*) dentro de HAVING opera sobre as linhas que já passaram pelo WHERE e foram agrupadas, não sobre a tabela inteira sem filtro."
+    },
+    {
+      "id": 566,
+      "topic": "groups",
+      "context": "Examine this query:\nSELECT department_id,\n       MAX(salary) - MIN(salary) AS spread\nFROM payroll.employees\nGROUP BY department_id;\nAssume one department has only a single employee.",
+      "text": "What value does spread evaluate to for the department with only one employee?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "0, because MAX and MIN both return that employee's single salary value, and their difference is zero."
+        },
+        {
+          "key": "B",
+          "text": "NULL, because MAX and MIN require at least two rows to compute a meaningful result."
+        },
+        {
+          "key": "C",
+          "text": "The employee's salary, because MIN defaults to zero when only one row exists in the group."
+        },
+        {
+          "key": "D",
+          "text": "An error is raised, because arithmetic between two aggregate functions is not permitted in the SELECT list."
+        },
+        {
+          "key": "E",
+          "text": "NULL, because subtracting two identical aggregate expressions always produces NULL, not zero."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "MAX e MIN funcionam normalmente mesmo com um único valor no grupo, retornando esse mesmo valor para ambas as funções; a diferença entre valores iguais é 0, não NULL. MIN não assume zero na ausência de outros valores — ele retorna o próprio valor existente. Não há nenhuma restrição contra operações aritméticas entre duas funções de grupo na mesma lista SELECT."
+    },
+    {
+      "id": 567,
+      "topic": "joins",
+      "context": "Examine these tables and query:\nprojects.tasks(task_id, task_name, assigned_to, milestone_id)\nprojects.milestones(milestone_id, milestone_name, due_date)\n\nSELECT t.task_name, m.milestone_name\nFROM projects.tasks t, projects.milestones m\nWHERE t.milestone_id = m.milestone_id (+)\nAND m.due_date > SYSDATE;",
+      "text": "Which two statements are true about this query? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The (+) operator combined with a filter on m.due_date in the WHERE clause can unexpectedly eliminate the outer-joined rows that have no matching milestone, effectively turning the query into an inner join."
+        },
+        {
+          "key": "B",
+          "text": "Tasks with no matching milestone_id would normally appear with a NULL milestone_name due to the (+), but the additional condition on m.due_date filters those rows out because NULL > SYSDATE is never TRUE."
+        },
+        {
+          "key": "C",
+          "text": "This is a valid ANSI-style LEFT OUTER JOIN, equivalent to writing \"FROM projects.tasks t LEFT JOIN projects.milestones m ON t.milestone_id = m.milestone_id\"."
+        },
+        {
+          "key": "D",
+          "text": "Oracle raises ORA-01417 because the (+) operator cannot be combined with any other condition on the outer-joined table in the WHERE clause."
+        },
+        {
+          "key": "E",
+          "text": "Placing m.due_date > SYSDATE in the WHERE clause has no effect on which rows are outer-joined; it only filters after the join completes without excluding any originally NULL-extended row."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Quando se usa a sintaxe antiga (+) e uma condição adicional é aplicada à tabela do lado outer no WHERE (não no próprio join), essa condição acaba filtrando as linhas estendidas com NULL, pois NULL > SYSDATE nunca é TRUE — na prática, o outer join se comporta como um inner join. Essa sintaxe com (+) é a notação legada do Oracle, e por causa desse filtro extra o comportamento diverge de um LEFT JOIN ANSI equivalente aplicado corretamente na cláusula ON. ORA-01417 ocorre em outros cenários (como ambiguidade de outer join), não simplesmente por haver uma condição extra no WHERE. A condição no WHERE efetivamente exclui linhas que teriam sido estendidas com NULL pelo outer join, então E está errada."
+    },
+    {
+      "id": 568,
+      "topic": "set",
+      "context": "Examine this query:\nSELECT store_id, product_id FROM retail.stores_current\nMINUS\nSELECT store_id, product_id FROM retail.stores_discontinued\nORDER BY 1, 2;",
+      "text": "Which two statements are true about how this MINUS query treats duplicate rows and column ordering? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The result contains rows that exist in stores_current but do not exist in stores_discontinued, based on matching the full row (both columns)."
+        },
+        {
+          "key": "B",
+          "text": "ORDER BY 1, 2 is valid here and sorts the final combined result by the first and second selected columns."
+        },
+        {
+          "key": "C",
+          "text": "Both queries must reference the same table names; only column data types and count need to match."
+        },
+        {
+          "key": "D",
+          "text": "If a row's column order differs conceptually between the two queries for the same underlying values, MINUS treats them as distinct rows."
+        },
+        {
+          "key": "E",
+          "text": "ORDER BY must be repeated once for each SELECT in the set operation, or it applies only to the first query."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "MINUS retorna as linhas do primeiro conjunto que não aparecem no segundo, comparando a linha inteira (todas as colunas na posição correspondente). Em operações de conjunto, ORDER BY aparece apenas uma vez, ao final, e pode referenciar as colunas pela posição, ordenando o resultado combinado. As tabelas das duas consultas não precisam ter o mesmo nome — apenas o número de colunas e a compatibilidade de tipos precisam corresponder. A comparação do MINUS é feita coluna a coluna pela posição definida no SELECT, não pelo nome de tabela de origem. ORDER BY não pode ser repetido por SELECT individual em um set operator; ele é escrito uma única vez ao final de toda a operação."
+    },
+    {
+      "id": 569,
+      "topic": "set",
+      "context": "Examine these two queries:\nSELECT product_id FROM inventory.parts WHERE warehouse_id = 10\nUNION ALL\nSELECT product_id FROM inventory.parts WHERE warehouse_id = 20;\nAssume product_id 900 exists in both warehouse 10 and warehouse 20.",
+      "text": "Which two statements are true about how many times product_id 900 appears in the result, and how that would change if UNION replaced UNION ALL? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "With UNION ALL as written, product_id 900 appears twice, because UNION ALL does not eliminate duplicate rows between the two queries."
+        },
+        {
+          "key": "B",
+          "text": "With UNION ALL as written, product_id 900 appears once, because UNION ALL still removes exact duplicate rows across both result sets."
+        },
+        {
+          "key": "C",
+          "text": "With UNION ALL as written, product_id 900 appears zero times, because UNION ALL only returns rows unique to each individual query."
+        },
+        {
+          "key": "D",
+          "text": "If UNION replaced UNION ALL in this statement, product_id 900 would appear only once, since UNION eliminates duplicate rows from the combined result."
+        },
+        {
+          "key": "E",
+          "text": "Whether UNION or UNION ALL is used has no effect on how many times product_id 900 appears, since both operators treat duplicates identically."
+        }
+      ],
+      "correct": [
+        "A",
+        "D"
+      ],
+      "explanation": "UNION ALL simplesmente concatena os resultados das duas consultas sem eliminar duplicatas, então um valor presente em ambas aparece duas vezes no resultado final. Apenas UNION (sem ALL) eliminaria duplicatas, fazendo com que product_id 900 aparecesse apenas uma vez caso o operador fosse trocado. UNION ALL não exclui linhas exclusivas de uma consulta; pelo contrário, inclui tudo, então a opção C está errada. Os dois operadores tratam duplicatas de forma bem diferente — UNION elimina, UNION ALL preserva — então dizer que não há efeito é falso."
+    },
+    {
+      "id": 570,
+      "topic": "dml",
+      "context": "Examine this statement:\nMERGE INTO inventory.parts tgt\nUSING inventory.parts_staging src\nON (tgt.part_id = src.part_id)\nWHEN MATCHED THEN\n  UPDATE SET tgt.qty = tgt.qty + src.qty\n  DELETE WHERE tgt.qty <= 0\nWHEN NOT MATCHED THEN\n  INSERT (part_id, qty) VALUES (src.part_id, src.qty);",
+      "text": "Which two statements are true about how the DELETE WHERE clause inside this MERGE statement interacts with the UPDATE and NOT MATCHED branches? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The DELETE WHERE clause only removes rows that were just updated by this same MERGE and whose resulting qty is now zero or negative — it does not delete unrelated rows with qty <= 0 that weren't matched."
+        },
+        {
+          "key": "B",
+          "text": "Rows in tgt with no matching part_id in src are left untouched, since only the NOT MATCHED branch inserts new rows from src."
+        },
+        {
+          "key": "C",
+          "text": "The DELETE clause executes independently of the UPDATE, evaluating tgt.qty as it existed before this MERGE statement began."
+        },
+        {
+          "key": "D",
+          "text": "If a part_id exists in both tables, the row is always deleted, since UPDATE and DELETE are combined in the same WHEN MATCHED clause."
+        },
+        {
+          "key": "E",
+          "text": "WHEN NOT MATCHED THEN INSERT will insert a row for every src row, including those that already matched and were updated."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "A cláusula DELETE WHERE dentro do WHEN MATCHED só remove linhas que acabaram de ser atualizadas por este mesmo MERGE e cuja condição pós-update seja satisfeita — não afeta linhas não tocadas por este comando. Linhas de tgt sem correspondência em src simplesmente não são tocadas; o MERGE não insere nem atualiza para elas, pois só o ramo NOT MATCHED insere a partir de src. A avaliação do DELETE ocorre sobre o valor de qty já após o UPDATE ter sido aplicado à linha, não antes. A linha não é sempre deletada — apenas quando qty resultante satisfaz <= 0. O ramo NOT MATCHED insere apenas para linhas de src sem correspondência em tgt, não para as que já foram usadas no UPDATE."
+    },
+    {
+      "id": 571,
+      "topic": "dml",
+      "context": "Examine this sequence of statements in a single session:\nINSERT INTO sales.invoices (invoice_id, total_amt) VALUES (9001, 500);\nSAVEPOINT sp_after_insert;\nUPDATE sales.invoices SET total_amt = 750 WHERE invoice_id = 9001;\nROLLBACK TO sp_after_insert;\nSELECT total_amt FROM sales.invoices WHERE invoice_id = 9001;",
+      "text": "What value does the SELECT return?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "500, because ROLLBACK TO sp_after_insert undoes the UPDATE but preserves the INSERT that occurred before the savepoint."
+        },
+        {
+          "key": "B",
+          "text": "750, because ROLLBACK TO a savepoint only affects statements issued after the next COMMIT."
+        },
+        {
+          "key": "C",
+          "text": "NULL, because ROLLBACK TO a savepoint always undoes the entire transaction back to its start."
+        },
+        {
+          "key": "D",
+          "text": "The query raises an error, because a SELECT cannot follow a ROLLBACK TO SAVEPOINT without an explicit COMMIT first."
+        },
+        {
+          "key": "E",
+          "text": "500, but only if COMMIT is issued immediately after the ROLLBACK TO statement."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "ROLLBACK TO SAVEPOINT desfaz apenas as alterações feitas depois daquele ponto de salvamento, preservando o que veio antes — aqui, o INSERT permanece e o UPDATE é desfeito, retornando total_amt para 500. Não há relação com o próximo COMMIT, e o rollback não desfaz a transação inteira, apenas até o savepoint indicado. Uma consulta SELECT pode ser executada normalmente logo após um ROLLBACK TO SAVEPOINT, sem necessidade de COMMIT — o valor 500 já está visível na própria transação sem precisar de COMMIT."
+    },
+    {
+      "id": 572,
+      "topic": "ddl",
+      "context": "Examine this statement:\nCREATE SEQUENCE hr.contractor_seq\nSTART WITH 100\nINCREMENT BY 1\nMAXVALUE 999\nNOCYCLE\nCACHE 20;\nAssume the sequence has been used until it reaches its MAXVALUE.",
+      "text": "Which two statements are true about this sequence once it reaches MAXVALUE? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Because NOCYCLE is specified, the next call to contractor_seq.NEXTVAL after reaching MAXVALUE raises an error instead of wrapping back to the start value."
+        },
+        {
+          "key": "B",
+          "text": "Up to 20 cached values may be lost (never used by any session) if the instance is shut down abnormally, since CACHE pre-allocates values in memory."
+        },
+        {
+          "key": "C",
+          "text": "CYCLE is the default behavior for Oracle sequences, so NOCYCLE had to be explicitly specified here to prevent wrap-around."
+        },
+        {
+          "key": "D",
+          "text": "Once MAXVALUE is reached, the sequence automatically switches to negative increments to continue generating values."
+        },
+        {
+          "key": "E",
+          "text": "CACHE 20 guarantees that no gaps will ever occur in the sequence of values returned by NEXTVAL, even across multiple sessions."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Com NOCYCLE (que também é o padrão), ao atingir MAXVALUE a sequência não recomeça — uma nova chamada a NEXTVAL gera erro. O CACHE pré-aloca um bloco de valores em memória (aqui 20) para performance; se a instância cair abruptamente, os valores já alocados mas não usados são perdidos, criando lacunas — comportamento esperado, não um bug. NOCYCLE já é o comportamento padrão das sequences no Oracle, então dizer que CYCLE é o padrão é falso. Sequences não alternam para incrementos negativos automaticamente ao atingir o limite — com NOCYCLE elas simplesmente param de gerar valores. CACHE não garante ausência de lacunas; pelo contrário, é uma das principais causas de gaps em cenários de múltiplas sessões ou reinício da instância."
+    },
+    {
+      "id": 573,
+      "topic": "ddl",
+      "context": "Examine this statement:\nCREATE TABLE hr.contractors (\n  contractor_id NUMBER GENERATED ALWAYS AS IDENTITY,\n  full_name VARCHAR2(100) NOT NULL,\n  hourly_rate NUMBER(8,2) DEFAULT 50 NOT NULL,\n  CONSTRAINT contractors_pk PRIMARY KEY (contractor_id)\n);",
+      "text": "Which three statements are true about this table? (Choose three.)",
+      "type": "multiple",
+      "correctCount": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "Because contractor_id is GENERATED ALWAYS AS IDENTITY, any explicit INSERT that supplies a value for contractor_id fails unless the OVERRIDING SYSTEM VALUE clause is used."
+        },
+        {
+          "key": "B",
+          "text": "The PRIMARY KEY constraint on contractor_id automatically creates a unique index to enforce uniqueness."
+        },
+        {
+          "key": "C",
+          "text": "hourly_rate accepts NULL, because DEFAULT 50 only applies when the column is omitted from the INSERT, and NOT NULL is overridden by DEFAULT."
+        },
+        {
+          "key": "D",
+          "text": "If an INSERT statement omits hourly_rate entirely, the column is populated with 50."
+        },
+        {
+          "key": "E",
+          "text": "full_name can be omitted from an INSERT because Oracle automatically supplies an empty string for VARCHAR2 NOT NULL columns without a DEFAULT."
+        }
+      ],
+      "correct": [
+        "A",
+        "B",
+        "D"
+      ],
+      "explanation": "GENERATED ALWAYS AS IDENTITY impede que valores sejam fornecidos explicitamente na coluna a menos que se use OVERRIDING SYSTEM VALUE. Toda PRIMARY KEY implicitamente cria (ou reutiliza) um índice único para garantir a unicidade. Se hourly_rate for omitida no INSERT, o DEFAULT 50 é aplicado, preenchendo a coluna com esse valor. A cláusula NOT NULL continua valendo mesmo com DEFAULT — DEFAULT apenas fornece o valor quando a coluna é omitida; um INSERT explícito de NULL ainda seria barrado pela constraint, então a coluna nunca aceita NULL de fato. Não existe esse comportamento automático de preencher com string vazia — sem um valor explícito ou DEFAULT, um INSERT que omita full_name viola a constraint NOT NULL e falha."
+    },
+    {
+      "id": 574,
+      "topic": "access",
+      "context": "As user SYS:\nCREATE ROLE hr_read_role;\nGRANT SELECT ON hr.contractors TO hr_read_role;\nGRANT hr_read_role TO carla WITH ADMIN OPTION;",
+      "text": "Which two statements are true about CARLA's privileges after these statements execute? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "CARLA can grant hr_read_role to other users, because WITH ADMIN OPTION was specified on the role grant."
+        },
+        {
+          "key": "B",
+          "text": "CARLA can directly grant SELECT on hr.contractors to another user as an object privilege, since she indirectly has that privilege through the role."
+        },
+        {
+          "key": "C",
+          "text": "If hr_read_role is later revoked from CARLA, any grants of that role she made to other users remain valid."
+        },
+        {
+          "key": "D",
+          "text": "WITH ADMIN OPTION also grants CARLA the underlying SELECT object privilege directly on hr.contractors, independent of the role."
+        },
+        {
+          "key": "E",
+          "text": "CARLA cannot query hr.contractors directly in her own session, since the SELECT privilege was granted to the role, not to her."
+        }
+      ],
+      "correct": [
+        "A",
+        "C"
+      ],
+      "explanation": "WITH ADMIN OPTION permite que CARLA administre a role, incluindo concedê-la a outros usuários. Privilégios de roles concedidas com ADMIN OPTION continuam válidos mesmo que a role original seja revogada do concedente — a revogação da role de CARLA não desfaz automaticamente as concessões que ela já fez. CARLA não pode conceder o privilégio de objeto SELECT diretamente a outra pessoa apenas por possuí-lo indiretamente via role — isso exigiria um grant direto com WITH GRANT OPTION, diferente de ADMIN OPTION sobre a role. ADMIN OPTION concede a CARLA a capacidade de administrar a role em si, mas não transforma automaticamente os privilégios de objeto obtidos via role em concessões diretas. Privilégios concedidos via role estão disponíveis para o usuário assim que a role está habilitada em sua sessão, então CARLA pode sim consultar hr.contractors diretamente."
+    },
+    {
+      "id": 575,
+      "topic": "access",
+      "context": "User PEDRO has been granted the system privilege CREATE TABLE only, but not CREATE ANY TABLE.",
+      "text": "Which statement is true about what PEDRO can and cannot do?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "PEDRO can create tables in his own schema, but cannot create a table in another user's schema even if he specifies the schema name in the CREATE TABLE statement."
+        },
+        {
+          "key": "B",
+          "text": "PEDRO can create tables in any schema, since CREATE TABLE inherently allows creating objects anywhere in the database."
+        },
+        {
+          "key": "C",
+          "text": "PEDRO must additionally have the object privilege SELECT on a table before he can create his own tables."
+        },
+        {
+          "key": "D",
+          "text": "CREATE TABLE and CREATE ANY TABLE grant identical privileges; the ANY keyword only affects DROP and ALTER operations."
+        },
+        {
+          "key": "E",
+          "text": "PEDRO cannot create tables at all, because CREATE TABLE alone is insufficient without an explicit tablespace quota grant, regardless of privilege."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "O privilégio de sistema CREATE TABLE permite criar tabelas apenas no próprio schema do usuário. Para criar tabelas em schemas de outros usuários, seria necessário o privilégio CREATE ANY TABLE, que PEDRO não possui. Não há exigência de possuir SELECT sobre outra tabela para poder criar uma tabela própria. CREATE ANY TABLE é estritamente mais amplo que CREATE TABLE, permitindo criar em qualquer schema, o que já contraria a opção D. A falta de quota impede a alocação de espaço para dados, mas isso é uma condição adicional sobre uso de espaço, não invalida o fato de que o privilégio de sistema já permite emitir o CREATE TABLE — dizer que PEDRO \"não pode criar tabelas at all\" é uma afirmação exagerada e incorreta."
+    },
+    {
+      "id": 576,
+      "topic": "dictionary",
+      "context": "User CARLA wants to find all views she owns whose defining query is longer than 4000 characters, along with the actual text of the view definition.",
+      "text": "Which two statements are true about querying the data dictionary for this? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "USER_VIEWS contains a TEXT column (or TEXT_LENGTH) that reports the length of the view's defining query, useful for filtering by size."
+        },
+        {
+          "key": "B",
+          "text": "Because the view's defining query can exceed 4000 characters, the TEXT column in USER_VIEWS is of a LONG (or CLOB, depending on version) data type, not VARCHAR2."
+        },
+        {
+          "key": "C",
+          "text": "CARLA needs DBA_VIEWS to see her own views, because USER_VIEWS only shows views owned by SYS."
+        },
+        {
+          "key": "D",
+          "text": "USER_VIEWS never stores the actual SQL text of the view; only DBA_SOURCE keeps that information."
+        },
+        {
+          "key": "E",
+          "text": "Views longer than 4000 characters cannot be created in Oracle, since VARCHAR2 caps out at that length in SQL."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "USER_VIEWS possui as colunas TEXT (texto da view) e TEXT_LENGTH (tamanho do texto), permitindo tanto obter a definição quanto filtrar por tamanho. Como a definição de uma view pode ser bem longa, a coluna TEXT é do tipo LONG (ou CLOB em versões mais recentes), não VARCHAR2, justamente para acomodar textos grandes. USER_VIEWS mostra as views do próprio usuário conectado, não apenas as de SYS — não é necessário DBA_VIEWS para ver os próprios objetos. USER_VIEWS efetivamente armazena o texto da view na coluna TEXT; DBA_SOURCE é usado para código de procedures/functions/packages, não para views. O limite de 4000 caracteres do tipo VARCHAR2 não impede que a definição de uma view seja mais longa, pois ela é armazenada internamente como LONG/CLOB, não como VARCHAR2."
+    },
+    {
+      "id": 577,
+      "topic": "dictionary",
+      "context": "CARLA is a regular user without any DBA-related privileges. She runs:\nSELECT table_name FROM user_tables;\nSELECT table_name FROM all_tables WHERE owner = 'HR';",
+      "text": "Which two statements are true about the results of these two queries? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The first query returns only tables owned by CARLA herself, since USER_TABLES is always scoped to the current schema."
+        },
+        {
+          "key": "B",
+          "text": "The second query succeeds and returns HR's table names, provided CARLA has been granted at least one privilege (such as SELECT) on at least one of those tables, directly or through a role."
+        },
+        {
+          "key": "C",
+          "text": "The second query fails with an insufficient-privileges error unless CARLA has the SELECT ANY TABLE system privilege."
+        },
+        {
+          "key": "D",
+          "text": "ALL_TABLES only lists tables owned by the connected user, functioning identically to USER_TABLES."
+        },
+        {
+          "key": "E",
+          "text": "USER_TABLES requires the SELECT_CATALOG_ROLE to be granted before it returns any rows."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "USER_TABLES sempre reflete apenas o schema do usuário conectado, sem exigir privilégios extras. ALL_TABLES mostra as tabelas às quais o usuário tem acesso por qualquer privilégio (próprias, mais as que recebeu diretamente ou via role/PUBLIC) — CARLA só verá tabelas de HR se tiver algum privilégio sobre pelo menos uma delas, não precisando de SELECT ANY TABLE. ALL_TABLES não é idêntica a USER_TABLES — ALL_TABLES inclui objetos acessíveis de outros schemas, enquanto USER_TABLES é restrita ao próprio schema. USER_TABLES não exige SELECT_CATALOG_ROLE; essa role costuma ser necessária para visões DBA_*, não para USER_*/ALL_*."
+    },
+    {
+      "id": 578,
+      "topic": "timezone",
+      "context": "Examine this query, executed in a session with TIME_ZONE set to 'America/Sao_Paulo':\nSELECT hire_date,\n       hire_date AT TIME ZONE 'UTC' AS hire_utc\nFROM hr.contractors\nWHERE contractor_id = 55;\nAssume hire_date is stored as a column of type TIMESTAMP WITH LOCAL TIME ZONE.",
+      "text": "Which two statements are true about how TIMESTAMP WITH LOCAL TIME ZONE and the AT TIME ZONE clause interact in this query? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "hire_date is stored internally normalized to UTC and converted to the session's time zone whenever it is retrieved, regardless of who queries it."
+        },
+        {
+          "key": "B",
+          "text": "hire_utc explicitly converts the displayed value to the UTC time zone, showing a TIMESTAMP WITH TIME ZONE result with a '+00:00' offset."
+        },
+        {
+          "key": "C",
+          "text": "Two sessions with different TIME_ZONE settings querying the same row will see the same wall-clock hour and minute displayed for hire_date, only the offset differs."
+        },
+        {
+          "key": "D",
+          "text": "Because the column is WITH LOCAL TIME ZONE, the AT TIME ZONE clause has no effect and hire_utc always equals hire_date exactly."
+        },
+        {
+          "key": "E",
+          "text": "TIMESTAMP WITH LOCAL TIME ZONE stores the session time zone offset alongside the value, unlike TIMESTAMP WITH TIME ZONE which does not."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "TIMESTAMP WITH LOCAL TIME ZONE armazena o valor normalizado (em UTC) e o converte automaticamente para o fuso horário da sessão no momento da recuperação, então cada sessão vê o horário já ajustado ao seu próprio fuso. AT TIME ZONE 'UTC' converte explicitamente o valor exibido para UTC, retornando um TIMESTAMP WITH TIME ZONE com offset '+00:00'. Sessões com TIME_ZONE diferentes verão horas de relógio diferentes para a mesma hire_date, exatamente porque o valor é ajustado ao fuso de cada sessão — não apenas o offset muda. AT TIME ZONE tem efeito normal sobre qualquer tipo de dado temporal, incluindo colunas WITH LOCAL TIME ZONE. É o contrário do que diz a última opção: TIMESTAMP WITH LOCAL TIME ZONE não armazena o offset junto ao dado, enquanto TIMESTAMP WITH TIME ZONE sim armazena o offset explicitamente."
+    },
+    {
+      "id": 579,
+      "topic": "timezone",
+      "context": "Examine this query:\nSELECT INTERVAL '2' YEAR + INTERVAL '18' MONTH AS total_period\nFROM dual;",
+      "text": "What is the result of this expression?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "An INTERVAL YEAR TO MONTH value equivalent to 3 years and 6 months, since both intervals share the same YEAR TO MONTH family and are added together."
+        },
+        {
+          "key": "B",
+          "text": "An error, because INTERVAL YEAR and INTERVAL MONTH cannot be added directly without converting one of them first."
+        },
+        {
+          "key": "C",
+          "text": "An INTERVAL DAY TO SECOND value, since addition of two YEAR/MONTH intervals is implicitly converted to a day-based interval."
+        },
+        {
+          "key": "D",
+          "text": "42 months displayed as a plain NUMBER, since Oracle automatically reduces YEAR TO MONTH intervals to a total month count when added."
+        },
+        {
+          "key": "E",
+          "text": "An INTERVAL YEAR TO MONTH value equivalent to 2 years and 18 months, without normalizing the excess months into years."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "INTERVAL '2' YEAR e INTERVAL '18' MONTH pertencem à mesma família YEAR TO MONTH, então podem ser somados diretamente, resultando em um valor normalizado de 3 anos e 6 meses (2 anos + 1 ano e 6 meses, pois 18 meses = 1 ano e 6 meses). O resultado permanece um INTERVAL YEAR TO MONTH, não é convertido para DAY TO SECOND nem reduzido a um NUMBER simples de meses. Oracle normaliza automaticamente o excesso de meses em anos ao exibir o resultado, então não fica \"2 anos e 18 meses\" sem normalização."
     }
   ]
 }

@@ -6090,6 +6090,702 @@
         "A"
       ],
       "explanation": "ON COMMIT DELETE ROWS define uma temporary table cujos dados têm escopo de transação: ao emitir COMMIT, as linhas daquela sessão são automaticamente removidas. Isso não depende de outras sessões estarem ou não consultando a tabela — cada sessão só enxerga seus próprios dados em uma temporary table. O efeito é justamente sobre o COMMIT, não sobre o ROLLBACK, e não existe nenhuma movimentação automática de dados para uma tabela permanente."
+    },
+    {
+      "id": 181,
+      "topic": "architecture",
+      "context": "In a multitenant Oracle Database with one CDB containing two PDBs (pdb1, pdb2), examine this statement executed while connected to the root (CDB$ROOT) as a common user:\nALTER SYSTEM SET db_recovery_file_dest_size = 20G;",
+      "text": "Which two statements are true about parameters and memory structures in this multitenant architecture? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Most instance-level parameters (such as memory and background-process related parameters) are shared by the whole CDB instance and apply to all PDBs, since there is only one instance and one SGA for the entire CDB."
+        },
+        {
+          "key": "B",
+          "text": "Some parameters, like OPEN_CURSORS, can be overridden at the PDB level, taking a different effective value inside a specific PDB."
+        },
+        {
+          "key": "C",
+          "text": "Each PDB has its own separate instance and its own SGA, completely isolated from the CDB's background processes."
+        },
+        {
+          "key": "D",
+          "text": "ALTER SYSTEM executed from the root always applies only to the current container and never propagates to open PDBs."
+        },
+        {
+          "key": "E",
+          "text": "The CDB$ROOT and every PDB always share exactly one identical set of undo tablespaces, with no possibility of PDB-level undo."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Em um CDB, existe uma única instância e uma única SGA compartilhada por todos os PDBs — a maioria dos parâmetros de instância (memória, processos em background) é comum a todo o CDB. Ainda assim, alguns parâmetros modificáveis (como OPEN_CURSORS) podem ser definidos com um valor diferente em nível de PDB, sobrepondo o valor do CDB para aquele contêiner. PDBs não têm instância ou SGA próprias — eles compartilham a mesma instância do CDB. ALTER SYSTEM executado a partir da raiz pode, dependendo do parâmetro e da cláusula (como CONTAINER=ALL), propagar-se para os PDBs abertos. Undo pode ser gerenciado de forma local por PDB (local undo mode) a partir de versões mais recentes, então não é verdade que exista sempre um único conjunto compartilhado."
+    },
+    {
+      "id": 182,
+      "topic": "users",
+      "context": "Examine this statement:\nCREATE USER app_user IDENTIFIED BY \"Str0ng_Pwd#1\"\nDEFAULT TABLESPACE app_data\nQUOTA 100M ON app_data\nPROFILE app_profile;",
+      "text": "Which two statements are true about APP_USER immediately after this statement runs? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "APP_USER cannot connect to the database yet, because the CREATE SESSION privilege has not been granted."
+        },
+        {
+          "key": "B",
+          "text": "APP_USER is limited to at most 100 MB of space usage specifically within the app_data tablespace, regardless of quota on other tablespaces."
+        },
+        {
+          "key": "C",
+          "text": "APP_USER automatically receives unlimited quota on the SYSTEM and SYSAUX tablespaces to support basic connectivity."
+        },
+        {
+          "key": "D",
+          "text": "The PROFILE clause is mandatory in CREATE USER; without it, Oracle rejects the statement."
+        },
+        {
+          "key": "E",
+          "text": "Custom profiles such as app_profile cannot enforce a password verify function; only the DEFAULT profile supports PASSWORD_VERIFY_FUNCTION."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Por padrão, um usuário recém-criado não recebe o privilégio CREATE SESSION automaticamente — sem GRANT CREATE SESSION, APP_USER não consegue conectar. A cláusula QUOTA 100M ON app_data limita o uso de espaço daquele usuário especificamente nessa tablespace, não afetando cotas em outras tablespaces. Usuários não recebem quota ilimitada automática em SYSTEM/SYSAUX — conceder quota nessas tablespaces geralmente não é recomendado e não acontece por padrão. PROFILE é opcional em CREATE USER; se omitido, o usuário recebe o profile DEFAULT. Qualquer profile, customizado ou não, pode ter PASSWORD_VERIFY_FUNCTION definida via ALTER PROFILE — não é exclusividade do profile DEFAULT."
+    },
+    {
+      "id": 183,
+      "topic": "storage",
+      "context": "Examine this statement:\nALTER TABLE sales.invoices MOVE TABLESPACE data02 ROW MOVEMENT ENABLED;\nAssume the table has a bitmap index and a conventional B-tree index defined on it.",
+      "text": "Which two statements are true about the effect of this MOVE operation on the table's indexes? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "After the MOVE completes, both indexes become UNUSABLE, because the ROWIDs of the rows have changed as a result of relocating the segment."
+        },
+        {
+          "key": "B",
+          "text": "Queries that rely on those indexes will fail or perform full table scans until the indexes are rebuilt (or the table was moved with UPDATE INDEXES)."
+        },
+        {
+          "key": "C",
+          "text": "Bitmap indexes are unaffected by MOVE operations, since they store logical values instead of ROWIDs."
+        },
+        {
+          "key": "D",
+          "text": "ROW MOVEMENT ENABLED must remain permanently enabled after this statement for the table to continue accepting UPDATE statements at all."
+        },
+        {
+          "key": "E",
+          "text": "A conventional B-tree index automatically detects the ROWID changes and updates itself in the background without requiring a rebuild."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Mover uma tabela para outra tablespace altera fisicamente a localização das linhas, mudando seus ROWIDs; como índices armazenam ROWIDs (inclusive bitmap indexes, que também referenciam ROWIDs internamente), eles ficam UNUSABLE após o MOVE. Enquanto não forem reconstruídos (ou movidos com UPDATE INDEXES), consultas que dependeriam deles falham ou caem para full table scan. Bitmap indexes também referenciam ROWIDs e são afetados da mesma forma que índices B-tree — não são imunes ao MOVE. ROW MOVEMENT ENABLED só é necessário durante certas operações (como flashback ou mudanças de partição), não é uma exigência permanente para qualquer UPDATE comum na tabela. Índices B-tree não se autoatualizam em segundo plano após o ROWID mudar — precisam ser explicitamente reconstruídos com REBUILD."
+    },
+    {
+      "id": 184,
+      "topic": "movedata",
+      "context": "A DBA runs Data Pump Export with the following relevant parameters:\nexpdp hr_user/password DIRECTORY=dp_dir DUMPFILE=hr_%U.dmp PARALLEL=4 SCHEMAS=HR",
+      "text": "Which two statements are true about the purpose of the %U substitution variable in the DUMPFILE parameter here? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "It allows Data Pump to generate multiple dump files automatically, distributing the export across them to take advantage of the PARALLEL setting."
+        },
+        {
+          "key": "B",
+          "text": "It uniquely encodes the username of the session that started the export, for audit purposes."
+        },
+        {
+          "key": "C",
+          "text": "A later impdp of these files can also use PARALLEL to read from more than one dump file concurrently, speeding up the import."
+        },
+        {
+          "key": "D",
+          "text": "It represents the Unix timestamp of the export, ensuring the file name is unique across different runs."
+        },
+        {
+          "key": "E",
+          "text": "It has no functional effect unless COMPRESSION is also enabled."
+        }
+      ],
+      "correct": [
+        "A",
+        "C"
+      ],
+      "explanation": "%U é um espaço reservado que o Data Pump substitui por um número sequencial de dois dígitos (crescendo conforme necessário), permitindo gerar múltiplos arquivos de dump conforme o grau de paralelismo definido em PARALLEL — assim, o trabalho é distribuído em vários arquivos simultaneamente. Ter múltiplos arquivos de dump também beneficia uma importação posterior com impdp, que pode ler de vários arquivos concorrentemente quando PARALLEL é usado no import. Não tem relação com nome de usuário nem representa timestamp. Seu funcionamento independe de COMPRESSION estar habilitado."
+    },
+    {
+      "id": 185,
+      "topic": "tools",
+      "context": "A DBA wants to view a single, real-time graphical performance overview of an Oracle Database instance (active sessions, wait events, throughput) directly from a browser, without installing a separate management repository or a full Enterprise Manager Cloud Control setup.",
+      "text": "Which tool most directly satisfies this requirement?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "EM Express (Enterprise Manager Database Express), which runs directly against the target database using an HTTPS listener configured within the database itself."
+        },
+        {
+          "key": "B",
+          "text": "SQL Developer, a desktop IDE primarily focused on writing and tuning SQL, without a built-in real-time performance dashboard."
+        },
+        {
+          "key": "C",
+          "text": "EM Cloud Control, which requires a separate OMS (Oracle Management Service) and its own repository database."
+        },
+        {
+          "key": "D",
+          "text": "DBCA, which is used only for creating and configuring databases, not for monitoring them."
+        },
+        {
+          "key": "E",
+          "text": "SQL*Plus, a command-line tool without any graphical dashboard capability."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "EM Express é uma interface web leve embutida na própria instância do banco (via um listener HTTPS configurado com DBMS_XDB_CONFIG), oferecendo um dashboard de performance em tempo real sem exigir um repositório de gerenciamento separado. SQL Developer é uma IDE de desenvolvimento/administração, mas não oferece um dashboard de performance em tempo real como o Express. EM Cloud Control é uma solução completa que exige OMS e repositório próprio, exatamente o que o requisito busca evitar. DBCA cria e configura bancos, não monitora performance. SQL*Plus é puramente textual, sem recursos gráficos."
+    },
+    {
+      "id": 186,
+      "topic": "network",
+      "context": "Examine this entry in tnsnames.ora:\nSALESDB =\n (DESCRIPTION =\n   (ADDRESS = (PROTOCOL = TCP)(HOST = dbhost01)(PORT = 1521))\n   (CONNECT_DATA =\n     (SERVER = DEDICATED)\n     (SERVICE_NAME = sales.example.com)\n   )\n )",
+      "text": "Which two statements are true about this naming method and connection configuration? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "This is an example of Local Naming, since the resolution of the alias SALESDB to a connect descriptor is defined in a local tnsnames.ora file on the client."
+        },
+        {
+          "key": "B",
+          "text": "SERVER = DEDICATED requests a dedicated server process for this connection, as opposed to a shared server process from a dispatcher."
+        },
+        {
+          "key": "C",
+          "text": "SERVICE_NAME identifies a specific database instance (SID) directly, and cannot represent a service shared across multiple instances."
+        },
+        {
+          "key": "D",
+          "text": "Without an explicit SERVER clause, Oracle Net always defaults to using shared servers whenever the listener supports them."
+        },
+        {
+          "key": "E",
+          "text": "This configuration cannot work unless a matching entry also exists in the listener.ora file's DEFAULT_SERVICE list."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Local Naming é justamente a resolução de um alias de conexão através de um arquivo tnsnames.ora local ao cliente — é o caso aqui. SERVER = DEDICATED solicita explicitamente um processo dedicado, em vez de compartilhado via dispatcher. SERVICE_NAME identifica um serviço, que pode ser compartilhado por múltiplas instâncias (como em RAC), não está limitado a representar diretamente um único SID. Sem cláusula SERVER explícita, o comportamento padrão histórico é dedicado, não existe uma regra absoluta de que sempre usa shared server quando disponível. O listener aprende dinamicamente sobre os serviços registrados pela instância (via PMON), não é necessário listar manualmente cada serviço no listener.ora para a conexão funcionar."
+    },
+    {
+      "id": 187,
+      "topic": "tablespaces",
+      "context": "Examine this statement:\nCREATE TABLESPACE sales_data\nDATAFILE '/u01/oradata/orcl/sales_data01.dbf' SIZE 500M\nAUTOEXTEND ON NEXT 50M MAXSIZE 2G\nEXTENT MANAGEMENT LOCAL\nSEGMENT SPACE MANAGEMENT AUTO;",
+      "text": "Which two statements are true about the AUTOEXTEND and SEGMENT SPACE MANAGEMENT clauses of this tablespace? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "AUTOEXTEND ON allows the datafile to grow automatically in increments of 50 MB, up to a maximum size of 2 GB, without manual intervention."
+        },
+        {
+          "key": "B",
+          "text": "SEGMENT SPACE MANAGEMENT AUTO uses bitmaps to track free and used space inside segments, instead of relying on manually configured PCTUSED/FREELISTS parameters."
+        },
+        {
+          "key": "C",
+          "text": "EXTENT MANAGEMENT LOCAL means the extents for this tablespace are tracked in the data dictionary tables rather than in bitmaps within the tablespace's own datafiles."
+        },
+        {
+          "key": "D",
+          "text": "Once the datafile reaches its MAXSIZE of 2 GB, subsequent DML operations that need more space silently fail without raising any error."
+        },
+        {
+          "key": "E",
+          "text": "SEGMENT SPACE MANAGEMENT AUTO can only be used together with dictionary-managed tablespaces, not locally managed ones."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "AUTOEXTEND ON com NEXT 50M e MAXSIZE 2G permite crescimento automático do datafile em incrementos de 50 MB até o limite de 2 GB, sem intervenção manual. SEGMENT SPACE MANAGEMENT AUTO usa bitmaps para gerenciar o espaço livre/usado dentro dos segmentos, eliminando a necessidade de configurar PCTUSED e FREELISTS manualmente. EXTENT MANAGEMENT LOCAL é exatamente o oposto do que diz a opção C: os extents são controlados por bitmaps dentro dos próprios datafiles da tablespace, não no dicionário de dados. Ao atingir o MAXSIZE, operações que precisem de mais espaço falham com um erro, não falham silenciosamente. SEGMENT SPACE MANAGEMENT AUTO é um recurso de tablespaces locally managed; tablespaces dictionary-managed não suportam essa opção."
+    },
+    {
+      "id": 188,
+      "topic": "undo",
+      "context": "Examine this parameter setting:\nUNDO_RETENTION = 900\nAssume the undo tablespace has AUTOEXTEND OFF and a fixed size, and the database is NOT using Guaranteed Undo Retention.",
+      "text": "Which two statements are true about undo retention behavior in this configuration? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "UNDO_RETENTION of 900 seconds is only a target/best-effort value; if space is needed for active transactions, Oracle can overwrite older undo data before 900 seconds have elapsed."
+        },
+        {
+          "key": "B",
+          "text": "Long-running queries can still fail with ORA-01555 (snapshot too old) under this configuration if their undo is overwritten before they complete."
+        },
+        {
+          "key": "C",
+          "text": "Because AUTOEXTEND is OFF, Oracle automatically switches to Guaranteed Undo Retention to protect long-running queries from ORA-01555."
+        },
+        {
+          "key": "D",
+          "text": "UNDO_RETENTION guarantees that undo data will never be overwritten for at least 900 seconds, regardless of space pressure, even without Guaranteed Undo Retention."
+        },
+        {
+          "key": "E",
+          "text": "Enabling Guaranteed Undo Retention behaves identically to the current setting, since UNDO_RETENTION already enforces a hard minimum regardless of the GUARANTEE clause."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Sem GUARANTEE, o UNDO_RETENTION é apenas um valor-alvo (best effort); sob pressão de espaço, o Oracle pode sobrescrever undo mais antigo mesmo antes do tempo configurado, para atender transações ativas. Isso pode causar ORA-01555 em consultas longas cujo undo necessário foi sobrescrito. AUTOEXTEND OFF não ativa automaticamente Guaranteed Undo Retention — são configurações independentes; a garantia só existe se explicitamente configurada com a cláusula RETENTION GUARANTEE. Sem essa garantia, não há promessa absoluta de retenção mínima quando há pressão de espaço. Guaranteed Undo Retention muda o comportamento padrão, impedindo alocações que violem a retenção (podendo falhar transações por falta de espaço) — isso é diferente do comportamento não-garantido do cenário, então dizer que se comportam de forma idêntica é falso."
+    },
+    {
+      "id": 189,
+      "topic": "sql-select",
+      "context": "Examine this query:\nSELECT employee_id, last_name\nFROM hr.contractors\nORDER BY hire_date\nOFFSET 5 ROWS FETCH NEXT 5 ROWS ONLY;",
+      "text": "Which two statements are true about this query's row-limiting clause? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "OFFSET 5 ROWS skips the first 5 rows of the ordered result before starting to fetch, so rows 6 through 10 (by hire_date order) are returned."
+        },
+        {
+          "key": "B",
+          "text": "ORDER BY is required for the OFFSET/FETCH result to be deterministic across repeated executions."
+        },
+        {
+          "key": "C",
+          "text": "FETCH NEXT 5 ROWS ONLY behaves differently from FETCH FIRST 5 ROWS ONLY when OFFSET is present, applying the limit before the OFFSET skip rather than after."
+        },
+        {
+          "key": "D",
+          "text": "If OFFSET is omitted, FETCH NEXT cannot be used, only FETCH FIRST is valid without a preceding OFFSET."
+        },
+        {
+          "key": "E",
+          "text": "OFFSET and FETCH must both reference the same column list as ORDER BY, or the query raises a syntax error."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "OFFSET 5 ROWS pula as 5 primeiras linhas do conjunto já ordenado, e a cláusula FETCH busca as próximas 5 (linhas 6 a 10 pela ordem de hire_date). Sem ORDER BY, a ordem das linhas não é garantida entre execuções, tornando o resultado de OFFSET/FETCH não determinístico. FIRST e NEXT são apenas sinônimos sintáticos na row limiting clause; não existe diferença de comportamento relacionada à ordem de aplicação do OFFSET — ambos aplicam o FETCH depois do OFFSET da mesma forma. FETCH (FIRST ou NEXT) pode ser usado sem OFFSET normalmente, começando do início do resultado. Não existe exigência de que as colunas do OFFSET/FETCH coincidam com as do ORDER BY."
+    },
+    {
+      "id": 190,
+      "topic": "sql-select",
+      "context": "Examine this query:\nSELECT DISTINCT department_id, job_id\nFROM hr.contractors\nORDER BY last_name;",
+      "text": "What happens when this statement is executed?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It raises an error, because last_name is not part of the DISTINCT column list in the SELECT clause, and DISTINCT queries can only ORDER BY columns that appear in the SELECT list."
+        },
+        {
+          "key": "B",
+          "text": "It executes successfully, because ORDER BY can freely reference any column from the underlying table regardless of DISTINCT."
+        },
+        {
+          "key": "C",
+          "text": "It executes successfully, but last_name is silently added as an extra column to the DISTINCT result set."
+        },
+        {
+          "key": "D",
+          "text": "It raises an error only if department_id and job_id together are not unique per last_name."
+        },
+        {
+          "key": "E",
+          "text": "It executes successfully, but the ORDER BY clause is ignored because DISTINCT already imposes an implicit ordering."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Quando DISTINCT é usado, o ORDER BY só pode referenciar colunas presentes na lista de colunas selecionadas (ou expressões derivadas delas) — como last_name não está no SELECT, a instrução gera erro (ORA-01791). O ORDER BY inválido não é silenciosamente aceito nem adiciona a coluna ao resultado, e o erro ocorre independentemente de haver ou não unicidade de valores. DISTINCT não impõe nenhuma ordenação implícita nem faz o ORDER BY ser ignorado — pelo contrário, aqui ele causa erro por referenciar coluna fora do SELECT."
+    },
+    {
+      "id": 191,
+      "topic": "sql-functions",
+      "context": "Examine this query:\nSELECT contractor_id,\n       CASE\n         WHEN hourly_rate >= 100 THEN 'Senior'\n         WHEN hourly_rate >= 50 THEN 'Mid'\n         ELSE 'Junior'\n       END AS level,\n       DECODE(SIGN(hourly_rate - 50), 1, 'Above', 0, 'Equal', -1, 'Below') AS vs_50\nFROM hr.contractors;\nAssume a row where hourly_rate is exactly 50.",
+      "text": "Which two statements are true about the results for this row? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "level evaluates to 'Mid', because the second WHEN condition (hourly_rate >= 50) is the first one satisfied for a value of exactly 50."
+        },
+        {
+          "key": "B",
+          "text": "vs_50 evaluates to 'Equal', because SIGN(50 - 50) returns 0, matching the second DECODE pair."
+        },
+        {
+          "key": "C",
+          "text": "level evaluates to 'Junior', because CASE always falls through to ELSE when a boundary value is compared with >=."
+        },
+        {
+          "key": "D",
+          "text": "vs_50 evaluates to 'Above', because DECODE treats a difference of zero as a positive match by default."
+        },
+        {
+          "key": "E",
+          "text": "The CASE expression raises an error because two WHEN conditions could theoretically both be true for the same row."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Para hourly_rate = 50, a primeira condição (>= 100) é falsa, mas a segunda (>= 50) é verdadeira, então CASE retorna 'Mid' — CASE avalia as condições em ordem e para na primeira verdadeira. SIGN(50 - 50) = SIGN(0) = 0, que corresponde ao segundo par do DECODE, retornando 'Equal'; SIGN não trata zero como positivo. CASE não gera erro por ter múltiplas condições potencialmente verdadeiras — ele simplesmente usa a primeira que casar, ignorando as demais, o que é um comportamento padrão e válido, não uma falha."
+    },
+    {
+      "id": 192,
+      "topic": "sql-groups",
+      "context": "Examine this query:\nSELECT tablespace_name,\n       COUNT(*) AS segment_count,\n       SUM(bytes)/1024/1024 AS total_mb\nFROM dba_segments\nWHERE owner NOT IN ('SYS', 'SYSTEM')\nGROUP BY tablespace_name\nHAVING SUM(bytes)/1024/1024 > 100\nORDER BY total_mb DESC;",
+      "text": "Which two statements are true about this query? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "HAVING filters out entire tablespace groups whose total segment size is 100 MB or less, evaluated after the aggregation."
+        },
+        {
+          "key": "B",
+          "text": "Column aliases defined in the SELECT list, such as total_mb, cannot be referenced inside the HAVING clause condition, which is why this query repeats the SUM(bytes)/1024/1024 expression instead of just writing \"HAVING total_mb > 100\"."
+        },
+        {
+          "key": "C",
+          "text": "The WHERE clause is applied after GROUP BY, so it can filter based on the aggregated segment_count for each tablespace."
+        },
+        {
+          "key": "D",
+          "text": "total_mb cannot be used in the ORDER BY clause either, for the same reason it cannot be used in HAVING."
+        },
+        {
+          "key": "E",
+          "text": "GROUP BY tablespace_name must also repeat the SUM and COUNT expressions from the SELECT list to be valid syntax."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "HAVING opera após a agregação, eliminando grupos inteiros — aqui, tablespaces cujo total_mb seja <= 100. Aliases definidos no SELECT, como total_mb, não podem ser referenciados dentro de WHERE, GROUP BY ou HAVING (apenas em ORDER BY), por isso a consulta repete a expressão completa na cláusula HAVING em vez de usar o alias. O WHERE é aplicado antes do GROUP BY, sobre linhas individuais, e não pode referenciar valores agregados como segment_count. Diferente de HAVING, o ORDER BY pode sim referenciar aliases do SELECT livremente. O GROUP BY deve conter as colunas não agregadas do SELECT (aqui, apenas tablespace_name) — não é necessário nem válido repetir expressões de agregação nele."
+    },
+    {
+      "id": 193,
+      "topic": "sql-groups",
+      "context": "Examine this query:\nSELECT job_id,\n       COUNT(*) AS emp_count,\n       COUNT(commission) AS with_commission,\n       COUNT(*) - COUNT(commission) AS without_commission\nFROM hr.contractors\nGROUP BY job_id;",
+      "text": "Which three statements are true about how COUNT behaves in this query? (Choose three.)",
+      "type": "multiple",
+      "correctCount": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "COUNT(*) counts every row in each group, regardless of whether any column contains NULL."
+        },
+        {
+          "key": "B",
+          "text": "COUNT(commission) counts only the rows in each group where commission is NOT NULL."
+        },
+        {
+          "key": "C",
+          "text": "without_commission correctly derives, for each job_id, how many employees have a NULL commission."
+        },
+        {
+          "key": "D",
+          "text": "COUNT(commission) and COUNT(*) always return the same value, since COUNT ignores NULLs only when used with DISTINCT."
+        },
+        {
+          "key": "E",
+          "text": "If every employee in a given job_id group has a NULL commission, with_commission evaluates to NULL rather than 0."
+        }
+      ],
+      "correct": [
+        "A",
+        "B",
+        "C"
+      ],
+      "explanation": "COUNT(*) conta todas as linhas do grupo, independentemente de valores NULL em qualquer coluna. COUNT(coluna) conta apenas as linhas em que aquela coluna não é NULL — aqui, apenas os funcionários com comissão definida. A subtração COUNT(*) - COUNT(commission) resulta exatamente na quantidade de linhas com commission NULA em cada grupo. COUNT(coluna) ignora NULLs sempre, com ou sem DISTINCT — essa não é uma condição exclusiva do uso de DISTINCT. Se todas as linhas do grupo tiverem commission NULA, COUNT(commission) retorna 0, não NULL — COUNT nunca retorna NULL."
+    },
+    {
+      "id": 194,
+      "topic": "sql-joins",
+      "context": "Examine these tables and query:\nhr.contractors(contractor_id, full_name, manager_id)\nSELECT e.full_name AS contractor, m.full_name AS manager\nFROM hr.contractors e\nLEFT JOIN hr.contractors m\n  ON e.manager_id = m.contractor_id;",
+      "text": "Which two statements are true about how NULL manager_id values are handled by this self-join? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "This is a self-join because the same table hr.contractors is joined to itself using two different aliases, e and m."
+        },
+        {
+          "key": "B",
+          "text": "Contractors with a NULL manager_id (such as a top-level manager with no manager of their own) will still appear in the result, with manager returned as NULL."
+        },
+        {
+          "key": "C",
+          "text": "Because it is a self-join, Oracle requires the ON condition to use the \"=\" operator exclusively between manager_id and contractor_id, with no other join types allowed."
+        },
+        {
+          "key": "D",
+          "text": "If manager_id contains a value that does not match any contractor_id, that row is excluded entirely from the result due to the LEFT JOIN."
+        },
+        {
+          "key": "E",
+          "text": "Both aliases e and m always return exactly the same number of rows individually in the result, since they reference the same underlying table."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Um self-join ocorre quando a mesma tabela é referenciada mais de uma vez na cláusula FROM, usando aliases distintos para diferenciar os \"papéis\" — aqui e (funcionário) e m (gerente). Como é um LEFT JOIN a partir de e, todo contratante aparece no resultado mesmo sem gerente correspondente (manager_id NULL), com manager retornado como NULL. Não há essa restrição de \"apenas igualdade\" para self-joins — qualquer tipo de join pode ser usado normalmente entre uma tabela e ela mesma. Por ser um LEFT JOIN, uma linha de e sem correspondência em m ainda aparece no resultado (com m.full_name NULL) — ela não é excluída. Os aliases apontam para a mesma tabela fisicamente, mas isso não significa que produzam necessariamente o mesmo número de linhas no resultado final do join."
+    },
+    {
+      "id": 195,
+      "topic": "sql-joins",
+      "context": "Examine this correlated subquery:\nSELECT department_id, last_name, salary\nFROM hr.contractors e\nWHERE salary > (\n  SELECT AVG(salary)\n  FROM hr.contractors\n  WHERE department_id = e.department_id\n);",
+      "text": "What does this query return?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Employees whose salary is above the average salary of their own department."
+        },
+        {
+          "key": "B",
+          "text": "Employees whose salary is above the average salary of the entire company, regardless of department."
+        },
+        {
+          "key": "C",
+          "text": "An error, because the subquery references the outer query's alias e, which is not visible inside a subquery."
+        },
+        {
+          "key": "D",
+          "text": "Only one employee per department: the single highest-paid employee in each department."
+        },
+        {
+          "key": "E",
+          "text": "Employees whose department_id matches the average department_id across the whole table."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "A subquery é correlacionada porque referencia e.department_id da consulta externa, recalculando a média salarial separadamente para o departamento de cada linha candidata — por isso o resultado são os funcionários com salário acima da média do próprio departamento, não uma média global. Subqueries correlacionadas podem sim referenciar colunas/aliases da consulta externa — isso é exatamente o que as caracteriza e é uma construção válida. A consulta pode retornar múltiplos funcionários por departamento, todos os que estejam acima da média, não apenas o mais bem pago. A comparação é sobre salary, não sobre department_id."
+    },
+    {
+      "id": 196,
+      "topic": "sql-setops",
+      "context": "Examine these two queries:\nSELECT contractor_id FROM hr.contractors WHERE status = 'ACTIVE'\nINTERSECT\nSELECT contractor_id FROM hr.contractors WHERE hourly_rate > 80;",
+      "text": "Which two statements are true about how INTERSECT treats duplicates and matching conditions in this query? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The result contains only contractor_id values that satisfy both conditions simultaneously — active status and hourly_rate above 80."
+        },
+        {
+          "key": "B",
+          "text": "INTERSECT automatically removes duplicate rows from the combined result, similar to UNION (without ALL)."
+        },
+        {
+          "key": "C",
+          "text": "INTERSECT requires both SELECT statements to query the exact same table; it cannot be used across two different tables."
+        },
+        {
+          "key": "D",
+          "text": "If no rows satisfy both conditions, the query raises an error instead of returning an empty result."
+        },
+        {
+          "key": "E",
+          "text": "INTERSECT preserves duplicate occurrences of a contractor_id if it appears more than once in both queries' results."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "INTERSECT retorna apenas as linhas que aparecem em ambos os conjuntos de resultados — aqui, contractor_id que estejam ativos E tenham hourly_rate > 80. Assim como UNION (sem ALL), INTERSECT elimina duplicatas do resultado final. Não há exigência de que ambas as consultas usem a mesma tabela — o requisito é apenas compatibilidade de número de colunas e tipos. Se nenhuma linha satisfizer ambas as condições, o resultado é simplesmente um conjunto vazio, não um erro. INTERSECT elimina duplicatas, então não preserva múltiplas ocorrências do mesmo valor mesmo que ele se repita nas duas consultas."
+    },
+    {
+      "id": 197,
+      "topic": "sql-setops",
+      "context": "Examine these two queries:\nSELECT contractor_id, full_name FROM hr.contractors_north\nUNION\nSELECT emp_id, emp_name FROM hr.contractors_south;",
+      "text": "What determines the column names shown in the final result set?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The column names (or aliases) from the first SELECT statement in the set operation."
+        },
+        {
+          "key": "B",
+          "text": "The column names from whichever SELECT statement returns more rows."
+        },
+        {
+          "key": "C",
+          "text": "Oracle merges both sets of column names, showing them concatenated with an underscore."
+        },
+        {
+          "key": "D",
+          "text": "The column names must be identical in both SELECT statements, or the query fails to compile."
+        },
+        {
+          "key": "E",
+          "text": "Oracle always displays generic column names such as COLUMN_1 and COLUMN_2 when a set operator is used."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Em operadores de conjunto (UNION, UNION ALL, INTERSECT, MINUS), os nomes de coluna exibidos no resultado final vêm da primeira consulta do bloco — mesmo que a segunda use nomes de coluna ou aliases diferentes. Não há relação com qual consulta retorna mais linhas, nem qualquer concatenação de nomes. As consultas não precisam ter os mesmos nomes de coluna, apenas número de colunas e tipos compatíveis — os nomes podem divergir livremente. Nomes genéricos como COLUMN_1 apareceriam apenas se nenhuma das colunas tivesse nome/alias válido, o que não é o caso aqui."
+    },
+    {
+      "id": 198,
+      "topic": "sql-dml",
+      "context": "Examine this statement, executed inside a single transaction with autocommit disabled:\nUPDATE hr.contractors SET hourly_rate = hourly_rate * 1.1 WHERE department_id = 30;\nAssume the session then abruptly loses its network connection before issuing COMMIT or ROLLBACK, and the server-side process is eventually terminated by PMON.",
+      "text": "Which two statements are true about the fate of this UPDATE? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Because the transaction was never committed, Oracle uses undo data to roll back the uncommitted changes once the dead connection/process is detected."
+        },
+        {
+          "key": "B",
+          "text": "The row locks held by the UPDATE are released once the transaction is rolled back by recovery (PMON or a subsequent process discovering the dead session)."
+        },
+        {
+          "key": "C",
+          "text": "The changes are automatically committed after a timeout period, since Oracle assumes a lost connection implies the user intended to keep the changes."
+        },
+        {
+          "key": "D",
+          "text": "Other sessions can immediately see and modify department 30's rows the instant the network drops, without waiting for any rollback."
+        },
+        {
+          "key": "E",
+          "text": "Redo log data, not undo data, is what Oracle uses to undo the uncommitted changes from this transaction."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Como a transação nunca foi commitada, o Oracle usa os dados de undo para desfazer as alterações não confirmadas assim que detecta a sessão morta (via PMON ou outro processo de limpeza). Uma vez que o rollback é concluído, os locks de linha mantidos por aquela transação são liberados. Não existe timeout que \"assuma\" a intenção de commit — a ausência de COMMIT explícito sempre resulta em rollback quando a sessão é encerrada de forma anômala. Outras sessões continuam bloqueadas pelos locks até que o rollback seja efetivamente concluído — não é instantâneo à queda da rede. É o undo (não o redo) que armazena a imagem anterior necessária para desfazer transações não commitadas; redo serve para reaplicar mudanças em caso de recuperação de instância, não para desfazê-las."
+    },
+    {
+      "id": 199,
+      "topic": "sql-dml",
+      "context": "Examine this statement:\nINSERT ALL\n  WHEN hourly_rate > 100 THEN INTO hr.senior_contractors (contractor_id, hourly_rate)\n  WHEN hourly_rate <= 100 THEN INTO hr.junior_contractors (contractor_id, hourly_rate)\nSELECT contractor_id, hourly_rate FROM hr.contractors_staging;",
+      "text": "What kind of multitable INSERT is this, and how does it evaluate each row from the staging table?",
+      "type": "single",
+      "correctCount": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "It is a conditional multitable INSERT; each WHEN condition is evaluated independently per source row, so a row could be inserted into both target tables if it happened to satisfy overlapping conditions."
+        },
+        {
+          "key": "B",
+          "text": "It is an unconditional multitable INSERT, since INSERT ALL always inserts into every listed target table regardless of any WHEN condition."
+        },
+        {
+          "key": "C",
+          "text": "It stops evaluating further WHEN clauses for a row as soon as the first one matches, similar to INSERT FIRST, making WHEN order irrelevant."
+        },
+        {
+          "key": "D",
+          "text": "INSERT ALL automatically guarantees that each source row is routed into exactly one target table, treating overlapping WHEN conditions as mutually exclusive by design."
+        },
+        {
+          "key": "E",
+          "text": "The statement fails to compile, because INSERT ALL cannot combine WHEN conditions with a subquery-based source."
+        }
+      ],
+      "correct": [
+        "A"
+      ],
+      "explanation": "Trata-se de um INSERT ALL condicional: cada cláusula WHEN é avaliada de forma independente para cada linha de origem, e se as condições não forem mutuamente exclusivas, uma mesma linha pode ser inserida em mais de uma tabela de destino. Isso é diferente de um INSERT ALL puramente incondicional, que não teria cláusulas WHEN e inseriria em todas as tabelas listadas para toda linha. O comportamento de \"parar na primeira condição verdadeira\" é característico do INSERT FIRST, não do INSERT ALL — no INSERT ALL, todas as condições WHEN são avaliadas independentemente para cada linha. O comando não garante mutual exclusividade automaticamente; isso depende de como as condições WHEN foram escritas, não é um comportamento embutido do INSERT ALL. INSERT ALL aceita normalmente uma subquery como fonte de dados — essa é inclusive sua forma de uso mais comum."
+    },
+    {
+      "id": 200,
+      "topic": "sql-ddl",
+      "context": "Examine this statement:\nCREATE INDEX contractors_rate_idx ON hr.contractors (hourly_rate) INVISIBLE;",
+      "text": "Which two statements are true about this INVISIBLE index? (Choose two.)",
+      "type": "multiple",
+      "correctCount": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "The optimizer ignores this index by default when generating execution plans, unless a session explicitly sets OPTIMIZER_USE_INVISIBLE_INDEXES = TRUE."
+        },
+        {
+          "key": "B",
+          "text": "The index is still fully maintained by Oracle during INSERT, UPDATE, and DELETE operations on hr.contractors, even while invisible to the optimizer."
+        },
+        {
+          "key": "C",
+          "text": "An invisible index cannot be made visible later; it must be dropped and recreated as a normal index to be used by the optimizer."
+        },
+        {
+          "key": "D",
+          "text": "INVISIBLE indexes are automatically dropped after a set retention period if never made visible."
+        },
+        {
+          "key": "E",
+          "text": "Making an index INVISIBLE prevents it from being maintained during DML, which is the main performance benefit of this feature."
+        }
+      ],
+      "correct": [
+        "A",
+        "B"
+      ],
+      "explanation": "Por padrão, o otimizador ignora índices INVISIBLE ao gerar planos de execução, a menos que o parâmetro de sessão OPTIMIZER_USE_INVISIBLE_INDEXES seja definido como TRUE. Mesmo sendo invisível para o otimizador, o índice continua sendo mantido normalmente pelas operações DML — isso permite testá-lo com segurança antes de torná-lo visível, sem afetar a corretude dos dados indexados. Um índice invisível pode ser tornado visível a qualquer momento com ALTER INDEX ... VISIBLE, sem precisar recriá-lo. Não existe expiração automática para índices invisíveis. O benefício de performance de DML viria de NÃO manter o índice, mas isso não é o que acontece — o índice invisible continua sendo mantido em DML, apenas fica oculto do otimizador."
     }
   ]
 }
